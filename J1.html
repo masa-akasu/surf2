@@ -344,7 +344,7 @@
       <td style='background-color:grey;color:white;width:10%;' onclick="onOpenDialog('dialogID',  null, this)">&nbsp;ID&nbsp;</td>
       
       <td style='width:15%' id="idNo"></td>
-      <td style='width:30%' id="class">aaaaa</td>
+      <td style='width:30%' id="class">aaa</td>
       <td style='width:15%' id="rnd">Round </td>
       <td style='width:15%' id="ht">Heat</td>
       <td style='width:15%' id="timer">xx:xx</td>
@@ -1881,7 +1881,7 @@
         //console.log( '669 ', ar.length > 1 ?	ar[1] : '' );
         if( ar.length > 1 ){
           hash = JSON.parse(ar[1]);
-          //console.log(hash);
+          console.log(hash);
   
           switch( ar[0] ){
             case 'MC':
@@ -1900,7 +1900,18 @@
               console.log( "689 " , timerVal );
   
               break;
-          }
+  
+              case 'PR':    //  ex. PR;["G","W","B","Y","W"]
+  
+                var ar2 = JSON.parse(ar[1]);
+                for( ele in ar2){
+                  console.log('1908', color[ar2[ele]] );
+                  obj = document.getElementById( ele + '_99');
+                  obj.style.backgroundColor = color[ar2[ele]] ;
+                }
+                //console.log('1900 ' , ar2 );
+                break;
+            }
   
           /* for( ele in color ){
             console.log( ele + " " + color[ele]);
@@ -2001,14 +2012,14 @@
         if (n == 5000) {
           clearInterval(timer);
         }
-        socket.emit("post", { text: id + ':' + n });
+        socket.emit("post", { text: id + ';' + n });
       }
   
   
       objTimer = document.getElementById('timer');
       const onTimer2 = function(){
   
-        //console.log('798 ' , timerVal + hash.tSt );
+        console.log('798 ' , timerVal + hash.tSt );
   
         if( hash.tSt == "start" && timerVal > 0){
           timerVal -= timerVal >= 0 ? 1000 : 0;

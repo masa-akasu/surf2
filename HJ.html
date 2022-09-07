@@ -1,0 +1,2826 @@
+
+<html>
+	<head>
+	
+		<STYLE TYPE="text/css">
+		<!--
+		BODY,TD{
+			font-size:		24pt;
+			border-width:	1px;
+			border-color:	white;
+			border-style:	solid;
+			text-align: center;
+			padding: 5px;
+	
+		}
+	
+		.scroll2{
+			overflow: auto;
+			/*white-space: pre;*/
+		}
+	
+		p{
+			font-size: 16pt;
+		}
+		-->
+	
+		</STYLE>	
+		<script language="javascript" ><!--	
+				
+			var prev = "";	//	前回のRGBWB_
+			
+			color = { R: "#ff0000" , W: "#ffffff" , Y: "#ffff00", B: "#0000ff", G: "#00ff00" ,  _: "#000000" , g:"#a0a0a0"};
+			arColor = [ "#ff0000" , "#ffffff" , "#ffff00", "#0000ff", "#00ff00" ];
+				
+							
+			//	dialogの表示パラメータ
+			var flagOnDialog = false;		//	表示中か？
+			var prevIJ="";					//	前回の行列
+	
+			//
+			//	dialog表示開始（共通）
+			//
+			function onOpenDialog( div_id, 		//	<div id='div_id' >
+									fun,			//	daialog毎の特別処理	ex.	table内の場合、色を付ける
+									obj ){		//	this
+				//alert(div_id);
+				
+				//	dialogが表示中なら、終了
+				if( !flagOnDialog  ){
+					flagOnDialog = true;
+				} else{
+					return;
+				}
+				console.log('105 ', prevIJ );
+				if( div_id != "dialogPaddling" ){
+					prevIJ = obj.id;
+				}
+				
+				obj = document.getElementById( div_id ).style;
+				
+				var w =parseInt(window.innerWidth);
+				var h = parseInt(window.innerHeight);
+				obj.left 		= (w / 3) + "px";
+				obj.top 		= ( h / 4 ) +"px";
+				
+				//	callback	, dialog毎の特別処理	※	今回はinTable（だけ）用
+				if( fun ){
+					fun();
+				}
+				
+				//	dialog表示
+				obj.display = "";		
+				
+				//	実際のサイズは表示後に得られる
+				objX = document.getElementById(div_id);
+				obj.width 	=objX.offsetWidth +10;	
+				obj.height  = objX.offsetHeght;
+				//console.log("98 width=", objX.offsetWidth );
+				//console.log("98 width=", objX.offsetHeight );
+			}
+	
+			//	table内からのdialog特別処理		ここで初回表示をする
+			inTableSpecial_ = function inTableSpecial(){
+				
+				//	dialog中の（WebNoなどの3つのtd）色セット、	どの行が選択されたか
+				ar = prevIJ.split("_");	
+				color_ = arColor[ parseInt(ar[0]) ];		//	行_列	※	いずれもindex値	0...
+				console.log('133 color=' , color_ );
+									
+									
+				//	1段目,wave番号をセット	（←列番号）
+				document.getElementById( "waveNo" ).innerHTML = "&nbsp;" + ( parseInt(ar[1]) + 1 ) + "&nbsp;";
+				
+				//	1段目1行目の2項目、色替え			
+				ele = document.getElementsByName( 'colored' );		//	色を変更するところ	同一name	<td name='colored'>
+				ele.forEach( (val)=>{
+					[ 'border-top-color', 'border-bottom-color' , 'border-left-color', 'border-right-color', 'background-color']
+					.forEach( (val2)=>{ 
+						val.style["color"] =  color_ == "#0000ff" ? "white" : "black";		//	青→白文字、その他→黒文字
+						val.style[val2] = color_;
+					 } );
+				});
+				
+				//	1段目3行目の２項目、値をセット
+				str = prevIJ;
+				console.log( "123" , str );
+				str = document.getElementById( prevIJ + "_0"   ).innerHTML;
+				str = str.split("△").join('');
+				str = str.split("▲").join('');
+				document.getElementById( "echoback_TB_0"   ).innerHTML = str;
+				
+				var b=0;
+				for( var i=1; i<=5; i++ ){
+					str = document.getElementById( prevIJ + "_" + i  ).innerHTML;
+					if( str.indexOf("△") > 0 || str.indexOf("▲") > 0 ){
+						document.getElementById( "echoback_TB_1"   ).innerHTML = str.substr( str.length-1 );					
+					}
+					
+					//console.log( '125' , str );
+				}
+				
+				
+				//	2段目、J1・・・	タイトル表示
+				for( var i=0; i<5; i++ ){				
+					str = "Judge_0_" + (i+1);
+					str2 = "J" + (i+1) + "_0";
+					document.getElementById( str2 ).innerHTML = document.getElementById( str ).innerHTML;
+				}
+				//	2段目、その値表示			<!-- 2段目の各Judgeの点数 -->
+				for( var i=0; i<5; i++ ){				
+					str = prevIJ + "_" + (i+1);
+					str2 = "J" + (i+1) + "_1";
+					str3= document.getElementById( str ).innerHTML;
+					str3 = str3.split("P▲").join('');
+					str3 = str3.split("P△").join('');
+					str3 = str3.split("△").join('');
+					str3 = str3.split("▲").join('');
+					document.getElementById( str2 ).innerHTML = str3;
+				}			
+				
+				
+				//	3段目、interfere		<!-- 3段目の interfare の指定-->	//	3段目のボタンの色替えをする
+				str = document.getElementById( "echoback_TB_1"   ).innerHTML;
+				console.log('162 ' , str );
+				colorChangeSub( str );
+						
+			}
+		
+			//	3段目のボタンの色替えをする（共通）
+			function colorChangeSub( str ){
+				//console.log('186 ' , str );
+				if( str != '△' &&  str != '▲' ){		//	&nbsp;	がパラメータで渡らない	以下、対処療法
+					//console.log('189 ' , str + " " + str.length );	
+					str = "&nbsp;"
+				}
+				var interference_char = [ "△" , "▲", "&nbsp;"];
+				["Interference_1", "Interference_2", "Interference_3"].forEach( (val,key) =>{
+					//console.log('164 ' , val + " " + key );
+					if( str == interference_char[key] ){
+						obj = document.getElementById( val  );
+						obj.style.backgroundColor = "white";			
+						obj.style.color = "black";
+						document.getElementById( "echoback_TB_1"   ).innerHTML = interference_char[key];		//	（初回処理では）二重にセットする（今のところ仕方ない）	ボタンのイベントでは有効		
+					} else {
+						obj = document.getElementById( val  );
+						obj.style.backgroundColor = "#202020";			
+						obj.style.color = "white";
+					}		
+				});			
+			}
+							
+							
+			//
+			//	テーブル内でのtenKey処理
+			//
+			function on10_TB(n){
+	
+				obj = document.getElementById( "echoback_TB_0" );
+				obj2 = document.getElementById( "echoback_TB_1" );
+	
+				if( n == "BS" ){
+					for( var i=1; i<6; i++ ){
+						if( document.getElementById("J"  + i + "_1" ).style.backgroundColor != "white" ){
+							str = document.getElementById("J"  + i + "_1" ).innerHTML;
+							if( str != "&nbsp;" &&  str != ""  && str.length >0 ){
+								document.getElementById("J"  + i + "_1" ).innerHTML = str.substr(0, str.length-1);
+							}
+						}
+					}						
+				}			
+				
+				if( n == "Clear" ){
+					for( var i=1; i<6; i++ ){
+						if( document.getElementById("J"  + i + "_1" ).style.backgroundColor != "white" ){
+							document.getElementById("J"  + i + "_1" ).innerHTML = "\&nbsp;";
+						}
+					}		
+				}
+	
+				if( n == "OK" ){
+					//console.log('231', document.getElementById( prevIJ + "_0" ).innerHTML);
+					
+					//	dialog内の平均値→５X20の表の該当セルに移す
+					document.getElementById( prevIJ + "_0" ).innerHTML = document.getElementById("echoback_TB_0" ).innerHTML ;
+					
+					//	Approve	-1
+					//if( document.getElementById( prevIJ + "_00" ).style.backgroundColor != "white" ){
+					//	if( Approve > 0 ) Approve -= 1;
+					//	document.getElementById( "Approve" ).innerHTML = Approve < 20 ? ApproveNo[Approve] : Approve;
+					//}
+					
+					//	網掛けをクリア
+					document.getElementById( prevIJ + "_00" ).style 
+						= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+					setApprove();
+					
+					var iSav = [prevIJ.split("_")[0] ];
+					subApprove( iSav, 0 );
+					
+					totalReculcuSub(hash);		//	total再計算
+					
+					n ="X";									//	to 後始末
+				}
+	
+				
+				if( '0' <= n && n <= '9' ){				
+					
+					for( var i=1; i<6; i++ ){
+						if( document.getElementById("J"  + i + "_1" ).style.backgroundColor != "white" ){
+													
+							str = document.getElementById("J"  + i + "_1" ).innerHTML;
+							
+							if( str.length==1 && "0" <= str && str >= "9" ){
+								document.getElementById("J"  + i + "_1" ).innerHTML = str + ".";
+							}
+							str = document.getElementById("J"  + i + "_1" ).innerHTML;
+							
+							if(  str != "&nbsp;" ){
+								document.getElementById("J"  + i + "_1" ).innerHTML = str + n;
+							}else{
+								document.getElementById("J"  + i + "_1" ).innerHTML =  n;
+							}	
+							
+							str = document.getElementById("J"  + i + "_1" ).innerHTML;		
+							if( str.length==1 || str == "10" ){
+								document.getElementById("J"  + i + "_1" ).innerHTML = str + "." ;
+							}
+									
+						}
+					}	
+					//console.log('329');
+					
+					//	平均値を求める
+					var bunbo=0;
+					var ave=0.0;
+					for( var i=1; i<6; i++ ){
+						str = document.getElementById("J"  + i + "_1" ).innerHTML;
+						str = str.split("▲P").join('');
+						str = str.split("△P").join('');
+						str = str.split("▲").join('');
+						str = str.split("△").join('');
+						if( ! isNaN(str) ){
+							bunbo += 1;
+							ave += parseFloat(str);
+						}
+					}	
+					if( bunbo > 0 ){
+						ave = ave / bunbo;
+						//console.log('341 ' , ave.toFixed(2) );					
+						document.getElementById("echoback_TB_0" ).innerHTML = ave.toFixed(2);
+					}			
+					
+				}	
+	
+				if( n == "X" ){
+					//	後始末					
+					//	2段目、各judgeの背景色
+					for( var i=1; i<6; i++ ){
+						document.getElementById("J"  + i + "_1" ).style.backgroundColor = "white";
+					}						
+					obj2 = document.getElementById( "dialogTable" );
+					obj2.style.display = "none";
+					flagOnDialog = false;
+					obj.innerHTML = "";
+				}	
+							
+			}
+			
+		
+			//	3段目、ボタン処理		<!-- 3段目の interfare の指定-->	
+			function onclick_Non_Priority(){
+				//alert('onclick_Non_Priority');
+				document.getElementById( "echoback_TB_1" ).innerHTML = "△";
+				obj = document.getElementById( "Interference_1" );
+				obj.style.backgroundColor = 'black';
+			}
+					
+			function onclick_Priority(){
+				//alert('onclick_Priority');
+				document.getElementById( "echoback_TB_1" ).innerHTML = "▲";
+			}		
+			
+			function onclick_No_Interference(){
+				//alert('onclick_No_Interference');
+				document.getElementById( "echoback_TB_1" ).innerHTML = "";
+			}				
+			
+			
+			//「onApproveScores」押下時
+			function onApproveScores(){
+				
+				//	5X20の中で（１つでも）網掛けセルのある行列番号をメモる
+				var iSav=[];
+				for( var i=0; i<5; i++ ){
+					for( var j=0; j<20; j++ ){
+						str =  i + "_" + j + "_00";
+						if( document.getElementById( str ).style.backgroundColor != "white" ){
+							iSav.push( i );
+							break;
+						}
+					}	
+				}			
+		
+				//console.log('382', iSav );
+				//	網掛けセルのある行だけLoop					
+				//var seqX = [ [], [], [], [], [] ];			//	（0...4）行、		合計点の保存、順位が決まらない時に参照する		保留
+				for( var k=0; k<iSav.length; k++ ){
+					
+					subApprove( iSav, k );
+									
+				}	//	網掛けセルのある行だけLoop・・・ここまで
+				
+				//	後始末
+				document.getElementById( "Approve" ).innerHTML = "&nbsp;";
+	
+				//	順位およびneedPointを決める
+				getSeqAndNeedPoint();
+				
+			}
+			
+			//	ある行に網掛けがある、上位２つ（の0行）を色付けする、total列に表示する
+			function subApprove( iSav, 		//	網掛けセルのある行の配列		ex [0]
+														k ){			//	そのindex								ex.	0
+				var seq = [];
+				for( var j=0; j<20; j++ ){
+					str =  iSav[k] + "_" + j + "_0";
+					str = document.getElementById( str ).innerHTML == "&nbsp;" ? -1.0 : document.getElementById( str ).innerHTML;
+					seq.push( [ str,  j ] ); 
+				}
+				//console.log('408 ', seq );
+				seq =seq.sort( (a,b)=>{ return( b[0] - a[0] ); });
+				var cnt2=0;
+				var topTwo = [ 0.0, 0.0 ];
+				seq.forEach( val => {
+				
+					//	そのセルの網掛けをクリア
+					str = iSav[k] + "_" + val[1] + "_00";
+					console.log('421 ' , document.getElementById( str ).innerHTML.indexOf("INT") + " " + document.getElementById( str ).style.background.indexOf("238") );
+					if( document.getElementById( str ).innerHTML.indexOf("INT") < 0 
+						//&&	document.getElementById( str ).style.background.indexOf("238") == -1
+					){		//	妨害網掛けのセルはクリアしない
+						document.getElementById( str ).style
+							= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+						//	上位2つを色付けする					
+						str = 	 iSav[k] + "_" + val[1] + "_0";
+						str = document.getElementById( str ).innerHTML;
+						str2 = iSav[k] + "_" + val[1] + "_0";
+						if(	( cnt2 == 0 && ! isNaN( str ) && parseFloat(str) >= val[0] ) ||
+								( cnt2 == 1 && ! isNaN( str ) && parseFloat(str) >= val[0] )  ) {
+							topTwo[cnt2] = str;
+							cnt2 += 1;
+													
+							document.getElementById( str2 ).style.backgroundColor = "lightgreen";					
+						} 	else {
+							document.getElementById( str2 ).style.backgroundColor = "white";					
+						}
+					}															
+					
+				});	
+												
+				//		上位２つをTotal（列)にセット
+				total2 = 0.0;
+				for( var j=0; j<20; j++ ){
+					str = iSav[k] + "_" + j + "_0";
+					if(document.getElementById( str ).style.backgroundColor == "lightgreen" ){
+						total2 += parseFloat( document.getElementById( str ).innerHTML );
+					}
+				}
+				//console.log("409 " , total2 );
+				str = "Total_" + iSav[k] + "_0";
+				document.getElementById( str ).innerHTML = parseFloat(total2).toFixed(2) ; 
+				str = "Total_" + iSav[k] + "_1";
+				if(  parseFloat( topTwo[0] ) > parseFloat( topTwo[1] ) ){
+					document.getElementById( str ).innerHTML = topTwo[0] + " + " + topTwo[1] ;
+				} else {
+					document.getElementById( str ).innerHTML = topTwo[1] + " + " + topTwo[0] ;
+				}
+				
+				//seqX[k] = seq;	
+	
+			}
+			
+	
+			
+		//-->
+		</script>
+	</head>
+	<body >
+	
+		<!--
+			ヘッド ジャッジシート画面
+		-->
+	<div>
+	
+	<!-- 最上段ロゴ -->
+	<div  style='background-color:white;padding:5px'>
+		<div style='background-color:blue;padding:10 10 10 10;color:white;border-radius:10px '>
+			XXX Surfer's Club
+		</div>
+	</div>
+	
+	<!-- 上段見出し -->
+	<div>
+		<table style='background-color:white;width:100%'><tr>	
+		
+			<td style="width:30%">
+				<table style=""><tr><td colspan="2" style='text-align:center' id="class">class name</td>	</tr>
+					<tr>
+						<td id="rnd" style="text-align: center;vertical-align: middle;">Round 1</td>
+						<td style="text-align: center;vertical-align: middle;" id="ht">Heat 1</td>
+					</tr>
+				</table>
+			</td>
+			<td style='width:30%;font-size:36pt' ><img src="https://sozaic.com/wp-content/uploads/2022/03/life410.jpg" width="36px" height="36px" ></img><label id="timer">xx:xx</label></td>
+			
+			<!-- 追加分	「承認ボタン」 -->
+			<td style='width:30%' >
+				<label style='margin:5px 5px 5px 5px;padding:10px 10px 10px 10px;background-color:black;border-radius:10px;color:white;font-size:20pt' 
+					onclick="onApproveScores()">Approve Scores&nbsp;
+					<label id="Approve" style="padding:1px;color:#ffff00;border-radius:10px;font-weight:bold;font-size:22pt">&nbsp;</label></label>
+			</td>
+			</tr>
+		</table>
+	</div>
+	
+	
+	<!-- 横並び（大きな）３個のdiv -->
+	<div style="display:flex;background-color:lightgrey;" >
+	
+		<!--
+			左<div>、５色（行）	３列	(色、athlete、total）
+		-->
+		<div >
+				
+			<table >
+			<!-- １行目	タイトル行-->
+			<tr >
+				<td style="background-color:white;  color:lightgrey;font-size:16pt;" >&nbsp;</td>
+				<td style="background-color:white;color:lightgrey;font-size:16pt;">Athelete</td>
+				<td style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;&nbsp;Total&nbsp;&nbsp;&nbsp;</td>
+				<td style="background-color:white;color:lightgrey;font-size:16pt">Judge</td>
+			</tr>
+	
+		<!-- ２～６行目	５色-->
+			
+			<tr  height="128px">
+				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#ff0000;
+				height:125px;color:White;border-color:lightgrey" 
+					 id="0"
+			>Red		</td>
+			
+			<!-- Athleteの列-->
+			
+			<td style="background-color:#FFCCCB;border-right-color:#FFCCCB;vertical-align:top">
+				<table >
+					<tr><td style="font-size:12pt;border-width:0px;padding:0px;text-align:left;font-weight:bold" id="athlete_0_0">佐藤 一郎</td></tr>
+					<tr><td style="font-size:8pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_0_1">サトウ イチロウ</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_0_2">東京</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_0_4">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_0_5"></td></tr>
+				</table>
+			</td>	
+			
+			<!-- Totalの列-->
+	
+			<td style="background-color:#FFCCCB;border-left-color:#FFCCCB;vertical-align:top">
+				<table >
+					<tr><td style="font-size:14pt;border-width:0px;padding:0px;text-align:center;font-weight:bold" id="Total_0_0" >0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_0_1">0.00 + 0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_0_2">Needs 0.00</td></tr>
+				</table>		
+			</td>	
+	
+	
+			<!-- Judgeの列-->
+			
+			<td style="background-color:white;">
+			
+				<table >																											
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_0_1">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_0_2">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_0_3">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_0_4">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_0_5">J#</td></tr>
+				</table>		
+			
+			</td>	
+			
+			</tr>
+	
+			
+			<tr  height="128px">
+				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#ffffff;
+				height:125px;color:Black;border-color:lightgrey" 
+					 id="1"
+			>White		</td>
+			
+			<!-- Athleteの列-->
+			
+			<td style="background-color:White;border-right-color:White;vertical-align:top">
+				<table >
+					<tr><td style="font-size:12pt;border-width:0px;padding:0px;text-align:left;font-weight:bold" id="athlete_1_0">鈴木 二郎</td></tr>
+					<tr><td style="font-size:8pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_1_1">スズキ ジロウ</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_1_2">神奈川</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_1_4">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_1_5"></td></tr>
+				</table>
+			</td>	
+			
+			<!-- Totalの列-->
+	
+			<td style="background-color:White;border-left-color:White;vertical-align:top">
+				<table >
+					<tr><td style="font-size:14pt;border-width:0px;padding:0px;text-align:center;font-weight:bold" id="Total_1_0" >0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_1_1">0.00 + 0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_1_2">win by 0.00</td></tr>
+				</table>		
+			</td>	
+	
+	
+			<!-- Judgeの列-->
+			
+			<td style="background-color:white;">
+			
+				<table >																											
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_1_1">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_1_2">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_1_3">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_1_4">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_1_5">J#</td></tr>
+				</table>		
+			
+			</td>	
+			
+			</tr>
+	
+			
+			<tr  height="128px">
+				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#ffff00;
+				height:125px;color:Black;border-color:lightgrey" 
+					 id="2"
+			>Yellow		</td>
+			
+			<!-- Athleteの列-->
+			
+			<td style="background-color:LightYellow;border-right-color:LightYellow;vertical-align:top">
+				<table >
+					<tr><td style="font-size:12pt;border-width:0px;padding:0px;text-align:left;font-weight:bold" id="athlete_2_0">田中 三郎</td></tr>
+					<tr><td style="font-size:8pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_2_1">タナカ サブロウ</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_2_2">千葉</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_2_4">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_2_5"></td></tr>
+				</table>
+			</td>	
+			
+			<!-- Totalの列-->
+	
+			<td style="background-color:LightYellow;border-left-color:LightYellow;vertical-align:top">
+				<table >
+					<tr><td style="font-size:14pt;border-width:0px;padding:0px;text-align:center;font-weight:bold" id="Total_2_0" >0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_2_1">0.00 + 0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_2_2">Needs 0.00</td></tr>
+				</table>		
+			</td>	
+	
+	
+			<!-- Judgeの列-->
+			
+			<td style="background-color:white;">
+			
+				<table >																											
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_2_1">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_2_2">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_2_3">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_2_4">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_2_5">J#</td></tr>
+				</table>		
+			
+			</td>	
+			
+			</tr>
+	
+			
+			<tr  height="128px">
+				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#0000ff;
+				height:125px;color:White;border-color:lightgrey" 
+					 id="3"
+			>Blue		</td>
+			
+			<!-- Athleteの列-->
+			
+			<td style="background-color:LightBlue;border-right-color:LightBlue;vertical-align:top">
+				<table >
+					<tr><td style="font-size:12pt;border-width:0px;padding:0px;text-align:left;font-weight:bold" id="athlete_3_0">高橋 四郎</td></tr>
+					<tr><td style="font-size:8pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_3_1">タカハシ シロウ</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_3_2">愛知</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_3_4">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_3_5"></td></tr>
+				</table>
+			</td>	
+			
+			<!-- Totalの列-->
+	
+			<td style="background-color:LightBlue;border-left-color:LightBlue;vertical-align:top">
+				<table >
+					<tr><td style="font-size:14pt;border-width:0px;padding:0px;text-align:center;font-weight:bold" id="Total_3_0" >0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_3_1">0.00 + 0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_3_2">Needs 0.00</td></tr>
+				</table>		
+			</td>	
+	
+	
+			<!-- Judgeの列-->
+			
+			<td style="background-color:white;">
+			
+				<table >																											
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_3_1">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_3_2">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_3_3">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_3_4">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_3_5">J#</td></tr>
+				</table>		
+			
+			</td>	
+			
+			</tr>
+	
+			
+			<tr  height="128px">
+				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#00ff00;
+				height:125px;color:Black;border-color:lightgrey" 
+					 id="4"
+			>Green		</td>
+			
+			<!-- Athleteの列-->
+			
+			<td style="background-color:#c0ffc0;border-right-color:#c0ffc0;vertical-align:top">
+				<table >
+					<tr><td style="font-size:12pt;border-width:0px;padding:0px;text-align:left;font-weight:bold" id="athlete_4_0">山本 五郎</td></tr>
+					<tr><td style="font-size:8pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_4_1">ヤマモト ゴロウ</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_4_2">宮崎</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;"  id="Athlete_4_4">&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:left;" id="Athlete_4_5"></td></tr>
+				</table>
+			</td>	
+			
+			<!-- Totalの列-->
+	
+			<td style="background-color:#c0ffc0;border-left-color:#c0ffc0;vertical-align:top">
+				<table >
+					<tr><td style="font-size:14pt;border-width:0px;padding:0px;text-align:center;font-weight:bold" id="Total_4_0" >0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_4_1">0.00 + 0.00</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Total_4_2">Needs 0.00</td></tr>
+				</table>		
+			</td>	
+	
+	
+			<!-- Judgeの列-->
+			
+			<td style="background-color:white;">
+			
+				<table >																											
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_4_1">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_4_2">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_4_3">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_4_4">J#</td></tr>
+					<tr><td style="font-size:10pt;border-width:0px;padding:0px;text-align:center;" id="Judge_4_5">J#</td></tr>
+				</table>		
+			
+			</td>	
+			
+			</tr>
+	
+			</table>
+		</div>
+	
+		<!--
+			中<div>、１~20列	
+		-->
+		
+		<div class="scroll2" style="width:100%">
+		
+			<table style="width:200%;background-color:lightgrey"> 
+			<!-- <table style="background-color:lightgrey">-->
+				<tr>
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;1</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;2</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;3</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;4</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;5</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;6</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;7</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;8</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">&nbsp;&nbsp;9</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">10</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">11</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">12</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">13</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">14</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">15</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">16</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">17</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">18</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">19</td> 
+							<td  style="background-color:white;color:lightgrey;font-size:16pt;">20</td> 
+							
+				</tr>
+				
+						<tr>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_0" style="background-color:white;width:5%;">
+							<table  id="0_0_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_0_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_0_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_0_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_0_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_0_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_0_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_1" style="background-color:white;width:5%;">
+							<table  id="0_1_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_1_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_1_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_1_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_1_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_1_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_1_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_2" style="background-color:white;width:5%;">
+							<table  id="0_2_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_2_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_2_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_2_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_2_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_2_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_2_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_3" style="background-color:white;width:5%;">
+							<table  id="0_3_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_3_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_3_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_3_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_3_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_3_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_3_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_4" style="background-color:white;width:5%;">
+							<table  id="0_4_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_4_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_4_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_4_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_4_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_4_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_4_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_5" style="background-color:white;width:5%;">
+							<table  id="0_5_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_5_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_5_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_5_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_5_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_5_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_5_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_6" style="background-color:white;width:5%;">
+							<table  id="0_6_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_6_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_6_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_6_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_6_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_6_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_6_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_7" style="background-color:white;width:5%;">
+							<table  id="0_7_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_7_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_7_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_7_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_7_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_7_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_7_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_8" style="background-color:white;width:5%;">
+							<table  id="0_8_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_8_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_8_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_8_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_8_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_8_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_8_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_9" style="background-color:white;width:5%;">
+							<table  id="0_9_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_9_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_9_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_9_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_9_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_9_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_9_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_10" style="background-color:white;width:5%;">
+							<table  id="0_10_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_10_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_10_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_10_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_10_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_10_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_10_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_11" style="background-color:white;width:5%;">
+							<table  id="0_11_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_11_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_11_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_11_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_11_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_11_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_11_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_12" style="background-color:white;width:5%;">
+							<table  id="0_12_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_12_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_12_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_12_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_12_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_12_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_12_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_13" style="background-color:white;width:5%;">
+							<table  id="0_13_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_13_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_13_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_13_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_13_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_13_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_13_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_14" style="background-color:white;width:5%;">
+							<table  id="0_14_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_14_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_14_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_14_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_14_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_14_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_14_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_15" style="background-color:white;width:5%;">
+							<table  id="0_15_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_15_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_15_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_15_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_15_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_15_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_15_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_16" style="background-color:white;width:5%;">
+							<table  id="0_16_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_16_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_16_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_16_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_16_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_16_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_16_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_17" style="background-color:white;width:5%;">
+							<table  id="0_17_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_17_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_17_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_17_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_17_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_17_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_17_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_18" style="background-color:white;width:5%;">
+							<table  id="0_18_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_18_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_18_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_18_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_18_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_18_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_18_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="0_19" style="background-color:white;width:5%;">
+							<table  id="0_19_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="0_19_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_19_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="0_19_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="0_19_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_19_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="0_19_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+							
+				</tr>
+	
+						<tr>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_0" style="background-color:white;width:5%;">
+							<table  id="1_0_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_0_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_0_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_0_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_0_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_0_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_0_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_1" style="background-color:white;width:5%;">
+							<table  id="1_1_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_1_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_1_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_1_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_1_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_1_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_1_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_2" style="background-color:white;width:5%;">
+							<table  id="1_2_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_2_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_2_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_2_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_2_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_2_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_2_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_3" style="background-color:white;width:5%;">
+							<table  id="1_3_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_3_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_3_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_3_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_3_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_3_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_3_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_4" style="background-color:white;width:5%;">
+							<table  id="1_4_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_4_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_4_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_4_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_4_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_4_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_4_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_5" style="background-color:white;width:5%;">
+							<table  id="1_5_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_5_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_5_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_5_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_5_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_5_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_5_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_6" style="background-color:white;width:5%;">
+							<table  id="1_6_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_6_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_6_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_6_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_6_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_6_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_6_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_7" style="background-color:white;width:5%;">
+							<table  id="1_7_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_7_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_7_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_7_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_7_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_7_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_7_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_8" style="background-color:white;width:5%;">
+							<table  id="1_8_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_8_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_8_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_8_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_8_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_8_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_8_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_9" style="background-color:white;width:5%;">
+							<table  id="1_9_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_9_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_9_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_9_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_9_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_9_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_9_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_10" style="background-color:white;width:5%;">
+							<table  id="1_10_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_10_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_10_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_10_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_10_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_10_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_10_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_11" style="background-color:white;width:5%;">
+							<table  id="1_11_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_11_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_11_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_11_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_11_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_11_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_11_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_12" style="background-color:white;width:5%;">
+							<table  id="1_12_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_12_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_12_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_12_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_12_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_12_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_12_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_13" style="background-color:white;width:5%;">
+							<table  id="1_13_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_13_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_13_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_13_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_13_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_13_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_13_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_14" style="background-color:white;width:5%;">
+							<table  id="1_14_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_14_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_14_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_14_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_14_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_14_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_14_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_15" style="background-color:white;width:5%;">
+							<table  id="1_15_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_15_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_15_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_15_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_15_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_15_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_15_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_16" style="background-color:white;width:5%;">
+							<table  id="1_16_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_16_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_16_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_16_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_16_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_16_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_16_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_17" style="background-color:white;width:5%;">
+							<table  id="1_17_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_17_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_17_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_17_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_17_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_17_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_17_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_18" style="background-color:white;width:5%;">
+							<table  id="1_18_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_18_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_18_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_18_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_18_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_18_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_18_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="1_19" style="background-color:white;width:5%;">
+							<table  id="1_19_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="1_19_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_19_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="1_19_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="1_19_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_19_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="1_19_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+							
+				</tr>
+	
+						<tr>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_0" style="background-color:white;width:5%;">
+							<table  id="2_0_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_0_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_0_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_0_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_0_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_0_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_0_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_1" style="background-color:white;width:5%;">
+							<table  id="2_1_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_1_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_1_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_1_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_1_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_1_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_1_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_2" style="background-color:white;width:5%;">
+							<table  id="2_2_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_2_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_2_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_2_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_2_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_2_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_2_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_3" style="background-color:white;width:5%;">
+							<table  id="2_3_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_3_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_3_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_3_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_3_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_3_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_3_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_4" style="background-color:white;width:5%;">
+							<table  id="2_4_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_4_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_4_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_4_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_4_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_4_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_4_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_5" style="background-color:white;width:5%;">
+							<table  id="2_5_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_5_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_5_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_5_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_5_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_5_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_5_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_6" style="background-color:white;width:5%;">
+							<table  id="2_6_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_6_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_6_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_6_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_6_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_6_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_6_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_7" style="background-color:white;width:5%;">
+							<table  id="2_7_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_7_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_7_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_7_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_7_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_7_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_7_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_8" style="background-color:white;width:5%;">
+							<table  id="2_8_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_8_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_8_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_8_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_8_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_8_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_8_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_9" style="background-color:white;width:5%;">
+							<table  id="2_9_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_9_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_9_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_9_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_9_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_9_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_9_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_10" style="background-color:white;width:5%;">
+							<table  id="2_10_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_10_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_10_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_10_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_10_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_10_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_10_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_11" style="background-color:white;width:5%;">
+							<table  id="2_11_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_11_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_11_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_11_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_11_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_11_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_11_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_12" style="background-color:white;width:5%;">
+							<table  id="2_12_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_12_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_12_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_12_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_12_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_12_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_12_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_13" style="background-color:white;width:5%;">
+							<table  id="2_13_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_13_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_13_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_13_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_13_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_13_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_13_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_14" style="background-color:white;width:5%;">
+							<table  id="2_14_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_14_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_14_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_14_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_14_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_14_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_14_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_15" style="background-color:white;width:5%;">
+							<table  id="2_15_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_15_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_15_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_15_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_15_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_15_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_15_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_16" style="background-color:white;width:5%;">
+							<table  id="2_16_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_16_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_16_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_16_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_16_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_16_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_16_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_17" style="background-color:white;width:5%;">
+							<table  id="2_17_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_17_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_17_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_17_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_17_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_17_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_17_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_18" style="background-color:white;width:5%;">
+							<table  id="2_18_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_18_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_18_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_18_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_18_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_18_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_18_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="2_19" style="background-color:white;width:5%;">
+							<table  id="2_19_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="2_19_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_19_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="2_19_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="2_19_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_19_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="2_19_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+							
+				</tr>
+	
+						<tr>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_0" style="background-color:white;width:5%;">
+							<table  id="3_0_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_0_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_0_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_0_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_0_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_0_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_0_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_1" style="background-color:white;width:5%;">
+							<table  id="3_1_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_1_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_1_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_1_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_1_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_1_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_1_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_2" style="background-color:white;width:5%;">
+							<table  id="3_2_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_2_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_2_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_2_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_2_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_2_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_2_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_3" style="background-color:white;width:5%;">
+							<table  id="3_3_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_3_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_3_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_3_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_3_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_3_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_3_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_4" style="background-color:white;width:5%;">
+							<table  id="3_4_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_4_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_4_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_4_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_4_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_4_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_4_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_5" style="background-color:white;width:5%;">
+							<table  id="3_5_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_5_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_5_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_5_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_5_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_5_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_5_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_6" style="background-color:white;width:5%;">
+							<table  id="3_6_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_6_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_6_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_6_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_6_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_6_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_6_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_7" style="background-color:white;width:5%;">
+							<table  id="3_7_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_7_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_7_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_7_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_7_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_7_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_7_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_8" style="background-color:white;width:5%;">
+							<table  id="3_8_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_8_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_8_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_8_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_8_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_8_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_8_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_9" style="background-color:white;width:5%;">
+							<table  id="3_9_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_9_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_9_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_9_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_9_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_9_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_9_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_10" style="background-color:white;width:5%;">
+							<table  id="3_10_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_10_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_10_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_10_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_10_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_10_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_10_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_11" style="background-color:white;width:5%;">
+							<table  id="3_11_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_11_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_11_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_11_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_11_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_11_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_11_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_12" style="background-color:white;width:5%;">
+							<table  id="3_12_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_12_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_12_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_12_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_12_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_12_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_12_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_13" style="background-color:white;width:5%;">
+							<table  id="3_13_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_13_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_13_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_13_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_13_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_13_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_13_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_14" style="background-color:white;width:5%;">
+							<table  id="3_14_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_14_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_14_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_14_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_14_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_14_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_14_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_15" style="background-color:white;width:5%;">
+							<table  id="3_15_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_15_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_15_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_15_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_15_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_15_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_15_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_16" style="background-color:white;width:5%;">
+							<table  id="3_16_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_16_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_16_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_16_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_16_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_16_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_16_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_17" style="background-color:white;width:5%;">
+							<table  id="3_17_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_17_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_17_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_17_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_17_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_17_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_17_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_18" style="background-color:white;width:5%;">
+							<table  id="3_18_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_18_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_18_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_18_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_18_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_18_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_18_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="3_19" style="background-color:white;width:5%;">
+							<table  id="3_19_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="3_19_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_19_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="3_19_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="3_19_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_19_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="3_19_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+							
+				</tr>
+	
+						<tr>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_0" style="background-color:white;width:5%;">
+							<table  id="4_0_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_0_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_0_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_0_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_0_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_0_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_0_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_1" style="background-color:white;width:5%;">
+							<table  id="4_1_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_1_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_1_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_1_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_1_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_1_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_1_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_2" style="background-color:white;width:5%;">
+							<table  id="4_2_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_2_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_2_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_2_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_2_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_2_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_2_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_3" style="background-color:white;width:5%;">
+							<table  id="4_3_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_3_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_3_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_3_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_3_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_3_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_3_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_4" style="background-color:white;width:5%;">
+							<table  id="4_4_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_4_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_4_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_4_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_4_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_4_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_4_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_5" style="background-color:white;width:5%;">
+							<table  id="4_5_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_5_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_5_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_5_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_5_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_5_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_5_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_6" style="background-color:white;width:5%;">
+							<table  id="4_6_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_6_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_6_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_6_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_6_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_6_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_6_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_7" style="background-color:white;width:5%;">
+							<table  id="4_7_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_7_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_7_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_7_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_7_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_7_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_7_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_8" style="background-color:white;width:5%;">
+							<table  id="4_8_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_8_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_8_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_8_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_8_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_8_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_8_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_9" style="background-color:white;width:5%;">
+							<table  id="4_9_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_9_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_9_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_9_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_9_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_9_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_9_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_10" style="background-color:white;width:5%;">
+							<table  id="4_10_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_10_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_10_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_10_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_10_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_10_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_10_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_11" style="background-color:white;width:5%;">
+							<table  id="4_11_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_11_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_11_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_11_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_11_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_11_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_11_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_12" style="background-color:white;width:5%;">
+							<table  id="4_12_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_12_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_12_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_12_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_12_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_12_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_12_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_13" style="background-color:white;width:5%;">
+							<table  id="4_13_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_13_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_13_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_13_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_13_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_13_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_13_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_14" style="background-color:white;width:5%;">
+							<table  id="4_14_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_14_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_14_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_14_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_14_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_14_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_14_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_15" style="background-color:white;width:5%;">
+							<table  id="4_15_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_15_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_15_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_15_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_15_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_15_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_15_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_16" style="background-color:white;width:5%;">
+							<table  id="4_16_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_16_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_16_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_16_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_16_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_16_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_16_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_17" style="background-color:white;width:5%;">
+							<table  id="4_17_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_17_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_17_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_17_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_17_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_17_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_17_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_18" style="background-color:white;width:5%;">
+							<table  id="4_18_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_18_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_18_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_18_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_18_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_18_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_18_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+										<td onclick="onOpenDialog('dialogTable',  inTableSpecial_ , this)" id="4_19" style="background-color:white;width:5%;">
+							<table  id="4_19_00" style='background-color:white;height:117px;border-width:2px;width:100%;'  >
+								<tr ><td id="4_19_0" style='font-size:10pt;font-weight:bold;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_19_1" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td></tr>
+								<tr>	<td id="4_19_2" style='font-size:10pt;border-width:0px;padding:0px;'>&nbsp;</td>	</tr>
+								<tr >	<td id="4_19_3" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_19_4" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+								<tr >	<td id="4_19_5" style="font-size:10pt;border-width:0px;padding:0px;">&nbsp;</td>	</tr>
+							</table>			
+						</td>
+							
+				</tr>
+	
+					</table>
+		</div>
+		
+		<!-- 右列、色のdiv -->
+		<div  style="width:10%;">
+			<table >
+			<tr > <td style="color:lightgrey;background-color:white;font-size:16pt">priority</td></tr>
+			<tr ><td  class="td_common" width="200px"  style="background-color:red;height:146px;" id='0_99'>&nbsp;</td><td></td></tr>
+			<tr ><td  class="td_common" width="200px" style="background-color:red;height:146px;" id='1_99' >&nbsp;</td><td></td></tr>
+			<tr ><td  class="td_common" width="200px" style="background-color:red;height:146px;" id='2_99'>&nbsp;</td><td></td></tr>
+			<tr ><td  class="td_common" width="200px" style="background-color:red;height:146px;" id='3_99'>&nbsp;</td><td></td></tr>
+			<tr ><td  class="td_common" width="200px" style="background-color:red;height:146px;" id='4_99'>&nbsp;</td><td></td></tr>
+			
+			
+					</table>
+		</div>	
+	</div>
+	
+	<!-- 下段の paddling interfere 
+	//			padding inerfere 判定	→	左下（Paddling Interfere )に警告マークを表示する
+	-->
+	<div style="background-color:lightgrey;" >
+	
+		&nbsp;
+	
+		<table align="left" style="padding-left:60px;padding-top:20px;" >
+			<tr><td colspan="5" style="border-color:lightgrey">
+				<span style="font-size:16pt;">Paddling Interfere</span>
+			</td></tr>
+			
+			<tr><td style="border-color:lightgrey">
+				<!-- onOpenDialog('dialogPaddling', -->
+				<label style='margin-right:10px;padding:10px 10px 10px 10px;background-color:red;border-radius:10px;display:block;float:left;width:80px;'  
+				onclick="onOpenDialog('dialogPaddling',  onPaddlingSpecial_('0') , this)">&nbsp;
+					<img id="Paddling_0" style="display:none" src="https://illust8.com/wp-content/uploads/2018/08/mark_chuui_illust_904.png" width="30px" height="30px" ></img>
+					&nbsp;</label> 
+				<label style='margin-right:10px;padding:10px 10px 10px 10px;background-color:white;border-radius:10px;display:block;float:left;width:80px' 
+				onclick="onOpenDialog('dialogPaddling',  onPaddlingSpecial_('1') , this)">&nbsp;
+					<img id="Paddling_1" style="display:none" src="https://illust8.com/wp-content/uploads/2018/08/mark_chuui_illust_904.png" width="30px" height="30px" ></img>
+					&nbsp;</label>
+				<label style='margin-right:10px;padding:10px 10px 10px 10px;background-color:yellow;border-radius:10px;display:block;float:left;width:80px' 
+				onclick="onOpenDialog('dialogPaddling',  onPaddlingSpecial_('2') , this)">&nbsp;
+					<img id="Paddling_2" style="display:none"  src="https://illust8.com/wp-content/uploads/2018/08/mark_chuui_illust_904.png" width="30px" height="30px" ></img>
+					&nbsp;</label>
+				<label style='margin-right:10px;padding:10px 10px 10px 10px;background-color:blue;border-radius:10px;display:block;float:left;width:80px' 
+				onclick="onOpenDialog('dialogPaddling',  onPaddlingSpecial_('3') , this)">&nbsp;
+					<img id="Paddling_3" style="display:none" src="https://illust8.com/wp-content/uploads/2018/08/mark_chuui_illust_904.png" width="30px" height="30px" ></img>
+					&nbsp;</label>
+				<label style='padding:10px 10px 10px 10px;background-color:green;border-radius:10px;display:block;float:left;width:80px' 
+				onclick="onOpenDialog('dialogPaddling',  onPaddlingSpecial_('4') , this)">&nbsp;
+					<img id="Paddling_4" style="display:none" src="https://illust8.com/wp-content/uploads/2018/08/mark_chuui_illust_904.png" width="30px" height="30px" ></img>
+					&nbsp;</label>
+			</td></tr>
+		</table>
+		
+		<br>
+		&nbsp;
+	</div>
+	
+	<script>
+		var arId = [ 	["InterferencePaddling_1", "InterferencePaddling_2", "InterferencePaddling_3"],
+								 ["InterferencePaddling2_1", "InterferencePaddling2_2", "InterferencePaddling2_3"] ];
+		//	paddlingの特別処理	初回処理					 	
+		function  onPaddlingSpecial_(n){		//	n:行index	0:red行	...4:green行
+			//alert('onPaddlingSpecial_' + n );
+			
+			//	（0段目）色ラインに色を付ける
+			color = ["red", "white", "yellow", "blue", "green"];
+			str = document.getElementById( "color_line" );
+			str.style.backgroundColor = color[n];
+			str.style.color = color[n];
+					
+			//	全ボタンを白に(初期化)する	・・・	未選択は白、選択済みは黒	（background-color)
+			arId.forEach( val =>{
+				val.forEach( val2 => {
+					document.getElementById( val2 ).style.backgroundColor = "white"; 
+					document.getElementById( val2 ).style.color = "black"; 
+				});				
+			});
+					
+			//	現在のpaddlingInt.の回数を取得する				<!-- Athleteの列-->			<!-- PaddlingInterfereのdialog -->
+			str =document.getElementById( "Athlete_" + n + "_5" ).innerHTML;
+			if( str != "" ){
+						
+				//	paddlingInt.が１つある場合、そのボタンを黒にする（他は白）
+				if( str.indexOf( "①" ) == 0 ){
+	
+					console.log('699');
+					//	妨害を1回している・・・それは何か？	▲（プライオリティ）か？
+					if( str.indexOf("▲") > 0 ){
+						console.log('702');
+						document.getElementById( arId[0][1] ).style.backgroundColor = "black"; 
+						document.getElementById( arId[0][1] ).style.color = "white"; 					
+					} else{
+						document.getElementById( arId[0][0] ).style.backgroundColor = "black"; 
+						document.getElementById( arId[0][0] ).style.color = "white"; 										
+					}
+				} else {
+					//	妨害を1回している
+					console.log('705');
+					if( str.indexOf("▲") > 0 ){
+						console.log('702');
+						document.getElementById( arId[1][1] ).style.backgroundColor = "black"; 
+						document.getElementById( arId[1][1] ).style.color = "white"; 					
+					} else{
+						document.getElementById( arId[1][0] ).style.backgroundColor = "black"; 
+						document.getElementById( arId[1][0] ).style.color = "white"; 										
+					}
+				}
+			}	
+			console.log('766 ' , str );
+			
+			prevIJ = n;	
+			//console.log('767 ' , prevIJ );
+			
+		}
+		
+		
+	</script>
+	
+	<!-- 下段の ©copyright -->
+	<div style="background-color:lightgrey" >
+		<br>
+		<hr>
+			<p align="right" style='padding: 20px 20Px' >©copyright by Hiro.Itoh&nbsp;&nbsp;</p>
+	</div>
+	
+	
+	
+	<!-- (dialog) -->
+	
+	<!-- 5行20列のdialog -->
+	<div id="dialogTable" style="position:absolute; background-color:lightgrey;border: 1px solid #000000;display:none; " >
+	
+		<!-- 左上の「X」 -->
+		<div align="right">	
+			<input type="button" value="X" onclick="on10_TB('X')" style="font-size:24pt;"></input>		
+		</div>
+	
+		<!-- １段目のWave番号 -->	
+		<table align="center" style="width:70%;padding:40px 0px 0px 0px">
+			<tr>
+				<td name="colored" id="Wave_0_0" style="font-size:20pt;background-color:red;border-color:red" >&nbsp;Wave:&nbsp;</td>
+				<td name="colored" id="Wave_0_1" style="font-size:20pt;border-color:lightgrey;background-color:red;border-color:red" >&nbsp;&nbsp;1&nbsp;&nbsp;</td>
+				<td style="border-color:lightgrey"></td>
+			</tr>	
+			<tr>
+				<td style="border-color:lightgrey;font-size:20pt">Score</td>
+				<td style="border-color:lightgrey;font-size:20pt">Interfere</td>
+				<td rowspan="2" style="border-color:lightgrey"> 
+					<input type="button" value="Release" style="font-size:24pt;border-color:lightgrey;border-radius:10px;background-color:black;color:white;padding:20px" onclick="Release()"/></td>			
+			</tr>
+			<tr>
+				<td id="echoback_TB_0" style="background-color:white">0.5</td>
+				<td id="echoback_TB_1" style="background-color:white">&nbsp;</td>
+			</tr>
+			
+		</table>
+		
+		<!-- 2段目の各Judgeの点数 -->	
+		<table align="center" style="width:70%;padding:20px">
+			<tr>
+				<td id="J1_0" style="border-color:lightgrey;font-size:18pt;width:20%"></td>
+				<td id="J2_0" style="border-color:lightgrey;font-size:18pt;width:20%"></td>
+				<td id="J3_0" style="border-color:lightgrey;font-size:18pt;width:20%"></td>
+				<td id="J4_0" style="border-color:lightgrey;font-size:18pt;width:20%"></td>
+				<td id="J5_0" style="border-color:lightgrey;font-size:18pt;width:20%"></td>
+			</tr>
+			<tr>
+				<td id="J1_1" style="border-color:lightgrey;font-size:18pt;background-color:white" onclick="onJind(1)">J1</td>
+				<td id="J2_1" style="border-color:lightgrey;font-size:18pt;background-color:white" onclick="onJind(2)">J1</td>
+				<td id="J3_1" style="border-color:lightgrey;font-size:18pt;background-color:white" onclick="onJind(3)">J1</td>
+				<td id="J4_1" style="border-color:lightgrey;font-size:18pt;background-color:white" onclick="onJind(4)">J1</td>
+				<td id="J5_1" style="border-color:lightgrey;font-size:18pt;background-color:white" onclick="onJind(5)">J1</td>
+			</tr>
+		</table>
+		
+		<script>
+	
+			function Release(){
+				str = document.getElementById( "echoback_TB_1" ).innerHTML ;
+				if( str == "△" || str == "▲" ){
+					console.log('822 ' , prevIJ  );
+					document.getElementById( prevIJ + "_0" ).innerHTML = "INT. " + str;
+					
+					console.log('826 ', document.getElementById( prevIJ  + '_0' ).style.backgroundColor );
+					if( document.getElementById( prevIJ  + '_0' ).style.backgroundColor == "lightgreen" ){
+						document.getElementById( prevIJ  + '_0' ).style.backgroundColor = "white";			//	対処療法
+					}else{
+						document.getElementById( prevIJ  + '_0' ).style.backgroundColor =  "inhibit";		//	※
+					}
+					//	赤の網掛け
+					document.getElementById( prevIJ  + '_00' ).style 
+						= "background:repeating-linear-gradient(45deg, #eecccc 0, #eecccc 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+				} else {
+					
+					var total=0.0;
+					var bunbo=0;
+					for( var i=1; i<6; i++ ){
+						var obj = document.getElementById( "J" + i + "_1"  );
+						str = obj.innerHTML;					
+						if( ! isNaN(obj.innerHTML) ){
+							console.log('818 ' + i + " " + obj.innerHTML);
+							total += parseFloat(obj.innerHTML);
+							bunbo += 1;
+						}
+					}
+					if( bunbo != 0 ){
+						console.log( '826' , total / bunbo );
+						document.getElementById( prevIJ + "_0" ).innerHTML = (total / bunbo).toFixed(2);
+						
+						//console.log('824 ' ,prevIJ);
+						//var ar = prevIJ.split("_") ;
+						//document.getElementById( "J" + ar[0] + "_0" )innerHTML = (total / bunbo).toFixed(2);
+					}
+					
+					document.getElementById( prevIJ + "_0" ).innerHTML 
+					//	網掛け	クリア
+					document.getElementById( prevIJ  + '_00' ).style 
+						= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+				}
+	
+				
+				var iSav=[];
+				iSav.push( prevIJ.split("_")[0]);
+				subApprove	( iSav,0)
+				console.log('845 ', hash );
+				totalReculcuSub(hash);
+				
+				setApprove();
+				
+				flagOnDialog = false;
+				document.getElementById( "dialogTable" ).style.display = "none";
+				
+			}
+			
+			var prevVal = ["","","","",""];
+			function onJind( n ){
+				str = document.getElementById( "J" + n + "_1").style.backgroundColor;
+				document.getElementById( "J" + n + "_1").style.backgroundColor = str != "#ddffdd" ? "#ddffdd" : "white";
+				//console.log('827', document.getElementById( "J" + n + "_1").innerHTML );
+			}
+		
+		
+				
+		</script>
+		
+			<!-- 3段目の interfare の指定-->	
+		<table align="center" style="padding:30px">
+		<tr>
+			<td colspan="3" style="border-color:lightgrey;font-size:20pt">Interference</td>
+		</tr>
+		<tr>
+			<td style="border-color:lightgrey">
+			<input type="button" onclick="colorChangeSub('△')" value="Non-Priority △"  		id="Interference_1"
+				style="border-color:black;background-color:white;border-radius:10pt;font-size:20pt;padding:10pt"/></td>
+			<td style="border-color:lightgrey">
+			<input type="button" onclick="colorChangeSub('▲')" value="   Priority ▲   "  					id="Interference_2"
+				style="border-color:black;background-color:white;border-radius:10pt;font-size:20pt;padding:10pt"/></td>
+			<td style="border-color:lightgrey">
+			<input type="button" onclick="colorChangeSub('&nbsp;')" value="No Interference"  id="Interference_3"
+				style="border-color:black;background-color:black;border-radius:10pt;font-size:20pt;padding:10pt;color:white"/></td>
+		</tr>
+		</table>	
+		
+		
+		
+			<!-- 最下段の tenkey -->				
+		<table align="center" style="width:70%;padding:20px">	
+							
+			<tr>
+	
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('1')">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('2')">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('3')">&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('BS')">
+					<img height="60px" width="60px"  src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAbFBMVEX///8AAAD29vbo6Oji4uI9PT2SkpKWlpaampr6+vpBQUE8PDyOjo7r6+uUlJQ5OTnU1NSenp5WVla7u7ssLCxRUVF3d3dzc3MyMjLR0dEmJia+vr7b29taWlp/f3+1tbVHR0cbGxtqamqpqakWsfPKAAAGMklEQVR4nO2d7XrTMAxGu40BXVc6YBsMBhS4/3vkqYFOyqf1SrajVucfD13qUyVRbMvOahUEQRAEQRAEQRAEQRAEQRAEE1z6ARN8vvADZvi5dbMFQILvW7daAiK4bd1oEYjht9aNFgEIfm3dZhlywXXrJguRG35v3WQhYkFPqTAhNvSUChNSQZoKb7dXC2X7BBvSVPhT+utU5BVs+IEYPhVpmw2wIU2Fn8q0zQbYkF7BYLekDqghTYU/CrXNBtDwjgjuy7TMCtDwnhhelWqbDZghTYXvirXNBsjQSypMQIZeUmECMfxIBBedChOAIesVrks2zgTA0E8qTMgNaSp8KNo2G+SGjlJhQmxIU+Gbsm2zQWpIU+GXwm2zQWr4QAzvCrfNBqGhm17hCzJDZ6kwITN8JIIOUmFCZEgHSD2kwoTIkA6Qbsu3zQaJobtUmBAY0lR4X6NtNggMaa/QRypM5BvSXuFjlbbZkG3oMRUmsg1pKvxYp2025Bp66xW+kGvorVf4QqbhWyL4Fvyqu1vwD3usfwk+nGdokQqf7QaPd5ILJc/QIBWmZ9rX2N922FxIJkuyDA0GSP99j8XD3rXsdpdjaJAKj1+jj+JOeEfPMdQPkJJv0Ubx5nikTMUMQ30qJF+iVdyIG5NhqE+Fe2qoUrxhR/qd8yfzhrRXiKbCHWsYrsiPk3dNzxraDJBemyjyCGbetGYNjeYK+a+PnQv8Z8p9QpozNOsV8uYhTzf8CNlpZ86QHlTXK9RGkZ+i+c+4M4aWvcINa6I0ivBfTxua9grXmiiiEZwz/EKOajBAiicN8Bo8MGlokQopa36q5R8Sj+C0YYG5QuxE5T+M8OF9yrDEXCE/3fIUoUR/ZMKwzACpPIqaU3Q1Zch6hdLDTiB9gNNFcMqw2AApj+L7mU8rIzhhWHCAVBJF3WPCgVFD2iu0nivMTxrqCI4bWgyQjpOrqEj0R0YMS88V5iUNgwiOGhYvm8lJGqpEf2TYsMJcIY/PkKI2Tfxj0LDKXOFc0jA5RVcjhnXmCqevRaMIDhvWKpuZiqJVBIcNS6ZCxngU9aM6RwYMK5bN8LvlSxT5ELJu3rFvWLVsZjj1m12DB/qGdctm+On4N4qWERwwrL2Yon+7MY1g37B+2Uw3ijyC+vnGrmGDClIexXv2L4Piho5hk7IZHkXbCPYM25TN7HpqZhHsGpbtFY4zHEWb4hRm2G4xxaanZxTBjmHDxRT9KFqVF1FDupiiegXpTSFBZti0UL2z180HswOfVwxP/zpseC8dShcl7qXN8mH3FLWM4rk907R5Lh2O4IECz6Ut+hb8eaZ036JB/5BHsHz/sHEf/3B7K9zHrz1OMzS4X3icpu5Y2/CIaeGxtprjpUMjbQcsr8WmY97j80829agJH/MWmig2nHuankHk/6t4gGs3fzg2Z/Efqyi6mQOGo+hnHh9VbFSLMR/B/qfAE7VNPU1uhaLFRGmTmqj8EkyDKLaoa+PNltS1IanfWW0iEMX69aWSCCKf71K9RlhezK7Mi7XrvJGI6KLYtFY/t7GqxX1V11vA0dCcqFXXzOC9PkXSqLjuCVpr8R88aVRcu6bLbPCysHrrD7VPJ+i12GgNKfKECf5EbdYBY0NLWN13k7Xc6JAE1JmSrcdHh/V2SNOMjpOxpwItYLDYU0Ez8cmjaLSngsEe+mxfDN0INo2i2b4YtnubaKeuN0LB6vvTqKc8jyvC99KvnurlGuw8+8omggc2kgjW3ifKpPQgRXGf/XH5Xl9oUny22giryF5fJj3FRe/XZpEUW5Fr6HIL4UTsfXnk9PcvPf09aM9gH+Ez2Av69PfzPoM92X0mRdm7EZy9JigR77focPLvKOFziot/5VpC866gn4XbZkO876mPt93Z5YbedtiXG3pLioChs6QIGJ7+OyzP4D2kvpIiZHj67wN2lRRBQ9pT3JdpmRWgoaOkiBqyQpvLMm2zATZ001OEDVffiOKSkyJu6CUp4oYsKd5urxbK9gk3ZMOnLhAbPs8fc1mIDVlS9IDccD1/0EUhN2RJ0QGAIUuKywcx3M4fdkEghiwpLh7I0FVSxAw9JUXMcHXpB9AwCIIgCIIgCIIgCIIgCIIgcMcfqXVQ1H9V738AAAAASUVORK5CYII=" ></img>
+				</td>
+			</tr>
+			
+			<tr>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('4')">&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('5')">&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('6')">&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('Clear')">&nbsp;&nbsp;&nbsp;&nbsp;Clear&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			</tr>
+			<tr>
+				
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('7')">&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('8')">&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('9')">&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('OK')" rowspan="2">OK</td>
+			</tr>
+			<tr>
+				<td colspan="2" style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('0')">0</td>
+				<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_TB('10')">10</td>
+			</tr>								
+		</table>
+			
+			
+		
+		<table align="center" style="width:70%;display:none">	
+			<tr>
+				<td  style="font-size:24pt;border-color:lightgrey;background-color:red;border-color:red" id="waveNo">&nbsp;&nbsp;1&nbsp;&nbsp;</td>
+			</tr>
+		</table>
+		
+		<br>
+	</div>
+	
+	
+	
+	<!-- PaddlingInterfereのdialog -->
+	<div id="dialogPaddling" style="position:absolute; background-color:lightgrey;border: 1px solid #000000;display:none; " >
+	
+		<!-- 右上の「X」 -->
+		<div align="right">	
+			<input type="button" value="X" onclick="onPaddlingX()" style="font-size:24pt;"></input>		
+		</div>
+	
+	
+		<!-- 0段目	色ライン	-->	
+		<div width="100%" height="40px" style="background-color:red;color:red" id="color_line">aaa
+		</div>
+		
+			<!-- 1段目　パドリングインターフェア （１回目）-->	
+		<table align="center" style="width:70%;padding:20px">
+			<tr>
+				<td  colspan="3" style="border-color:lightgrey;font-size:18pt">パドリング インターフェアー １回目</td>
+			</tr>
+			<tr>
+				<td style="border-color:lightgrey">
+					<input type="button" onclick="colorChangeSubPaddling('△', 0)" value=" Non-Priority △"  					id="InterferencePaddling_1"
+						style="border-color:black;background-color:white;border-radius:10pt;font-size:20pt;padding:7pt"/></td>
+						
+				<td style="border-color:lightgrey">
+					<input type="button" onclick="colorChangeSubPaddling('▲',0)" value="    Priority ▲    "  					id="InterferencePaddling_2"
+						style="border-color:black;background-color:white;border-radius:10pt;font-size:20pt;padding:10pt"/></td>
+						
+				<td style="border-color:lightgrey">
+					<input type="button" onclick="colorChangeSubPaddling('&nbsp;',0)" value="No Interference"  id="InterferencePaddling_3"
+						style="border-color:black;background-color:black;border-radius:10pt;font-size:20pt;padding:10pt;color:white"/></td>
+			</tr>
+			<tr>
+				<td colspan="3" style="border-color:lightgrey">
+					<input type="button" value="OK" onclick="PaddlingOK('1');" style="border-color:black;background-color:black;border-radius:10pt;font-size:20pt;padding:10pt;color:white"/>
+				</td>
+			</tr>
+		</table>
+		
+		<!-- 2段目　パドリングインターフェア （2回目）-->	
+		<table align="center" style="width:70%;padding:20px">
+			<tr>
+				<td  colspan="3" style="border-color:lightgrey;font-size:18pt">パドリング インターフェアー 2回目</td>
+			</tr>
+			<tr>
+				<td style="border-color:lightgrey">
+					<input type="button" onclick="colorChangeSubPaddling('△', 1)" value="Non-Priority △"  		id="InterferencePaddling2_1"
+						style="border-color:black;background-color:white;border-radius:10pt;font-size:20pt;padding:7pt"/></td>
+				<td style="border-color:lightgrey">
+					<input type="button" onclick="colorChangeSubPaddling('▲', 1)" value="    Priority ▲    "  					id="InterferencePaddling2_2"
+						style="border-color:black;background-color:white;border-radius:10pt;font-size:20pt;padding:10pt"/></td>
+				<td style="border-color:lightgrey">
+					<input type="button" onclick="colorChangeSubPaddling('&nbsp;', 1)" value="No Interference"  id="InterferencePaddling2_3"
+						style="border-color:black;background-color:black;border-radius:10pt;font-size:20pt;padding:10pt;color:white"/></td>
+			</tr>
+			<tr>
+				<td colspan="3" style="border-color:lightgrey">
+					<input type="button" value="OK" onclick="PaddlingOK('2');" style="border-color:black;background-color:black;border-radius:10pt;font-size:20pt;padding:10pt;color:white"/>
+				</td>
+			</tr>
+		</table>
+	
+		<br>
+			
+	</div>
+	
+	<script>
+	
+		function onPaddlingX(){
+			//alert('onPaddlingX');
+			document.getElementById('dialogPaddling').style.display = "none";
+			flagOnDialog = false;
+		}
+		
+	
+			//	1段目（2段目）のボタンの色替えをする（共通）
+		function colorChangeSubPaddling( str , ind ){
+			
+			if( str != '△' &&  str != '▲' ){		//	&nbsp;	がパラメータで渡らない	以下、対処療法
+				//console.log('189 ' , str + " " + str.length );	
+				str = "&nbsp;"
+			}
+			var interference_char = [ "△" , "▲", "&nbsp;"];
+			//["InterferencePaddling_1", "InterferencePaddling_2", "InterferencePaddling_3"].forEach( (val,key) =>{
+			arId[ind].forEach( (val,key) =>{
+				console.log('164 ' , val + " " + key );
+				if( str == interference_char[key] ){
+					obj = document.getElementById( val  );
+					obj.style.backgroundColor = "#202020";			
+					obj.style.color = "white";
+					//document.getElementById( "echoback_TB_1"   ).innerHTML = interference_char[key];		//	（初回処理では）二重にセットする（今のところ仕方ない）	ボタンのイベントでは有効		
+				} else {
+					obj = document.getElementById( val  );
+					obj.style.backgroundColor = "white";			
+					obj.style.color = "black";
+				}		
+			});			
+			
+		}
+		
+		
+		//	OKボタン
+		function PaddlingOK(n){
+			//alert('PaddlingOK ' + n );
+			//document.getElementById('dialogPaddling').style.display = "none";
+			//console.log('1069' , document.getElementById( "InterferencePaddling_1").style["background-color"]);
+			console.log('1070 ', prevIJ );
+			if( n == "1" ){
+				[ ["InterferencePaddling_1","P△"], ["InterferencePaddling_2","P▲"], ["InterferencePaddling_3",""] ].forEach( val=>{
+					//console.log('1076', val[0] );
+					if( document.getElementById( val[0] ).style.backgroundColor.indexOf("rgb(32") == 0 ){		//	rgb(32  : black
+						console.log('1072 ', val[1]);
+						if( val[1] != ""){
+							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "Paddling Int";
+							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "①"+val[1];
+						} else {
+							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "";
+							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "";
+						}
+					}			
+				});		
+			} else {
+				[ ["InterferencePaddling2_1","P△"], ["InterferencePaddling2_2","P▲"], ["InterferencePaddling2_3",""] ].forEach( val=>{
+					//console.log('1076', val[0] );
+					if( document.getElementById( val[0] ).style.backgroundColor.indexOf("rgb(32") == 0 ){		//	rgb(32  : black
+						console.log('1072 ', val[1]);
+						if( val[1] != ""){
+							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "Paddling Int";
+							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "②"+val[1];
+						} else {
+							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "";
+							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "";
+						}
+					}			
+				});		
+			}
+			
+			document.getElementById( "Paddling_" + prevIJ ).style.display = "none";
+			
+			//	後始末
+			onPaddlingX();
+		}
+	
+		
+	</script>
+	
+	
+	
+	
+	</div>
+	
+	
+		<div align="left" style='font-size:16pt;padding:10px 10px '>
+		
+			maintenance port (do not enter)
+			<!-- 発言フォーム -->
+			<form id="frm-post">
+				<input type="text" id="msg" style='width:300px;font-size:16pt;width:80%'>
+				<button>送信</button>
+			</form>
+	
+			<!-- 発言ログ -->
+			<ul id="msglist">
+			</ul>
+		
+		</div>
+	
+		<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+			integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+			crossorigin="anonymous"></script>
+		<script>
+		
+			const socket = io();
+	
+			/**
+			//-------------------------------------
+			// Socket.ioサーバへ接続
+			//-------------------------------------
+			 * [イベント] フォームが送信された    （自分からの）入力値の受信→サーバに送信
+			 */
+			document.querySelector("#frm-post").addEventListener("submit", (e) => {
+				//alert('33');
+				// 規定の送信処理をキャンセル(画面遷移しないなど)
+				e.preventDefault();
+	
+				// 入力内容を取得する
+				const msg = document.querySelector("#msg");
+				if (msg.value === "") {
+					return (false);
+				}
+	
+				// Socket.ioサーバへ送信
+				//for(i=0;i<10;i++){
+				socket.emit("post", { text: msg.value });
+				//}
+	
+				// 発言フォームを空にする
+				msg.value = "";
+			});
+	
+			var headKind = { PR: 0, J1: 0, J2: 0, J3: 0, J4: 0, J5: 0, HJ: 0, MC: 0 };
+			var headKindError = { PR: "", J1: "", J2: "", J3: "", J4: "", J5: "", HJ: "", MC: '' };
+	
+			/**
+			 * //[イベント] 誰かが発言した    （他人からの、および自分から）受信    どこに入れるかは自由
+			 */
+	
+			//	順位およびneedPointを決める
+			function getSeqAndNeedPoint(){
+	
+				console.log('1111');
+				
+				var seq=[];
+				var seqAns = []
+				for( var i=0; i<5; i++ ){
+	
+					seq=[];
+					//	20列を配列にしsortする
+					for( var j=0; j<20; j++ ){
+						
+						str =  i + "_" + j + "_0";
+						str = document.getElementById( str ).innerHTML;
+						if( isNaN(str) ){
+							str = "0.000";
+						}
+						
+						//	ここでinterfere値を0.001加える					
+						str = parseFloat( str ) ;	//+ parseFloat("0.001");				
+						str += 0.001;						///////	interfere考慮	保留
+						
+						seq.push(  [ str , j ] );
+					}
+					seq.sort( (a,b) =>{ return b[0] - a[0] ; });
+					//seq.forEach( val => {console.log( "828 " , val ); });
+					
+					//	それを(小数点以下3桁の）文字列にする
+					var str = "";
+					seq.forEach( val =>{ 
+						//console.log('816 ' , val );
+						str2 = val[0].toFixed(3) + "";
+						//str2 = val[0] + "";	////
+						if( str2.indexOf( "10.0" ) == 0 ){
+							str2 = "A";
+						} else {							
+							str2 = str2.split( ".").join("");
+							if( str2.indexOf( "000" ) == 0){
+								str2 = "000";
+							}
+						}
+						str += str2 + "_";
+					});
+					seqAns.push( [str , i ] );
+					//console.log('844' , str + " " + i );
+									
+				}	//	5行ここまで
+				
+				
+				console.log('1157 ', seqAns );
+				
+				//	（seqAnsの各要素[0]の）先頭に上位２つの合計値を追加する
+				seqAns.forEach( (val,key) => { 
+					ar = val[0].split("_");
+					////if( ar[0] == "a" )	ar[0] = 1000;
+					////if( ar[1] == "a" )	ar[1] = 1000;
+					str =  parseInt(ar[0]) + parseInt(ar[1])  ;
+					seqAns[key][0] = str + "_" + val[0];
+					//console.log( "841 " , seqAns[key][0] );
+				});		
+				//	sort		※	合計値を第一に考慮
+				seqAns = seqAns.sort( (a,b) => { 
+					if( a[0]>b[0] )return -1;
+					if( a[0]<b[0] )return 1;
+					return 0;
+				 });
+				seqAns.forEach( val =>{
+					//console.log("863", val[0] );
+				});
+	
+	
+				//		Total(列)の再計算		6/22mail	2枚目
+				var cons_=0;
+				seqAns.forEach( (val) =>{
+					//console.log('869', val[1] );
+					str = "Total_" + val[1] + "_2";
+					ar = val[0].split("_");
+					switch (cons_){
+					case 0:
+								document.getElementById( str ).innerHTML = "Win by " + ( parseFloat(ar[0]) / 1000.0 ).toFixed(2) ;
+								break;
+					case 1:
+								ar2 = seqAns[0][0].split("_");
+								//console.log( "884", parseInt(ar2[0]) - parseInt(ar[1]) );
+								str_ = ( ( parseInt(ar2[0]) - parseInt(ar[1]) )/1000.0 ).toFixed(2);
+								document.getElementById( str ).innerHTML = "Needs " + str_ ;
+								break;							 
+					case 2:
+					case 3:
+					case 4:
+								str_ = ( ( parseInt(ar2[0]) - parseInt(ar[1]) )/1000.0 ).toFixed(2);
+								document.getElementById( str ).innerHTML = "Needs " + str_;
+								break;
+					}
+	
+					cons_ += 1;
+				});			
+				
+			}	//	end	getSeqAndNeedPoint
+			
+			var time;		
+			var diff;
+			var timerVal=0; 
+			var hash;
+			//var Approve=0;
+			//var ApproveNo = [" ","①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲"];
+	
+			//
+			//	入力	msg	ex.	'J1;{"idNo":"5","IJ":"0_0","val":"1.1"}' 
+			//							→	ar[]	
+			//									ar[0]：PR...J1...		
+			//									ar[1]→	hash
+			//
+			function dummyOn_( msg ){
+				//console.log('664 ', msg);
+				ar = msg.split(";");
+				//console.log( '669 ', ar.length > 1 ?	ar[1] : '' );
+				if( ar.length > 1 ){
+					
+					hash = JSON.parse(ar[1]);
+					console.log(hash);
+	
+					switch( ar[0] ){
+						//	共通
+						case 'MC':
+							document.getElementById( "class" ).innerHTML = hash.class;
+							document.getElementById( "rnd" ).innerHTML = hash.rnd;
+							document.getElementById( "ht" ).innerHTML = hash.ht;
+	
+							time = new Date(hash.time);
+							timeNow = new Date();
+							diff = timeNow.getTime() - time.getTime();	
+							console.log('684 diff=', diff) ;
+	
+							//	timer表示	＝	 現在時刻 - 開始時刻　＋	timer値 * 60 * 1000 -
+							timerVal = hash.timer * 60000 - timeNow.getTime() + time.getTime()  ;	// * time.getTime() + hash.timer * 60000  ;
+							timerVal = timerVal >= 0 ? timerVal : 0; 
+							console.log( "689 " , timerVal );
+	
+							break;
+	
+						//	judge,headJudge
+						case 'PR':    //  ex. PR;["G","W","B","Y","W"]
+	
+							var ar2 = JSON.parse(ar[1]);
+							for( ele in ar2){
+								console.log('1908', color[ar2[ele]] );
+								obj = document.getElementById( ele + '_99');
+								obj.style.backgroundColor = color[ar2[ele]] ;
+							}
+							//console.log('1900 ' , ar2 );
+							break;
+						
+						//	I_J の通知
+						case 'J1':
+						case 'J2':
+						case 'J3':
+						case 'J4':
+						case 'J5':
+							//	Judge列の該当行(ar[0])に、idNo（Judge番号）を、5行分(離れているが)表示する
+							for( var i=0; i<5; i++ ){
+								str = "Judge_" + i + "_" + ar[0].substr(1);
+								var obj2 = document.getElementById( str );
+								obj2.innerHTML = "J" + hash['idNo'];
+							}						
+							
+							//	(5X20の表)idを求める	J(n)の（n）を取り出し、それを行番号とする行にvalを入れる
+							console.log('966');
+							str = hash['IJ'] + "_" +parseInt( ar[0].substr(1) );
+							//	今回値をセット
+							document.getElementById( str ).innerHTML = hash['val'];
+						
+							//console.log('970');
+													
+							var average = 0.0;
+							var bunbo=0;
+							//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
+							
+							var arPoint = [];
+							var flagPaddling = "";		//	paddling 有無flag
+								//	分母
+							for( var i=0; i<5; i++ ){
+								str = hash['IJ'] + "_" + (i+1);
+								str = document.getElementById( str ).innerHTML;
+								str0 = str;
+								
+								//			padding inerfere 判定	→	左下（Paddling Interfere )に警告マークを表示する
+								console.log('1020 ' , str + " " +  hash['IJ']);
+								if( str.indexOf( "▲P" ) == 0 || str.indexOf( "△P" ) == 0 ){
+									flagPaddling = "Paddling_" + hash['IJ'].split("_")[0];
+									console.log('1021 ' , flagPaddling );
+									document.getElementById( flagPaddling ).style.display = "";
+									
+								} 
+								
+								str = str.split("▲P").join("");
+								str = str.split("△P").join("");
+								str = str.split("▲").join("");
+								str = str.split("△").join("");
+								
+								bunbo += ! isNaN( str ) ? 1 : 0; 	
+								if( ! isNaN( str )	){
+									arPoint.push( str );
+								}
+							}
+							console.log( '754' , arPoint );
+							
+							if( flagPaddling != "" ){				//	paddling INT.の場合、以下の処理はしない
+								break;
+							}
+							
+							//console.log('750 ' , bunbo );
+								//	平均
+							switch( bunbo ){
+							case 0:
+							case 1:	
+										average = parseFloat(arPoint[0]);
+										break;
+							case 2: 
+									average = (parseFloat(arPoint[0]) + parseFloat(arPoint[1]) ) / 2.0 ;
+									//console.log('765 ' , average + " " + arPoint[0] + " " + arPoint[1]);
+									break;
+									
+							case 3: 
+									average = ( parseFloat(arPoint[0]) + parseFloat(arPoint[1]) + parseFloat(arPoint[2]) ) / 3.0 ;
+									break;
+							case 4: 
+							case 5:
+									arPoint = arPoint.sort( function(a,b){
+										if( a<b )return -1;
+										if( a>b )return 1;
+										return 0;
+									});		
+									average = 0.0;
+									for( var i=1; i< arPoint.length-1; i++ ){
+										average += parseFloat(arPoint[i]);
+									}				
+									average = average / (arPoint.length-2);
+									break;
+								
+							}
+							
+							//	平均値	(I)_(J)_0	にセット
+							str0 = hash['IJ'] + '_0';	
+							//console.log( '780 ' , average.toFixed(3) );
+							if( average >= 0.0 ){
+								document.getElementById( str0 ).innerHTML = average.toFixed(2);
+							} else {
+								document.getElementById( str0 ).innerHTML = "&nbsp;";
+							}
+													
+							//		平均値 網掛け	tableのbackground-color:lightgrey
+							if( document.getElementById( hash['IJ'] + '_00' ).style.backgroundColor != "lightgrey" ){
+								console.log('1271 ', flagPaddling);
+								
+								prevColor = document.getElementById( hash['IJ'] + '_00' ).style.backgroundColor ;
+								//console.log("1273 ", prevColor );
+								
+								document.getElementById( hash['IJ'] + '_00' ).style 
+									= "background:repeating-linear-gradient(45deg, #eeeeee 0, #eeeeee 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+								
+								console.log('1401 ' , document.getElementById( hash['IJ'] + '_00' ).style.background );
+								
+								//if( flagPaddling == "" && prevColor == "white" ){	//	paddlingでなければApprove+1
+								//	Approve += 1;							
+								//	document.getElementById( "Approve" ).innerHTML = Approve < 20 ? ApproveNo[Approve] : Approve;
+								//}
+								
+								setApprove();
+							}
+							
+							totalReculcuSub(hash);
+	
+							break;
+					
+					}		//	end switch
+	
+				}
+			}
+			
+			//	Approve数を表示する
+			//		5X20内に、#eeeeee	の網掛けの数（＝Approve数）を求める		※	#eeccccはINT、除外する
+			function setApprove(){
+				var Approve=0;
+				var ApproveNo = [" ","①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲"];
+				for( var i=0; i<5; i++ ){
+					for( var j=0; j<20; j++){
+						str = i + "_" + j + "_00";
+						//console.log('1425 ' ,  document.getElementById( str ).style.background);
+						if( document.getElementById( str ).style.background.indexOf("238") > 0 &&		//	#ee
+							document.getElementById( str ).style.background.indexOf("204") == -1			//	#cc
+						 ){
+							Approve += 1;
+						}	
+					}
+				}
+				document.getElementById( "Approve" ).innerHTML = Approve < 20 ? ApproveNo[Approve] : Approve;
+			}
+			
+			//	該当行の20列から、最大２つを取得、Total列の該当行（１行、２行）を表示する
+			function totalReculcuSub(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
+				
+				console.log('1421 ' , hash['IJ'] );
+				
+				var seq=[];
+				var total=0.0;
+				//
+				//	Total列
+				//
+				//		(5X20の表）Total列を再表示する（共通）			Total_(n)_(m)		(n)=0...4	行index			(m)=0...3	その行内index
+				//		上位２つの平均値（＝0行目）を合計する	->	
+				for( var i=0; i<20; i++ ){
+					str = hash['IJ'].split("_")[0] + "_" + i + "_0";
+					str = document.getElementById( str ).innerHTML;
+					if( ! isNaN( str )	){
+						seq.push(str);
+					}else{
+						seq.push("0.0");
+					}							
+				} 
+				seq = seq.sort( function(a,b){
+					if( a>b )return -1;
+					if( a<b )return 1;
+					return 0;
+				});	
+										
+				//	Total列	（該当行の中の）0行目		合計値
+				str = "Total_" + hash['IJ'].split("_")[0] +  "_0";
+				document.getElementById( str ).innerHTML = ( parseFloat( seq[0] ) + parseFloat( seq[1] ) ).toFixed(2);
+	
+				//	Total列	1行目		平均値の最大、その次の値
+				str = "Total_" + hash['IJ'].split("_")[0] +  "_1";
+				//console.log('843 ', str 
+				document.getElementById( str ).innerHTML = parseFloat( seq[0] ).toFixed(2)  + " + " + parseFloat( seq[1] ).toFixed(2);
+				
+				//	順位およびneedPointを決める
+				getSeqAndNeedPoint();
+				
+			}
+			
+			
+			
+			var listLength=0;
+			function dummyOn(msg){
+				console.log('80===== msg.text=', msg);
+				const list = document.querySelector("#msglist");
+				// const list = document.querySelector("msglist");  //NG
+				//alert(list);    //  [object HTMLUListElement]
+				const li = document.createElement("li");
+				//li.innerHTML = `${msg.text}`; //  下と同じ
+				li.innerHTML = msg;			
+	
+				list.insertBefore(li, list.firstChild);
+				
+				//	10行を超えない対策	
+				listLength += 1;
+				if( listLength > 10 ){
+					listLength = 10;
+					c_ = list.lastElementChild;
+					list.removeChild( c_ );
+				}
+				//console.log('838 listLength=', listLength);
+				
+				dummyOn_( msg );
+				
+			}
+	
+	
+			socket.on("member-post", (msg) => {
+				//alert(msg.text);  //  そのもの
+				console.log('80===== msg.text=', msg.text);
+				const list = document.querySelector("#msglist");
+				// const list = document.querySelector("msglist");  //NG
+				//alert(list);    //  [object HTMLUListElement]
+				const li = document.createElement("li");
+				//li.innerHTML = `${msg.text}`; //  下と同じ
+				li.innerHTML = msg.text;
+				list.insertBefore(li, list.firstChild);
+	
+				dummyOn_( li.innerHTML );
+	
+	
+			});
+	
+			/**
+			 * [イベント] ページの読込み完了    無くてもOK
+			 */
+			window.onload = () => {
+				// テキストボックスを選択する
+				//alert('69');
+				document.querySelector("#msg").focus();
+			}
+	
+	
+			//
+			//	config
+			//
+			var id = 'J1';		//	i am Judge 1
+			
+			
+			
+			//
+			//	heat run test
+			//
+			var n = 0;
+			const onTimer = function () {
+				n += 1;
+				if (n == 5000) {
+					clearInterval(timer);
+				}
+				socket.emit("post", { text: id + ';' + n });
+			}
+	
+	
+			objTimer = document.getElementById('timer');
+			const onTimer2 = function(){
+	
+				if( hash.tSt ){
+					console.log('798 ' , timerVal + hash.tSt );
+	
+					if( hash.tSt == "start" && timerVal > 0){
+						timerVal -= timerVal >= 0 ? 1000 : 0;
+					}
+	
+					intTimer = parseInt(timerVal/1000);
+					objTimer.innerHTML = parseInt(intTimer/60) + "\:" + parseInt(intTimer % 60)  ;
+				}
+	
+			}
+			//const timer = setInterval(onTimer, 1000);
+			const timer = setInterval(onTimer2, 1000);
+	
+	
+	
+			//	test
+			/* console.log('746');
+			dummyOn( 'MC;{"class":"あああ","rnd":"1","ht":"02","time":"Thu Jun 09 2022 16:49:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
+			*/
+	
+	
+			/* //color = ['R','W','Y','B','G'];
+			color = {R: 'f00' , W: 'fff' , G: '0f0'};
+			color_ = JSON.stringify(color);
+			console.log( ' ',color_ ); 			//	{"R":"f00","W":"fff","G":"0f0"}
+			color= JSON.parse( color_ );
+			console.log( ' ',color ); 			//	{R: 'f00', W: 'fff', G: '0f0'}
+			console.log( color.G );					//	0f0 */
+	
+			/* console.log( Date());
+			var str = Date();
+			console.log(str.split(' ')[2] ); */
+			/* var today = new Date('Thu Jun 09 2022 11:05:18 GMT+0900 (日本標準時)');
+	
+			console.log('750 ', Date(today)); */
+	
+	
+			
+			/* var e_time = new Date();
+			var diff = e_time.getTime() - today.getTime();
+			console.log("経過時間(ミリ秒):", diff);
+			console.log('753 ', aaa); */
+			/*
+			if( "060_055" > 
+				"060_060" ){
+				console.log("1204");
+			} else {
+				console.log("1206");
+			}
+			*/
+			ar0=[1,2,3];
+			ar0.unshift(0);
+			console.log(ar0);
+	
+		//	php test: ;	json形式
+		//console.log('746');
+		//dummyOn( 'MC;{"class":"あああa","rnd":"rnd.1","ht":"ht.2","time":"Thu July 04 2022 11:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
+		//dummyOn( 'PR;["G","W","B","Y","R"]' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_0","val":"1.2"}' );
+	
+			//dummyOn( 'J1;{"idNo":"5","IJ":"1_0","val":"▲P"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"2_0","val":"▲P"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"3_0","val":"▲P"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"4_0","val":"▲P"}' );
+	
+		
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_1","val":"▲P1.3"}' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_2","val":"1.4"}' );
+	
+		//dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"1.3"}' );
+		//dummyOn( 'J2;{"idNo":"2","IJ":"0_1","val":"1.3"}' );
+		//dummyOn( 'J2;{"idNo":"2","IJ":"0_2","val":"1.3"}' );
+	
+		//dummyOn( 'J3;{"idNo":"3","IJ":"0_0","val":"1.4"}' );
+		//dummyOn( 'J3;{"idNo":"3","IJ":"0_1","val":"1.3"}' );
+		//dummyOn( 'J3;{"idNo":"3","IJ":"0_2","val":"1.3"}' );
+		
+		//dummyOn( 'J4;{"idNo":"4","IJ":"0_0","val":"1.5"}' );
+		//dummyOn( 'J5;{"idNo":"5","IJ":"0_0","val":"1.6"}' );
+	
+	
+		//dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"1.2"}' );
+		//dummyOn( 'J2;{"idNo":"2","IJ":"1_0","val":"1.3"}' );
+		//dummyOn( 'J3;{"idNo":"3","IJ":"1_0","val":"1.4"}' );
+		//dummyOn( 'J4;{"idNo":"4","IJ":"1_0","val":"1.5"}' );
+		//dummyOn( 'J5;{"idNo":"15","IJ":"1_0","val":"1.6"}' );			
+	/*
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"1.2"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"1_1","val":"1.3"}' );
+		dummyOn( 'J3;{"idNo":"3","IJ":"1_1","val":"1.4"}' );
+		dummyOn( 'J4;{"idNo":"4","IJ":"1_1","val":"1.5"}' );
+		dummyOn( 'J5;{"idNo":"15","IJ":"1_1","val":"1.6"}' );			
+	
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_2","val":"1.2"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"1_2","val":"1.3"}' );
+		dummyOn( 'J3;{"idNo":"3","IJ":"1_2","val":"1.4"}' );
+		dummyOn( 'J4;{"idNo":"4","IJ":"1_2","val":"1.5"}' );
+		dummyOn( 'J5;{"idNo":"15","IJ":"1_2","val":"1.6"}' );			
+	
+	
+		dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.2"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"2_0","val":"1.3"}' );
+		dummyOn( 'J3;{"idNo":"3","IJ":"2_0","val":"1.4"}' );
+		dummyOn( 'J4;{"idNo":"4","IJ":"2_0","val":"1.5"}' );
+		dummyOn( 'J5;{"idNo":"15","IJ":"2_0","val":"1.6"}' );			
+	
+		dummyOn( 'J1;{"idNo":"1","IJ":"2_1","val":"1.2"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"2_1","val":"1.3"}' );
+		dummyOn( 'J3;{"idNo":"3","IJ":"2_1","val":"1.4"}' );
+		dummyOn( 'J4;{"idNo":"4","IJ":"2_1","val":"1.5"}' );
+		dummyOn( 'J5;{"idNo":"15","IJ":"2_1","val":"1.6"}' );			
+		
+		dummyOn( 'J1;{"idNo":"1","IJ":"2_2","val":"1.2"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"2_2","val":"1.3"}' );
+		dummyOn( 'J3;{"idNo":"3","IJ":"2_2","val":"1.4"}' );
+		dummyOn( 'J4;{"idNo":"4","IJ":"2_2","val":"1.5"}' );
+		dummyOn( 'J5;{"idNo":"15","IJ":"2_2","val":"1.6"}' );			
+	
+		//dummyOn( 'J1;{"idNo":"2","IJ":"1_0","val":"1.3"}' );
+		//dummyOn( 'J1;{"idNo":"2","IJ":"1_1","val":"1.1"}' );
+		//dummyOn( 'J1;{"idNo":"2","IJ":"1_2","val":"1.1"}' );
+	*/	
+		</script>
+	
+	
+	</body>
+	</html>
+	
+	

@@ -255,8 +255,8 @@
 					var ave=0.0;
 					for( var i=1; i<6; i++ ){
 						str = document.getElementById("J"  + i + "_1" ).innerHTML;
-						str = str.split("▲P").join('');
-						str = str.split("△P").join('');
+						str = str.split("P▲").join('');
+						str = str.split("P△").join('');
 						str = str.split("▲").join('');
 						str = str.split("△").join('');
 						if( ! isNaN(str) ){
@@ -2463,16 +2463,16 @@
 								str0 = str;
 								
 								//			padding inerfere 判定	→	左下（Paddling Interfere )に警告マークを表示する
-								console.log('1020 ' , str + " " +  hash['IJ']);
-								if( str.indexOf( "▲P" ) == 0 || str.indexOf( "△P" ) == 0 ){
+								console.log('1020 ' , str + " " +  hash['IJ'] + " " + str.length);
+								if( str.indexOf( "P▲" ) == 0 || str.indexOf( "P△" ) == 0 ){
 									flagPaddling = "Paddling_" + hash['IJ'].split("_")[0];
 									console.log('1021 ' , flagPaddling );
 									document.getElementById( flagPaddling ).style.display = "";
 									
 								} 
 								
-								str = str.split("▲P").join("");
-								str = str.split("△P").join("");
+								str = str.split("P▲").join("");
+								str = str.split("P△").join("");
 								str = str.split("▲").join("");
 								str = str.split("△").join("");
 								
@@ -2753,15 +2753,15 @@
 		//console.log('746');
 		//dummyOn( 'MC;{"class":"あああa","rnd":"rnd.1","ht":"ht.2","time":"Thu July 04 2022 11:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
 		//dummyOn( 'PR;["G","W","B","Y","R"]' );
-		//dummyOn( 'J1;{"idNo":"5","IJ":"0_0","val":"1.2"}' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_0","val":"P▲"}' );
 	
-			//dummyOn( 'J1;{"idNo":"5","IJ":"1_0","val":"▲P"}' );
-			//dummyOn( 'J1;{"idNo":"5","IJ":"2_0","val":"▲P"}' );
-			//dummyOn( 'J1;{"idNo":"5","IJ":"3_0","val":"▲P"}' );
-			//dummyOn( 'J1;{"idNo":"5","IJ":"4_0","val":"▲P"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"1_0","val":"P▲"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"2_0","val":"P▲"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"3_0","val":"P▲"}' );
+			//dummyOn( 'J1;{"idNo":"5","IJ":"4_0","val":"P▲"}' );
 	
 		
-		//dummyOn( 'J1;{"idNo":"5","IJ":"0_1","val":"▲P1.3"}' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_1","val":"P▲1.3"}' );
 		//dummyOn( 'J1;{"idNo":"5","IJ":"0_2","val":"1.4"}' );
 	
 		//dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"1.3"}' );

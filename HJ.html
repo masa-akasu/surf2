@@ -218,6 +218,8 @@
 					var iSav = [prevIJ.split("_")[0] ];
 					subApprove( iSav, 0 );
 					
+					//	OK をJudgeに反映
+					emitHJ();
 					totalReculcuSub(hash);		//	total再計算
 					
 					n ="X";									//	to 後始末
@@ -321,15 +323,37 @@
 						}
 					}	
 				}			
-		
 				//console.log('382', iSav );
+				
+				var iSavEx=[];
+				for( var i=0; i<5; i++ ){
+					for( var j=0; j<20; j++ ){
+						str =  i + "_" + j + "_00";
+						if( document.getElementById( str ).style.backgroundColor != "white" ){
+							iSavEx.push( i + "_" + j );
+						}
+					}	
+				}			
+				
 				//	網掛けセルのある行だけLoop					
-				//var seqX = [ [], [], [], [], [] ];			//	（0...4）行、		合計点の保存、順位が決まらない時に参照する		保留
-				for( var k=0; k<iSav.length; k++ ){
-					
-					subApprove( iSav, k );
-									
-				}	//	網掛けセルのある行だけLoop・・・ここまで
+				for( var k=0; k<iSav.length; k++ ){				
+					subApprove( iSav, k );								
+				}	
+				//	網掛けセルのある行だけLoop・・・ここまで
+				
+				
+				//	judgeに反映
+				//console.log("398", 	iSavEx );
+				hashHJ = {"IJ":[], "val":[]};
+				iSavEx.forEach( val=>{
+					//console.log('408 ', document.getElementById( val + "_0" ).innerHTML );
+					hashHJ.IJ.push( val );
+					hashHJ.val.push( document.getElementById( val + "_0" ).innerHTML );
+				});
+				
+				//console.log('413 ', hashHJ.IJ );
+				//console.log('415 ', hashHJ.val );
+				emit( hashHJ );
 				
 				//	後始末
 				document.getElementById( "Approve" ).innerHTML = "&nbsp;";
@@ -401,7 +425,22 @@
 	
 			}
 			
-	
+			
+			//	Judgeに反映
+			function emitHJ(){
+					hashToJudge = { "IJ":[""],"val":[""]};
+					hashToJudge.IJ[0] = prevIJ;
+					hashToJudge.val[0] = document.getElementById( prevIJ + "_0" ).innerHTML;
+					console.log( "281 ", hashToJudge );
+					emit( hashToJudge );					
+			}
+			//	broadcastする
+			function emit(str){
+				//console.log('350 str=', str);
+				var str = id + ";" + JSON.stringify(str) ;
+				console.log('474 str=' , str );
+				socket.emit("post", { text: str } );
+			}
 			
 		//-->
 		</script>
@@ -1984,7 +2023,10 @@
 				var iSav=[];
 				iSav.push( prevIJ.split("_")[0]);
 				subApprove	( iSav,0)
-				console.log('845 ', hash );
+				
+				//	OK をJudgeに反映
+				emitHJ();
+	
 				totalReculcuSub(hash);
 				
 				setApprove();
@@ -2674,7 +2716,7 @@
 			//
 			//	config
 			//
-			var id = 'J1';		//	i am Judge 1
+			var id = 'HJ';		//	i am Judge 1
 			
 			
 			
@@ -2754,15 +2796,15 @@
 		//console.log('746');
 		//dummyOn( 'MC;{"class":"あああa","rnd":"rnd.1","ht":"ht.2","time":"Thu July 04 2022 11:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
 		//dummyOn( 'PR;["G","W","B","Y","R"]' );
-		//dummyOn( 'J1;{"idNo":"5","IJ":"0_0","val":"P▲"}' );
-	
-			//dummyOn( 'J1;{"idNo":"5","IJ":"1_0","val":"P▲"}' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_0","val":"1.2"}' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"1_0","val":"1.3"}' );
+		
 			//dummyOn( 'J1;{"idNo":"5","IJ":"2_0","val":"P▲"}' );
 			//dummyOn( 'J1;{"idNo":"5","IJ":"3_0","val":"P▲"}' );
 			//dummyOn( 'J1;{"idNo":"5","IJ":"4_0","val":"P▲"}' );
 	
 		
-		//dummyOn( 'J1;{"idNo":"5","IJ":"0_1","val":"P▲1.3"}' );
+		//dummyOn( 'J1;{"idNo":"5","IJ":"0_1","val":"1.3"}' );
 		//dummyOn( 'J1;{"idNo":"5","IJ":"0_2","val":"1.4"}' );
 	
 		//dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"1.3"}' );

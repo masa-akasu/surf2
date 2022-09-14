@@ -178,7 +178,7 @@
       //	paddling設定でのtenKey処理
       //
       function on10_Paddling(n){
-  
+        alert('195');
         console.log('249' );
         if( n == "X" ){
           obj3 = document.getElementById( "dialogPaddling" );
@@ -1934,7 +1934,7 @@
         if( ar.length > 1 ){
           hash = JSON.parse(ar[1]);
           console.log(hash);
-  
+    
           switch( ar[0] ){
             case 'MC':
               document.getElementById( "class" ).innerHTML = hash.class;
@@ -1963,6 +1963,24 @@
                 }
                 //console.log('1900 ' , ar2 );
                 break;
+                
+              case 'HJ':
+                var hash = JSON.parse(ar[1]);
+                //console.log( "776 ", hash.IJ + " " + hash.val );
+                for( var i=0; i<hash.IJ.length; i++ ){
+              //console.log( "778 ", 		hash.IJ[i] + " " + hash.val[i] );
+              document.getElementById( hash.IJ[i] + "_4" ).innerHTML = hash.val[i];
+            }
+                /*
+                var ar2 = JSON.parse(ar[1]);
+                for( ele in ar2){
+                  console.log('777 ', ele );
+                  //obj = document.getElementById( ele + '_99');
+                  //obj.style.backgroundColor = color[ar2[ele]] ;
+                }
+                //console.log('1900 ' , ar2 );
+                */
+                break;            
             }
   
           /* for( ele in color ){
@@ -2070,7 +2088,6 @@
       }
   
   
-      
       //
       //	config
       //
@@ -2115,7 +2132,8 @@
       //console.log('746');
       //dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"rnd 1","ht":"ht 2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
       //dummyOn( 'PR;["G","W","B","Y","W"]' );
-  
+      //dummyOn( 'HJ;{"IJ":["0_0","0_1"],"val":["1.2","1.3"]}' );
+      //dummyOn( 'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10","1.10"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "]}');
       /* //color = ['R','W','Y','B','G'];
       color = {R: 'f00' , W: 'fff' , G: '0f0'};
       color_ = JSON.stringify(color);

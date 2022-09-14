@@ -220,7 +220,8 @@
 					
 					//	OK をJudgeに反映
 					emitHJ();
-					totalReculcuSub(hash);		//	total再計算
+					
+					totalReculcuSub({"IJ": prevIJ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
 					
 					n ="X";									//	to 後始末
 				}
@@ -276,6 +277,7 @@
 				}	
 	
 				if( n == "X" ){
+					console.log('339');
 					//	後始末					
 					//	2段目、各judgeの背景色
 					for( var i=1; i<6; i++ ){
@@ -1977,6 +1979,7 @@
 		<script>
 	
 			function Release(){
+				console.log('881');
 				str = document.getElementById( "echoback_TB_1" ).innerHTML ;
 				if( str == "△" || str == "▲" ){
 					console.log('822 ' , prevIJ  );
@@ -2027,9 +2030,9 @@
 				//	OK をJudgeに反映
 				emitHJ();
 	
-				totalReculcuSub(hash);
-				
-				setApprove();
+				totalReculcuSub({"IJ":prevIJ });			//	このイベントは通知ではないが、パラメータは通知を前提、
+				console.log('931 ', prevIJ);
+				//setApprove();
 				
 				flagOnDialog = false;
 				document.getElementById( "dialogTable" ).style.display = "none";
@@ -2621,7 +2624,7 @@
 			//	該当行の20列から、最大２つを取得、Total列の該当行（１行、２行）を表示する
 			function totalReculcuSub(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
 				
-				console.log('1421 ' , hash['IJ'] );
+				//console.log('1421 ' , hash['IJ'] );		//	error??
 				
 				var seq=[];
 				var total=0.0;

@@ -349,8 +349,11 @@
 				hashHJ = {"IJ":[], "val":[]};
 				iSavEx.forEach( val=>{
 					//console.log('408 ', document.getElementById( val + "_0" ).innerHTML );
-					hashHJ.IJ.push( val );
-					hashHJ.val.push( document.getElementById( val + "_0" ).innerHTML );
+					str = document.getElementById( val + "_0" ).innerHTML;
+					if( ! isNaN(str) ){
+						hashHJ.IJ.push( val );
+						hashHJ.val.push( str );
+					}
 				});
 				
 				//console.log('413 ', hashHJ.IJ );

@@ -1966,9 +1966,9 @@
                 
               case 'HJ':
                 var hash = JSON.parse(ar[1]);
-                //console.log( "776 ", hash.IJ + " " + hash.val );
+                console.log( "776 ", hash.IJ + " " + hash.val + " hash.IJ.length=" + hash.IJ.length);
                 for( var i=0; i<hash.IJ.length; i++ ){
-              //console.log( "778 ", 		hash.IJ[i] + " " + hash.val[i] );
+              console.log( "778 ", 		hash.IJ[i] + " " + hash.val[i] );
               document.getElementById( hash.IJ[i] + "_4" ).innerHTML = hash.val[i];
             }
                 /*
@@ -2133,7 +2133,7 @@
       //dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"rnd 1","ht":"ht 2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
       //dummyOn( 'PR;["G","W","B","Y","W"]' );
       //dummyOn( 'HJ;{"IJ":["0_0","0_1"],"val":["1.2","1.3"]}' );
-      //dummyOn( 'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10","1.10"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "]}');
+      //dummyOn( 'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10","1.10","1.12 "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "]}');
       /* //color = ['R','W','Y','B','G'];
       color = {R: 'f00' , W: 'fff' , G: '0f0'};
       color_ = JSON.stringify(color);

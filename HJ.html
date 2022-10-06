@@ -38,6 +38,24 @@
 			var flagOnDialog = false;		//	表示中か？
 			var prevIJ="";					//	前回の行列
 	
+			var ave = Array( Array(20), Array(20), Array(20), Array(20), Array(20) );					//	平均値	中間バッファ（コモン）	（本来ならclass内member変数）
+			//var sortedAve = Array( Array(20), Array(20), Array(20), Array(20), Array(20) );		//	sort
+			var net = Array( Array(20), Array(20), Array(20), Array(20), Array(20) );					//	網掛け		中間バッファ（コモン）
+			//for(var i=0; i<5; i++ )for(var j=0; j<20; j++ ){ave[i][j]=0; sortedAve[i][j]=0;	net[i][j]=""}
+			for(var i=0; i<5; i++ )for(var j=0; j<20; j++ ){ave[i][j]=0; 	net[i][j]=""}
+	
+			//	妨害（配列）の定義
+			var interfere = [ ["",""],  ["",""], ["",""], ["",""], ["",""] ];		//	"▲" or "△" or ""
+			
+			var total_and_top2 = Array( Array(3), Array(3), Array(3), Array(3), Array(3) )
+			for(var i=0; i<5; i++ )for(var j=0; j<3; j++ ){total_and_top2 [i][j]=0;}
+	
+			function getAve(i,j){
+				return ave[i][j];
+			}
+			function setAve( i,j, val ){
+				ave[i][j]=val;
+			}
 			//
 			//	dialog表示開始（共通）
 			//
@@ -199,29 +217,26 @@
 				}
 	
 				if( n == "OK" ){
-					//console.log('231', document.getElementById( prevIJ + "_0" ).innerHTML);
+					console.log('231 ave=%s prevIJ=%s', document.getElementById( prevIJ + "_0" ).innerHTML , prevIJ );
+					console.log('267 0=%s 1=%s', net[0][0],net[0][1] );
 					
 					//	dialog内の平均値→５X20の表の該当セルに移す
 					document.getElementById( prevIJ + "_0" ).innerHTML = document.getElementById("echoback_TB_0" ).innerHTML ;
-					
-					//	Approve	-1
-					//if( document.getElementById( prevIJ + "_00" ).style.backgroundColor != "white" ){
-					//	if( Approve > 0 ) Approve -= 1;
-					//	document.getElementById( "Approve" ).innerHTML = Approve < 20 ? ApproveNo[Approve] : Approve;
-					//}
-					
+					//ave[	 parseInt(prevIJ.split("_")[0]) ][	parseInt(prevIJ.split("_")[1]) ] = 	document.getElementById("echoback_TB_0" ).innerHTML;
+					setAve( 0,2, document.getElementById("echoback_TB_0" ).innerHTML);
+	
 					//	網掛けをクリア
-					document.getElementById( prevIJ + "_00" ).style 
-						= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
-					setApprove();
+					setNet( prevIJ, "" );				
+	
+					setApproveNo();
 					
 					var iSav = [prevIJ.split("_")[0] ];
-					//subApprove( iSav, 0 );
-					
+				
 					//	OK をJudgeに反映
 					emitHJ();
-					
-					totalReculcuSub({"IJ": prevIJ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
+					console.log('275 prevIJ=%s', prevIJ );
+					totalReculc({"IJ": prevIJ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
+					getSeqAndNeedPoint();
 					
 					n ="X";									//	to 後始末
 				}
@@ -318,34 +333,25 @@
 				var iSav=[];
 				for( var i=0; i<5; i++ ){
 					for( var j=0; j<20; j++ ){
-						str =  i + "_" + j + "_00";
-						if( document.getElementById( str ).style.backgroundColor != "white" ){
+						if( net[i][j] != "" && net[i][j] != "red" ){
 							iSav.push( i );
 							break;
 						}
 					}	
 				}			
-				//console.log('382', iSav );
+				console.log('382', iSav );
 				
-				//	5X20の中で（１つでも）網掛けセルのある行列番号、列番号を（"行番号_列番号"の形式で）メモる
+				//	5X20の中で(grey)網掛けセルのある行列番号、列番号を全て（"行番号_列番号"の形式で）メモる
 				var iSavEx=[];
 				for( var i=0; i<5; i++ ){
 					for( var j=0; j<20; j++ ){
-						str =  i + "_" + j + "_00";
-						if( document.getElementById( str ).style.backgroundColor != "white" ){
+						if( net[i][j] != "" && net[i][j] != "red" ){
 							iSavEx.push( i + "_" + j );
 						}
 					}	
 				}			
 				
-				//	網掛けセルのある行だけLoop					
-				for( var k=0; k<iSav.length; k++ ){				
-					subApprove( iSav, k );								
-				}	
-				//	網掛けセルのある行だけLoop・・・ここまで
-				
-				
-				//	judge1...5に反映、行番号_列番号のセルの下の行
+				//	judge1...5に反映、行番号_列番号のセルの下の行、（網掛けクリアもする）
 				//console.log("398", 	iSavEx );
 				hashHJ = {"IJ":[], "val":[]};
 				iSavEx.forEach( val=>{
@@ -354,83 +360,30 @@
 					if( ! isNaN(str) ){
 						hashHJ.IJ.push( val );
 						hashHJ.val.push( str );
+						
+						setNet( val, "" );					//	ここに入れてみた	※	網掛けのクリアが先？
 					}
 				});
 				
-				//console.log('413 ', hashHJ.IJ );
-				//console.log('415 ', hashHJ.val );
+				//	網掛けセルのあった行だけLoop					
+				var hash={"IJ":""};
+				for( var k=0; k<iSav.length; k++ ){				
+					totalReculc({"IJ":iSav[k] +"_0"});									
+				}	
+				
+				//	Broadcast（反映）
 				emit( hashHJ );
 				
 				//	後始末
 				document.getElementById( "Approve" ).innerHTML = "&nbsp;";
 	
-				totalReculcuSub({"IJ":prevIJ });			//
+				console.log('429 prevIJ=%s', prevIJ );
+				
 				//	順位およびneedPointを決める
 				getSeqAndNeedPoint();
 				
 			}
 			
-			//	ある行に網掛けがある、上位２つ（の0行）を色付けする、total列に表示する
-			function subApprove( iSav, 		//	網掛けセルのある行の配列		ex [0]
-														k ){			//	そのindex								ex.	0
-				var seq = [];
-				for( var j=0; j<20; j++ ){
-					str =  iSav[k] + "_" + j + "_0";
-					str = document.getElementById( str ).innerHTML == "&nbsp;" ? -1.0 : document.getElementById( str ).innerHTML;
-					seq.push( [ str,  j ] ); 
-				}
-				//console.log('408 ', seq );
-				seq =seq.sort( (a,b)=>{ return( b[0] - a[0] ); });
-				var cnt2=0;
-				var topTwo = [ 0.0, 0.0 ];
-				seq.forEach( val => {
-				
-					//	そのセルの網掛けをクリア
-					str = iSav[k] + "_" + val[1] + "_00";
-					console.log('421 ' , document.getElementById( str ).innerHTML.indexOf("INT") + " " + document.getElementById( str ).style.background.indexOf("238") );
-					if( document.getElementById( str ).innerHTML.indexOf("INT") < 0 
-						//&&	document.getElementById( str ).style.background.indexOf("238") == -1
-					){		//	妨害網掛けのセルはクリアしない
-						document.getElementById( str ).style
-							= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
-						//	上位2つを色付けする					
-						str = 	 iSav[k] + "_" + val[1] + "_0";
-						str = document.getElementById( str ).innerHTML;
-						str2 = iSav[k] + "_" + val[1] + "_0";
-						if(	( cnt2 == 0 && ! isNaN( str ) && parseFloat(str) >= val[0] ) ||
-								( cnt2 == 1 && ! isNaN( str ) && parseFloat(str) >= val[0] )  ) {
-							topTwo[cnt2] = str;
-							cnt2 += 1;
-													
-							document.getElementById( str2 ).style.backgroundColor = "lightgreen";					
-						} 	else {
-							document.getElementById( str2 ).style.backgroundColor = "white";					
-						}
-					}															
-					
-				});	
-												
-				//		上位２つをTotal（列)にセット
-				total2 = 0.0;
-				for( var j=0; j<20; j++ ){
-					str = iSav[k] + "_" + j + "_0";
-					if(document.getElementById( str ).style.backgroundColor == "lightgreen" ){
-						total2 += parseFloat( document.getElementById( str ).innerHTML );
-					}
-				}
-				//console.log("409 " , total2 );
-				str = "Total_" + iSav[k] + "_0";
-				document.getElementById( str ).innerHTML = parseFloat(total2).toFixed(2) ; 
-				str = "Total_" + iSav[k] + "_1";
-				if(  parseFloat( topTwo[0] ) > parseFloat( topTwo[1] ) ){
-					document.getElementById( str ).innerHTML = topTwo[0] + " + " + topTwo[1] ;
-				} else {
-					document.getElementById( str ).innerHTML = topTwo[1] + " + " + topTwo[0] ;
-				}
-				
-				//seqX[k] = seq;	
-	
-			}
 			
 			
 			//	Judgeに反映
@@ -514,7 +467,8 @@
 				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#ff0000;
 				height:125px;color:White;border-color:lightgrey" 
 					 id="0"
-			>Red		</td>
+			>Red <br><span id="0_seq"></span>
+			</td>
 			
 			<!-- Athleteの列-->
 			
@@ -562,7 +516,8 @@
 				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#ffffff;
 				height:125px;color:Black;border-color:lightgrey" 
 					 id="1"
-			>White		</td>
+			>White <br><span id="1_seq"></span>
+			</td>
 			
 			<!-- Athleteの列-->
 			
@@ -610,7 +565,8 @@
 				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#ffff00;
 				height:125px;color:Black;border-color:lightgrey" 
 					 id="2"
-			>Yellow		</td>
+			>Yellow <br><span id="2_seq"></span>
+			</td>
 			
 			<!-- Athleteの列-->
 			
@@ -658,7 +614,8 @@
 				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#0000ff;
 				height:125px;color:White;border-color:lightgrey" 
 					 id="3"
-			>Blue		</td>
+			>Blue <br><span id="3_seq"></span>
+			</td>
 			
 			<!-- Athleteの列-->
 			
@@ -706,7 +663,8 @@
 				<td  class="td_common"  style="font-size:16pt;vertical-align:top;background-color:#00ff00;
 				height:125px;color:Black;border-color:lightgrey" 
 					 id="4"
-			>Green		</td>
+			>Green <br><span id="4_seq"></span>
+			</td>
 			
 			<!-- Athleteの列-->
 			
@@ -1997,8 +1955,16 @@
 						document.getElementById( prevIJ  + '_0' ).style.backgroundColor =  "inhibit";		//	※
 					}
 					//	赤の網掛け
-					document.getElementById( prevIJ  + '_00' ).style 
-						= "background:repeating-linear-gradient(45deg, #eecccc 0, #eecccc 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+					setNet( prevIJ, "red");
+					
+					//	妨害のセット
+					if( interfere[ prevIJ.split("_")[0]][0] == "" ){
+						interfere[ prevIJ.split("_")[0]][0] = str;
+					} else if( interfere[ prevIJ.split("_")[0]][1] == "" ){ 
+						interfere[ prevIJ.split("_")[0]][1] = str;
+					}
+					console.log( "907 interfere=", 	interfere[ prevIJ.split("_")[0]] );
+	
 				} else {
 					
 					var total=0.0;
@@ -2006,38 +1972,38 @@
 					for( var i=1; i<6; i++ ){
 						var obj = document.getElementById( "J" + i + "_1"  );
 						str = obj.innerHTML;					
-						if( ! isNaN(obj.innerHTML) ){
+						str = str.split("P▲").join('');
+						str = str.split("P△").join('');
+						str = str.split("▲").join('');
+						str = str.split("△").join('');					
+						//if( ! isNaN(obj.innerHTML) ){
+						if( ! isNaN(str) ){
 							console.log('818 ' + i + " " + obj.innerHTML);
-							total += parseFloat(obj.innerHTML);
+							total += parseFloat(str);
 							bunbo += 1;
 						}
 					}
 					if( bunbo != 0 ){
 						console.log( '826' , total / bunbo );
-						document.getElementById( prevIJ + "_0" ).innerHTML = (total / bunbo).toFixed(2);
-						
-						//console.log('824 ' ,prevIJ);
-						//var ar = prevIJ.split("_") ;
-						//document.getElementById( "J" + ar[0] + "_0" )innerHTML = (total / bunbo).toFixed(2);
+						document.getElementById( prevIJ + "_0" ).innerHTML = (total / bunbo).toFixed(2);					
 					}
 					
-					document.getElementById( prevIJ + "_0" ).innerHTML 
 					//	網掛け	クリア
-					document.getElementById( prevIJ  + '_00' ).style 
-						= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+					setNet( prevIJ, "" );
 				}
 	
-				
-				var iSav=[];
-				iSav.push( prevIJ.split("_")[0] );
-				//subApprove	( iSav,0)
+				setApproveNo();
+	
+				console.log("937 prevIJ=%s", prevIJ );
 				
 				//	OK をJudgeに反映
 				emitHJ();
 	
-				totalReculcuSub({"IJ":prevIJ });			//	このイベントは通知ではないが、パラメータは通知を前提、
+				totalReculc({"IJ":prevIJ });			//	このイベントは通知ではないが、パラメータは通知を前提、
+				getSeqAndNeedPoint();
+				
 				console.log('931 ', prevIJ);
-				//setApprove();
+				//setApproveNo();
 				
 				flagOnDialog = false;
 				document.getElementById( "dialogTable" ).style.display = "none";
@@ -2204,7 +2170,7 @@
 			var interference_char = [ "△" , "▲", "&nbsp;"];
 			//["InterferencePaddling_1", "InterferencePaddling_2", "InterferencePaddling_3"].forEach( (val,key) =>{
 			arId[ind].forEach( (val,key) =>{
-				console.log('164 ' , val + " " + key );
+				//console.log('164 ' , val + " " + key );
 				if( str == interference_char[key] ){
 					obj = document.getElementById( val  );
 					obj.style.backgroundColor = "#202020";			
@@ -2220,12 +2186,11 @@
 		}
 		
 		
-		//	OKボタン
+		//	PaddlingOKボタン
 		function PaddlingOK(n){
-			//alert('PaddlingOK ' + n );
-			//document.getElementById('dialogPaddling').style.display = "none";
-			//console.log('1069' , document.getElementById( "InterferencePaddling_1").style["background-color"]);
-			console.log('1070 ', prevIJ );
+	
+			console.log('1136 prevIJ=%s', prevIJ );
+			var strINT = "";
 			if( n == "1" ){
 				[ ["InterferencePaddling_1","P△"], ["InterferencePaddling_2","P▲"], ["InterferencePaddling_3",""] ].forEach( val=>{
 					//console.log('1076', val[0] );
@@ -2234,6 +2199,7 @@
 						if( val[1] != ""){
 							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "Paddling Int";
 							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "①"+val[1];
+							strINT = "①"+val[1];
 						} else {
 							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "";
 							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "";
@@ -2247,7 +2213,8 @@
 						console.log('1072 ', val[1]);
 						if( val[1] != ""){
 							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "Paddling Int";
-							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "②"+val[1];
+							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML += " ②"+val[1];
+							strINT = "②"+val[1];						
 						} else {
 							document.getElementById( "Athlete_" + prevIJ + "_4" ).innerHTML = "";
 							document.getElementById( "Athlete_" + prevIJ + "_5" ).innerHTML = "";
@@ -2256,10 +2223,52 @@
 				});		
 			}
 			
+			//	妨害のセット
+			if( strINT != "" ){
+				if( interfere[ prevIJ ][0] == ""  ){
+					interfere[ prevIJ ][0]= strINT;
+				}	else if( interfere[ prevIJ ][1] == "" ) 	interfere[ prevIJ ][ 1 ] = strINT;
+			}
+			console.log('1177 interfere=',	interfere[ prevIJ ] );
+			
+			//	「!」アイコンを消す
 			document.getElementById( "Paddling_" + prevIJ ).style.display = "none";
 			
+			var ij ="";
+			//	セルが、(1)grey網掛けがあり、	2)	P△	または	P▲	の場合、	(3)網掛けクリア
+			//console.log('1070 ', prevIJ );
+			for( var j=0; j<20; j++ ){
+				if( net[ prevIJ ][ j ] == "grey" ){		//	セルが、(1)grey網掛けがあり
+					//console.log("1136 j=%d", j );
+					for( var k=1; k<6; k++ ){
+						str = prevIJ + "_" + j + "_" + k;
+						//	(2)	P△	または	P▲	の場合
+						if( document.getElementById( str ).innerHTML.indexOf("P") == 0 ){
+							console.log('1140 str=%s', str );
+							setNet( prevIJ + "_" + j, "" );		//	(3)網掛けクリア
+							ij = prevIJ + "_" + j;				
+							break;
+						}					
+					}
+					if( k < 6 )break;
+				}
+			}
+			console.log('1207');				
+			if( ij != "" ){		//	該当するセルがない場合（無効操作なので）処理しない	
+				console.log('1209');
+				//setAverageByDetail( ij );			※		平均は通知時にセット済み、「！」アイコンもその時セットする
+				//setNet( 	hash['IJ'], "grey" );		※	上でセット済み
+				setApproveNo();
+	
+				totalReculc({"IJ":ij} );
+	
+				getSeqAndNeedPoint();
+			}				
 			//	後始末
 			onPaddlingX();
+			
+			console.log('1218 ', document.getElementById( "Paddling_0"  ).style.display ); 
+	
 		}
 	
 		
@@ -2329,101 +2338,156 @@
 			//	順位およびneedPointを決める
 			function getSeqAndNeedPoint(){
 	
-				console.log('1111');
+				var seqAns = [ [[],0], [[],0], [[],0], [[],0], [[],0] ];
+				//
+				//	順位を求める	
+				//																	
+				//		そのための配列を作る->	seqAns	[0...4]順位		[][ [順位の配列], 元のindex0...4 ]		順位の配列	＝[合計、top1,top2、妨害1,妨害2,top3,・・・,top20]
 				
-				var seq=[];
-				var seqAns = []
+				//	total_and_top2をコピー
 				for( var i=0; i<5; i++ ){
-	
-					seq=[];
-					//	20列を配列にしsortする
-					for( var j=0; j<20; j++ ){
-						
-						str =  i + "_" + j + "_0";
-						str = document.getElementById( str ).innerHTML;
-						if( isNaN(str) ){
-							str = "0.000";
-						}
-						
-						//	ここでinterfere値を0.001加える					
-						str = parseFloat( str ) ;	//+ parseFloat("0.001");				
-						str += 0.001;						///////	interfere考慮	保留
-						
-						seq.push(  [ str , j ] );
+					seqAns[ i ][1] = i;				//	0...4 set 
+					for( var j=0; j<3; j++ ){
+						seqAns[ i ][0][ j ] = total_and_top2[ i ][ j ];		//	合計、top1、top2をセットする
 					}
-					seq.sort( (a,b) =>{ return b[0] - a[0] ; });
-					//seq.forEach( val => {console.log( "828 " , val ); });
+					for( var j=0; j<2; j++ ){
+						seqAns[ i ][0][ j+3 ] = interfere[ i ][ j ];		//	妨害をセットする
+					}
+					for( var j=3; j<20; j++ ){
+						seqAns[ i ][0][ j+5 ] = total_and_top2[ i ][ j ];		//	top3以降（20迄を）をセットする
+					}
 					
-					//	それを(小数点以下3桁の）文字列にする
-					var str = "";
-					seq.forEach( val =>{ 
-						//console.log('816 ' , val );
-						str2 = val[0].toFixed(3) + "";
-						//str2 = val[0] + "";	////
-						if( str2.indexOf( "10.0" ) == 0 ){
-							str2 = "A";
-						} else {							
-							str2 = str2.split( ".").join("");
-							if( str2.indexOf( "000" ) == 0){
-								str2 = "000";
-							}
-						}
-						str += str2 + "_";
-					});
-					seqAns.push( [str , i ] );
-					//console.log('844' , str + " " + i );
-									
-				}	//	5行ここまで
+				}	
 				
 				
-				console.log('1157 ', seqAns );
+				//console.log('1157 ', seqAns );
+	
 				
-				//	（seqAnsの各要素[0]の）先頭に上位２つの合計値を追加する
-				seqAns.forEach( (val,key) => { 
-					ar = val[0].split("_");
-					////if( ar[0] == "a" )	ar[0] = 1000;
-					////if( ar[1] == "a" )	ar[1] = 1000;
-					str =  parseInt(ar[0]) + parseInt(ar[1])  ;
-					seqAns[key][0] = str + "_" + val[0];
-					//console.log( "841 " , seqAns[key][0] );
-				});		
 				//	sort		※	合計値を第一に考慮
 				seqAns = seqAns.sort( (a,b) => { 
-					if( a[0]>b[0] )return -1;
-					if( a[0]<b[0] )return 1;
+					for( var i=0; i<5; i++){
+						if( a[0][i]>b[0][i] )return -1;
+						if( a[0][i]<b[0][i] )return 1;
+					}
 					return 0;
 				 });
 				seqAns.forEach( val =>{
-					//console.log("863", val[0] );
+					//console.log("863", val[0] + " " + val[1]);
 				});
+	
 	
 	
 				//		Total(列)の再計算		6/22mail	2枚目
 				var cons_=0;
 				seqAns.forEach( (val) =>{
 					//console.log('869', val[1] );
+					
+					//	順位	1...5	を色（Red,White,...）の下に表示する
+					str = "" + val[1] + "_seq";	
+					if( val[0][0] != 0.0 ){
+						document.getElementById( str ).innerHTML = cons_ + 1 ;		//	※	sort済みを参照	（役にたった）
+					} else {
+						document.getElementById( str ).innerHTML = "";
+					}
+					
 					str = "Total_" + val[1] + "_2";
-					ar = val[0].split("_");
 					switch (cons_){
 					case 0:
-								document.getElementById( str ).innerHTML = "Win by " + ( parseFloat(ar[0]) / 1000.0 ).toFixed(2) ;
+								document.getElementById( str ).innerHTML = "Win by " +  val[0][0].toFixed(2); 
 								break;
-					case 1:
-								ar2 = seqAns[0][0].split("_");
-								//console.log( "884", parseInt(ar2[0]) - parseInt(ar[1]) );
-								str_ = ( ( parseInt(ar2[0]) - parseInt(ar[1]) )/1000.0 ).toFixed(2);
-								document.getElementById( str ).innerHTML = "Needs " + str_ ;
-								break;							 
+								
+					//case 1:	break;			// defaultで行う
+					
 					case 2:
 					case 3:
 					case 4:
-								str_ = ( ( parseInt(ar2[0]) - parseInt(ar[1]) )/1000.0 ).toFixed(2);
-								document.getElementById( str ).innerHTML = "Needs " + str_;
-								break;
+								//	3位以下の人が2位になるためのneeds
+								//	1.		2位の合計点	-	3位以下の１番目の点数
+								str_ =  seqAns[1][0][0] - seqAns[cons_][0][1]; 
+								
+								//	2.		2位の合計点	-	3位以下の1番目の点数	<=	2位の1番目の点数		->	＋0.01	
+								if(  (seqAns[1][0][0] - seqAns[cons_][0][1])   <= seqAns[1][0][1] && seqAns[cons_][0][0] != 0.0 ){
+									str_ += 0.01;		
+								}			
+								document.getElementById( str ).innerHTML = "Needs " + str_.toFixed(2) ;
+	
+					default:		
+															
+								//	2位の場合、	または（3位以下でも）Finalの場合、1位になるためのNeedを求める
+								if( cons_ == 1 || 								
+									( document.getElementById( "rnd" ).innerHTML.indexOf( "Final" ) == 0 && seqAns[cons_][0][0] != 0.0 ) ){
+									
+									//	１．	１位の合計点－２(n)位の1番目の点数	
+									str_ =  seqAns[0][0][0] - seqAns[cons_][0][1]; 
+									
+									//	２．	もし、（1位の合計点-2(n)位の１番目の点数）<=1位の１番目の点数	->	（1位の合計点-2(n)位の１番目の点数）	+0.01
+									if( ( seqAns[0][0][0] - seqAns[cons_][0][1] ) <= seqAns[0][0][1] && seqAns[cons_][0][0] != 0.0 ){
+										str_ = seqAns[0][0][0] - seqAns[cons_][0][1] + 0.01;
+									}
+									
+									//	３．	もし、2(n)位の１番目の点数	<=	1位の１番目の点数		->	（1位の合計点-2位の１番目の点数）	+0.01
+									if(  seqAns[cons_][0][1]  <= seqAns[0][0][1] && seqAns[cons_][0][0] != 0.0  ){
+										str_ = seqAns[0][0][0] - seqAns[cons_][0][1] + 0.01;
+									}	
+																									
+								}	
+								
+								
+								//
+								//	妨害ありの場合、
+								//
+								console.log('1314 %s %s cons_=%d', interfere[ seqAns[cons_][1] ][0],interfere[ seqAns[cons_][1] ][1], cons_ );
+								
+								var prev = cons_ == 1 ? 0 : 1;		//	※	2位の上は1位、3位以降の上は2位
+								
+								//	△＿		（ノンプライオリティ妨害が1回(だけ)）	2位が1位（3位以降なら2位）になるNeed		
+								if( interfere[ seqAns[cons_][1] ][0].indexOf( "△" ) >= 0 && interfere[ seqAns[cons_][1] ][1] == ""  ){
+									//	もし、(1位の合計-2位の1番目)*2	<=	2位の1番目
+									prev = cons_ == 1 ? 0 : 1;		//	※	2位の上は1位、3位以降の上は2位
+									if( ( seqAns[ prev ][0][0] - seqAns[cons_][0][1] ) * 2.0 <= seqAns[cons_][0][1] ) {
+										//	(上位の合計-自分の1番目)*2
+										str_ = ( seqAns[ prev ][0][0] - seqAns[cons_][0][1] ) * 2.0;
+									} else {
+										str_ = seqAns[ prev ][0][0] - seqAns[cons_][0][1]/2.0;
+									}
+								}
+	
+								//	△△	（ノンプライオリティ妨害が1,2回）	2位が1位（3位以降が2位）になるNeed		
+								if( interfere[ seqAns[cons_][1] ][0].indexOf( "△" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "△" ) >= 0 ){
+									//	もし、(1位の合計-2位の1番目)*2	<=	2位の1番目
+									console.log('1335　seqAns[ prev ][0][0]=%f seqAns[cons_][0][1]=%f prev=%d' , seqAns[ prev ][0][0], seqAns[cons_][0][1], prev );
+										//	(上位の合計-自分の1番目)*2
+									str_ = ( seqAns[ prev ][0][0] - seqAns[cons_][0][1] ) * 2.0;
+								}
+	
+								//	▲_	（プライオリティ妨害が1回）	2位が1位（3位以降が2位）になるNeed		
+								if( interfere[ seqAns[cons_][1] ][0].indexOf( "▲" ) >= 0 && interfere[ seqAns[cons_][1] ][1] == ""  ){
+									str_ =  seqAns[ prev ][0][0];
+								}
+	
+								//	▲▲	（プライオリティ妨害が2回）	Need		
+								if( interfere[ seqAns[cons_][1] ][0].indexOf( "▲" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "▲" ) >= 0  ){
+									str_ = "---";
+								}
+								
+								//	▲△	or	△▲	（妨害が2回、▲と△の組み合わせ）	Need		
+								if( ( interfere[ seqAns[cons_][1] ][0].indexOf( "▲" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "△" ) >= 0 )
+									|| ( interfere[ seqAns[cons_][1] ][0].indexOf( "△" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "▲" ) >= 0)
+									){
+									str_ =  seqAns[ prev ][0][0] * 2.0;
+								}
+								
+								
+								if( ! isNaN(str_) ){
+									document.getElementById( str ).innerHTML = "Needs " + str_.toFixed(2) ;
+								} else {
+									document.getElementById( str ).innerHTML = "Needs " + str_ ;								
+								}
 					}
 	
 					cons_ += 1;
 				});			
+			
 				
 			}	//	end	getSeqAndNeedPoint
 			
@@ -2431,8 +2495,6 @@
 			var diff;
 			var timerVal=0; 
 			var hash;
-			//var Approve=0;
-			//var ApproveNo = [" ","①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲"];
 	
 			//
 			//	入力	msg	ex.	'J1;{"idNo":"5","IJ":"0_0","val":"1.1"}' 
@@ -2486,121 +2548,19 @@
 						case 'J3':
 						case 'J4':
 						case 'J5':
-							//	Judge列の該当行(ar[0])に、idNo（Judge番号）を、5行分(離れているが)表示する
-							for( var i=0; i<5; i++ ){
-								str = "Judge_" + i + "_" + ar[0].substr(1);
-								var obj2 = document.getElementById( str );
-								obj2.innerHTML = "J" + hash['idNo'];
-							}						
-							
-							//	(5X20の表)idを求める	J(n)の（n）を取り出し、それを行番号とする行にvalを入れる
-							console.log('966');
-							str = hash['IJ'] + "_" +parseInt( ar[0].substr(1) );
-							//	今回値をセット
-							document.getElementById( str ).innerHTML = hash['val'];
 						
-							//console.log('970');
-													
-							var average = 0.0;
-							var bunbo=0;
-							//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
+							setDetail( hash['IJ'] , ar[0].substr(1), hash['val'] );
 							
-							var arPoint = [];
-							var flagPaddling = "";		//	paddling 有無flag
-								//	分母
-							for( var i=0; i<5; i++ ){
-								str = hash['IJ'] + "_" + (i+1);
-								str = document.getElementById( str ).innerHTML;
-								str0 = str;
-								
-								//			padding inerfere 判定	→	左下（Paddling Interfere )に警告マークを表示する
-								console.log('1020 ' , str + " " +  hash['IJ'] + " " + str.length);
-								if( str.indexOf( "P▲" ) == 0 || str.indexOf( "P△" ) == 0 ){
-									flagPaddling = "Paddling_" + hash['IJ'].split("_")[0];
-									console.log('1021 ' , flagPaddling );
-									document.getElementById( flagPaddling ).style.display = "";
-									
-								} 
-								
-								str = str.split("P▲").join("");
-								str = str.split("P△").join("");
-								str = str.split("▲").join("");
-								str = str.split("△").join("");
-								
-								bunbo += ! isNaN( str ) ? 1 : 0; 	
-								if( ! isNaN( str )	){
-									arPoint.push( str );
-								}
-							}
-							console.log( '754' , arPoint );
+							setAverageByDetail( hash['IJ'] );
 							
-							if( flagPaddling != "" ){				//	paddling INT.の場合、以下の処理はしない
-								break;
-							}
+							setNet( 	hash['IJ'], "grey" );
+	
+							setApproveNo();
 							
-							//console.log('750 ' , bunbo );
-								//	平均
-							switch( bunbo ){
-							case 0:
-							case 1:	
-										average = parseFloat(arPoint[0]);
-										break;
-							case 2: 
-									average = (parseFloat(arPoint[0]) + parseFloat(arPoint[1]) ) / 2.0 ;
-									//console.log('765 ' , average + " " + arPoint[0] + " " + arPoint[1]);
-									break;
-									
-							case 3: 
-									average = ( parseFloat(arPoint[0]) + parseFloat(arPoint[1]) + parseFloat(arPoint[2]) ) / 3.0 ;
-									break;
-							case 4: 
-							case 5:
-									arPoint = arPoint.sort( function(a,b){
-										if( a<b )return -1;
-										if( a>b )return 1;
-										return 0;
-									});		
-									average = 0.0;
-									for( var i=1; i< arPoint.length-1; i++ ){
-										average += parseFloat(arPoint[i]);
-									}				
-									average = average / parseFloat(arPoint.length-2);
-									
-									break;
-								
-							}
-							console.log('1467 average=%f bunbo=%d', average, bunbo );
-							
-							//	平均値	(I)_(J)_0	にセット
-							str0 = hash['IJ'] + '_0';	
-							//console.log( '780 ' , average.toFixed(3) );
-							if( average >= 0.0 ){
-								document.getElementById( str0 ).innerHTML = average.toFixed(2);
-							} else {
-								document.getElementById( str0 ).innerHTML = "&nbsp;";
-							}
-													
-							//		平均値 網掛け	tableのbackground-color:lightgrey
-							if( document.getElementById( hash['IJ'] + '_00' ).style.backgroundColor != "lightgrey" ){
-								console.log('1271 ', flagPaddling);
-								
-								prevColor = document.getElementById( hash['IJ'] + '_00' ).style.backgroundColor ;
-								//console.log("1273 ", prevColor );
-								
-								document.getElementById( hash['IJ'] + '_00' ).style 
-									= "background:repeating-linear-gradient(45deg, #eeeeee 0, #eeeeee 3px, white 3px, white 6px);  width:100% ; height: 100%;";
-								
-								console.log('1401 ' , document.getElementById( hash['IJ'] + '_00' ).style.background );
-								
-								//if( flagPaddling == "" && prevColor == "white" ){	//	paddlingでなければApprove+1
-								//	Approve += 1;							
-								//	document.getElementById( "Approve" ).innerHTML = Approve < 20 ? ApproveNo[Approve] : Approve;
-								//}
-								
-								setApprove();
-							}
-							
-							totalReculcuSub(hash);
+							totalReculc(hash);
+							getSeqAndNeedPoint();
+	
+	
 	
 							break;
 					
@@ -2610,17 +2570,14 @@
 			}
 			
 			//	Approve数を表示する
-			//		5X20内に、#eeeeee	の網掛けの数（＝Approve数）を求める		※	#eeccccはINT、除外する
-			function setApprove(){
+			//		5X20内に、grey網掛けの数（＝Approve数）を求め、ApproveScore（右に）表示する		※red除外する
+			function setApproveNo(){
+				//console.log('1421 setApproveNo');
 				var Approve=0;
 				var ApproveNo = [" ","①","②","③","④","⑤","⑥","⑦","⑧","⑨","⑩","⑪","⑫","⑬","⑭","⑮","⑯","⑰","⑱","⑲"];
 				for( var i=0; i<5; i++ ){
 					for( var j=0; j<20; j++){
-						str = i + "_" + j + "_00";
-						//console.log('1425 ' ,  document.getElementById( str ).style.background);
-						if( document.getElementById( str ).style.background.indexOf("238") > 0 &&		//	#ee
-							document.getElementById( str ).style.background.indexOf("204") == -1			//	#cc
-						 ){
+						if( net[ i ][ j ] == "grey" ){
 							Approve += 1;
 						}	
 					}
@@ -2628,77 +2585,121 @@
 				document.getElementById( "Approve" ).innerHTML = Approve < 20 ? ApproveNo[Approve] : Approve;
 			}
 			
-			//	該当行の20列から、最大２つを取得、Total列の該当行（１行、２行）を表示する
-			function totalReculcuSub(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
+			
+			//	該当行の20列から、
+			//	網掛けがないセルについて
+			//	最大２つを取得、Total列の該当行（１行、２行）を表示する
+			function totalReculc(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
 				
-				//console.log('1421 ' , hash['IJ'] );		//	error??
+				console.log('1421 ' , hash['IJ'] );		//	error??
 				
-				var seq=[];
-				var total=0.0;
-				//
-				//	Total列
-				//
-				//		(5X20の表）Total列を再表示する（共通）			Total_(n)_(m)		(n)=0...4	行index			(m)=0...3	その行内index
-				//		上位２つの平均値（＝0行目）を合計する	->	
-				var npINT=0;
-				var pINT=0;
-				for( var i=0; i<20; i++ ){
-					str = hash['IJ'].split("_")[0] + "_" + i + "_0";
-					str = document.getElementById( str ).innerHTML;
-					if( ! isNaN( str )	){
-						seq.push(str);
-					}else{
-						seq.push("0.0");
-						
-						//	ペナルティの種別、回数を取得
-						if( str.indexOf("INT. ▲") == 0 ){
-							pINT += 1;
-						}
-						if( str.indexOf("INT. △") == 0 ){
-							npINT += 1;
-						}
-					}							
-				} 
-				seq = seq.sort( function(a,b){
-					if( a>b )return -1;
-					if( a<b )return 1;
-					return 0;
-				});	
+				var seq = getTop2_and_setTotal0( [ hash['IJ'].split("_")[0]  ], 0 );
 				
-				//console.log('1562', strINT );
+				ind = hash['IJ'].split("_")[0] ;
+				total_and_top2[ ind ][0] = seq[0] + seq[1];
+				total_and_top2[ ind ][1] = seq[0];
+				total_and_top2[ ind ][2] = seq[1];
+				//console.log( '1408 total_and_top2[ind]=', total_and_top2[ind] );
 				
-				//						
-				//	Total列	（該当行の中の）0行目		合計値
-				//
-				str = "Total_" + hash['IJ'].split("_")[0] +  "_0";
-				
-				if( pINT > 0 ){
-					seq[1] = 0.0;
-					if( pINT > 1 ){
-						seq[0] = 0.0;
-					}
-				} 
-				if( npINT > 0 ){
-					seq[1] = seq[1] / 2.0; 
-					if( npINT > 1 ){
-						seq[0] = seq[0] / 2.0; 
-					}
-				} 
-				
-	
-				
-				//console.log('1159 %f %f', seq[0], seq[1]);
+				//	Total 0行目
+				str = "Total_" + hash['IJ'].split("_")[0] +  "_0";		
+				console.log('1159 %f %f', seq[0], seq[1]);
+				if( isNaN( seq[0] ) ){
+					seq[0]=0.0;
+					seq[1]=0.0;
+				}
 				document.getElementById( str ).innerHTML = ( parseFloat( seq[0] ) + parseFloat( seq[1] ) ).toFixed(2);
 	
 				//	Total列	1行目		平均値の最大、その次の値
 				str = "Total_" + hash['IJ'].split("_")[0] +  "_1";
-				//console.log('843 ', str 
 				document.getElementById( str ).innerHTML = parseFloat( seq[0] ).toFixed(2)  + " + " + parseFloat( seq[1] ).toFixed(2);
+							
+			}		
+			
+			//	ある行の上位２つを求め、色付けし、total列（0行）に表示する
+			function getTop2_and_setTotal0( iSav, 		//	該当行が要素である配列		ex [0]
+																			k ){			//	そのindex								ex.	0
+				console.log("436 k=%d iSav[k]=%s", k, iSav[k], iSav );
 				
-				//	順位およびneedPointを決める
-				getSeqAndNeedPoint();
+				//
+				//	top2を求める
+				//
 				
+				//	網掛けのないセルを取得し、新たな配列にpushする
+				var seq = [];
+				for( var j=0; j<20; j++ ){
+					str = ave[ iSav[k] ][ j ]; 
+					if( net[ iSav[k] ][ j ] == "" ){
+						seq.push( [ str,  j ] ); 
+					}
+				}
+				//console.log('1461 seq=', seq ); 
+				seq.forEach( (val)=>{
+					//console.log('408 val=%s', val );
+				});
+				//	それをsortする
+				seq =seq.sort( (a,b)=>{ return( b[0] - a[0] ); });
+				seq.forEach( (val)=>{
+					//console.log('408 val=%s', val );
+				});
+				
+				//	上位2つをtop2とする
+				var top2 = [ 0.0, 0.0 ];
+				if( seq[0][0] != 0 ){ top2[0] = seq[0][0]; }
+				if( seq[1][0] != 0 ){ top2[1] = seq[1][0]; }
+				
+				
+				//	その2つを色替えする
+				var cnt2=0;
+				seq.forEach( val => {				
+					str2 = iSav[k] + "_" + val[1] + "_0";					
+					if( cnt2 < 2 && top2[cnt2] > 0 ){
+						document.getElementById( str2 ).style.backgroundColor = "lightgreen";					
+					} 	else {
+						if( document.getElementById( str2 ).style.backgroundColor != "" ){
+							document.getElementById( str2 ).style.backgroundColor = "white";
+						} 
+					}		
+					cnt2 += 1;														
+				});			
+				console.log( "473 top2=", top2 );
+				
+				//
+				//	妨害があれば(top2を)減点する			妨害の参照
+				//
+				console.log('469 interfere[ iSav[k] ]=',  interfere[ iSav[k] ] );
+				if( interfere[ iSav[k] ][0].indexOf("△") >= 0 ){
+					top2[1] = top2[1] / 2.0;
+					if( interfere[ iSav[k] ][1].indexOf("△") >= 0 ){
+						top2[0] = seq[0][0] / 2.0;
+						top2[1] = seq[1][0] / 2.0;
+					}
+					if( interfere[ iSav[k] ][1].indexOf("▲") >= 0 ){
+						top2[0] = seq[0][0] / 2.0;
+						top2[1] = 0.0;
+					}
+				}
+				if( interfere[ iSav[k] ][0].indexOf("▲") >= 0 ){
+					top2[1] = 0.0;
+					if( interfere[ iSav[k] ][1].indexOf("△") >= 0 ){
+						top2[0] = seq[0][0]  / 2.0;
+						top2[1] = 0.0;
+					}
+					if( interfere[ iSav[k] ][1].indexOf("▲") >= 0 ){
+						top2[0] = 0.0;
+						top2[1] = 0.0;
+					}				
+				}
+				console.log( "473 top2=", top2 );
+				
+				//			
+				//		上位２つをTotal（列)にセット
+				//
+	
+				return top2;
 			}
+	
+	
 			
 			
 			
@@ -2776,7 +2777,7 @@
 	
 			objTimer = document.getElementById('timer');
 			const onTimer2 = function(){
-	
+	/*
 				if( hash.tSt ){
 					console.log('798 ' , timerVal + hash.tSt );
 	
@@ -2787,14 +2788,166 @@
 					intTimer = parseInt(timerVal/1000);
 					objTimer.innerHTML = parseInt(intTimer/60) + "\:" + parseInt(intTimer % 60)  ;
 				}
-	
+	*/
 			}
 			//const timer = setInterval(onTimer, 1000);
 			const timer = setInterval(onTimer2, 1000);
 	
 	
+			//	共通処理
 	
-			//	test
+			//	detail(J1...5)セット		中間バッファなし（innerHTMLだけ）
+			function setDetail( ij, 				//	ij		ex. "0_1"	0行の1列
+												k, 				//	jNo	1...5
+												val ){			//	値	ex.	1.23
+				
+				//	Judge列の該当行(ar[0])に、idNo（Judge番号）を、5行分(離れているが)表示する	
+				for( var i=0; i<5; i++ ){
+					str = "Judge_" + i + "_" + k;	
+					var obj2 = document.getElementById( str );
+					obj2.innerHTML = "J" + hash['idNo'];
+				}						
+				
+				//	(5X20の表)idを求める	J(n)の（n）を取り出し、それを行番号とする行にvalを入れる
+				str = ij + "_" + k ;
+				//	今回値をセット
+				document.getElementById( str ).innerHTML = val;				
+			}
+	
+	
+			
+			
+			//	平均値セット	
+			function setAverageByDetail( ij ){		//	セルのIJ	ex.	"0_0"
+	
+				var average = 0.0;
+				var bunbo=0;
+				//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
+				
+				var arPoint = [];
+				var flagPaddling = "";		//	paddling 有無flag			※	これは保留	・・・・・・・・・・・・・・・・・・・・・・・・・・・
+					//	分母
+				for( var i=0; i<5; i++ ){
+					//str = hash['IJ'] + "_" + (i+1);
+					str = ij + "_" + (i+1);
+					str = document.getElementById( str ).innerHTML;
+					str0 = str;
+					
+					//			padding inerfere 判定	→	左下（Paddling Interfere )に警告マークを表示する
+					//console.log('1020 ' , str + " " +  hash['IJ'] + " " + str.length);
+					if( str.indexOf( "P▲" ) == 0 || str.indexOf( "P△" ) == 0 ){
+						flagPaddling = "Paddling_" + ij.split("_")[0];
+						console.log('1021 ' , flagPaddling );
+						document.getElementById( flagPaddling ).style.display = "";						
+					} 
+					
+					str = str.split("P▲").join("");
+					str = str.split("P△").join("");
+					str = str.split("▲").join("");
+					str = str.split("△").join("");
+					
+					bunbo += ! isNaN( str ) ? 1 : 0; 	
+					if( ! isNaN( str )	){
+						arPoint.push( str );
+					}
+				}
+				console.log( '754' , arPoint );
+			
+				//	平均
+				switch( bunbo ){
+				case 0:
+				case 1:	
+							average = parseFloat(arPoint[0]);
+							break;
+				case 2: 
+						average = (parseFloat(arPoint[0]) + parseFloat(arPoint[1]) ) / 2.0 ;
+						//console.log('765 ' , average + " " + arPoint[0] + " " + arPoint[1]);
+						break;
+						
+				case 3: 
+						average = ( parseFloat(arPoint[0]) + parseFloat(arPoint[1]) + parseFloat(arPoint[2]) ) / 3.0 ;
+						break;
+				case 4: 
+				case 5:
+						arPoint = arPoint.sort( function(a,b){
+							if( a<b )return -1;
+							if( a>b )return 1;
+							return 0;
+						});		
+						average = 0.0;
+						for( var i=1; i< arPoint.length-1; i++ ){
+							average += parseFloat(arPoint[i]);
+						}				
+						average = average / parseFloat(arPoint.length-2);
+						
+						break;
+					
+				}
+				//console.log('1467 average=%f bunbo=%d', average, bunbo );
+				
+				//	平均値	(I)_(J)_0	にセット
+				//str0 = hash['IJ'] + '_0';	
+				str0 = ij + '_0';	
+				//console.log( '780 ' , average.toFixed(3) );
+				if( average >= 0.0 ){
+					document.getElementById( str0 ).innerHTML = average.toFixed(2);
+				} else {
+					document.getElementById( str0 ).innerHTML = "&nbsp;";
+				}
+	
+				ave[ parseInt( ij.split("_")[0]) ][ parseInt(ij.split("_")[1]) ] = average;
+				//ave[0 ][ 0 ] = average;
+				console.log('1797 i=%s j=%s ave=%f bunbo=%d',  ij.split("_")[0] ,  ij.split("_")[1] , average, bunbo );
+				console.log('1708 ',ave[ parseInt( ij.split("_")[0]) ][ parseInt(ij.split("_")[1]) ]  );
+			}
+			
+			
+	
+	
+	
+	
+		
+			//	網掛けのセット/クリア
+			function setNet( ij, color ){		//	color: "" , "red" , "grey"
+				//console.log("1738 ij=%s", ij );
+				var ij_ = ij.split("_")[0] + "_" + 	ij.split("_")[1];
+																		 
+				net[ ij.split("_")[0] ][ ij.split("_")[1] ] = color;
+				
+				//		平均値 網掛け	tableのbackground-color:lightgrey
+				if( color == "grey" ){			
+					document.getElementById( ij_ + '_00' ).style 
+						= "background:repeating-linear-gradient(45deg, #eeeeee 0, #eeeeee 3px, white 3px, white 6px);  width:100% ; height: 100%;";	
+					document.getElementById( ij_  + '_0' ).style.backgroundColor =  "inhibit";		//	※
+				}
+				if( color == "" ){			
+					document.getElementById( ij_ + '_00' ).style 
+						= "background:repeating-linear-gradient(45deg, white 0, white 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+				}
+				if( color == "red" ){			
+					document.getElementById( ij_ + '_00' ).style 
+						= "background:repeating-linear-gradient(45deg, #eecccc 0, #eecccc 3px, white 3px, white 6px);  width:100% ; height: 100%;";
+					document.getElementById( ij_  + '_0' ).style.backgroundColor =  "inhibit";		//	※
+	
+				}
+							
+			}
+	
+			//	test		n-dimention sort
+			/*
+			arTest = [ [[2,2,3],0],  [[2,2,2],1],  [[3,3,3],2] ];
+			arT = arTest.sort( (a,b )=>{
+				for( var i=0;i<3;i++){
+					if( a[0][i] > b[0][i] ) return -1;
+					if( a[0][i] < b[0][i] ) return 1;
+				}
+				return 0;
+			});
+			arT.forEach( val=>{
+				console.log( '1782 ', val[0] + " " + val[1] );
+			});
+			*/
+			
 			/* console.log('746');
 			dummyOn( 'MC;{"class":"あああ","rnd":"1","ht":"02","time":"Thu Jun 09 2022 16:49:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
 			*/
@@ -2829,19 +2982,50 @@
 				console.log("1206");
 			}
 			*/
+			
+			/*
 			ar0=[1,2,3];
 			ar0.unshift(0);
 			console.log(ar0);
-	
+			*/
+			
 		//	php test: ;	json形式
 		//console.log('746');
-		//dummyOn( 'MC;{"class":"あああa","rnd":"rnd.1","ht":"ht.2","time":"Thu July 04 2022 11:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
+		//dummyOn( 'MC;{"class":"あああa","rnd":"Final","ht":"ht.2","time":"Thu July 04 2022 11:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"3"}'); 
 		//dummyOn( 'PR;["G","W","B","Y","R"]' );
 		
-		//	1570
-		//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.9"}' );
-		//dummyOn( 'J2;{"idNo":"2","IJ":"0_1","val":"1.3"}' );
+		//	
+		/*
+		dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"2.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"2.0"}' );
+		dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"0_1","val":"1.0"}' );
 		
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"4.4"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"1_0","val":"4.4"}' );		
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"0.9"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"1_1","val":"0.9"}' );			
+	
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_2","val":"P△"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"1_3","val":"P△"}' );			
+		
+		
+		dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"2_0","val":"1.2"}' );		
+		dummyOn( 'J1;{"idNo":"1","IJ":"2_1","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"2_1","val":"1.2"}' );		
+	
+		dummyOn( 'J1;{"idNo":"1","IJ":"4_0","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"4_0","val":"1.2"}' );		
+		dummyOn( 'J1;{"idNo":"1","IJ":"4_1","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"4_1","val":"1.2"}' );		
+			
+		dummyOn( 'J1;{"idNo":"1","IJ":"3_0","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"3_0","val":"1.2"}' );		
+		dummyOn( 'J1;{"idNo":"1","IJ":"3_1","val":"1.0"}' );
+		dummyOn( 'J2;{"idNo":"2","IJ":"3_1","val":"1.2"}' );		
+	*/
+	
 			//dummyOn( 'J3;{"idNo":"3","IJ":"0_0","val":"1.2"}' );
 			//dummyOn( 'J4;{"idNo":"4","IJ":"0_0","val":"1.2"}' );
 			//dummyOn( 'J5;{"idNo":"5","IJ":"0_0","val":"1.2"}' );

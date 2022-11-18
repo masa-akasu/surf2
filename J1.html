@@ -164,14 +164,18 @@
           //console.log('176 ', val ); 
           if( obj.style.color == val ){
             console.log('178 match' , key);
-            prevIJ = key  + "";			
+            prevIJ = key  + "";		
+            
+            //	最左の色列の文字色	青：白文字	その他：黒文字
+            document.getElementById( key + "" ).style.color = key == 3 ? 	"white" : "black";
+  
+            //	またそこに、文字列「Pd△」「Pd▲」	１つまたは２つの表示
             if( document.getElementById( key + "" ).innerHTML.length < 10 ){
               if( document.getElementById( key + "" ).innerHTML.indexOf("<br>") == -1){
                 document.getElementById( key + "" ).innerHTML = "<br>" + np_or_p_;
               } else {
                 document.getElementById( key + "" ).innerHTML += " " + np_or_p_;
-              }
-              
+              }						
             }
           }
         });

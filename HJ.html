@@ -4256,7 +4256,7 @@
 				});
 	
 	
-	
+				arSeq = ["st", "nd", "rd", "th", "th"];
 				//		Total(列)の再計算		6/22mail	2枚目
 				var cons_=0;
 				seqAns.forEach( (val) =>{
@@ -4265,7 +4265,7 @@
 					//	順位	1...5	を色（Red,White,...）の下に表示する
 					str = "" + val[1] + "_seq";	
 					if( val[0][0] != 0.0 ){
-						document.getElementById( str ).innerHTML = cons_ + 1 ;		//	※	sort済みを参照	（役にたった）
+						document.getElementById( str ).innerHTML = (cons_ + 1 ) + arSeq[cons_];		//	※	sort済みを参照	（役にたった）
 					} else {
 						document.getElementById( str ).innerHTML = "";
 					}
@@ -4431,10 +4431,11 @@
 						
 							setDetail( hash['IJ'] , ar[0].substr(1), hash['val'] );
 							
-							setAverageByDetail( hash['IJ'] );
+							setAverageByDetail( hash['IJ'] );			//	下段の警告マークはここで点灯している
 							
-							setNet( 	hash['IJ'], "grey" );
-	
+							if( hash['val'].indexOf('Pd') != 0 ){		//	対処療法、
+								setNet( 	hash['IJ'], "grey" );
+							}
 							setApproveNo();
 							
 							totalReculc(hash);
@@ -4692,7 +4693,9 @@
 				//	(5X20の表)idを求める	J(n)の（n）を取り出し、それを行番号とする行にvalを入れる
 				str = ij + "_" + k ;
 				//	今回値をセット
-				document.getElementById( str ).innerHTML = val;				
+				//if( val.indexOf("Pd") != 0 ){
+					document.getElementById( str ).innerHTML = val;			
+				//}	
 			}
 	
 	
@@ -4701,6 +4704,7 @@
 			//	平均値セット	
 			function setAverageByDetail( ij ){		//	セルのIJ	ex.	"0_0"
 	
+				console.log('1755 ' );
 				var average = 0.0;
 				var bunbo=0;
 				//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
@@ -4710,8 +4714,8 @@
 					//	分母
 				for( var i=0; i<5; i++ ){
 					//str = hash['IJ'] + "_" + (i+1);
-					str = ij + "_" + (i+1);
-					str = document.getElementById( str ).innerHTML;
+					str_ = ij + "_" + (i+1);
+					str = document.getElementById( str_ ).innerHTML;
 					str0 = str;
 					
 					//			padding inerfere 判定	→	左下（Paddling Interfere )に警告マークを表示する
@@ -4719,7 +4723,9 @@
 					if( str.indexOf( "Pd▲" ) == 0 || str.indexOf( "Pd△" ) == 0 ){
 						flagPaddling = "Paddling_" + ij.split("_")[0];
 						console.log('1021 ' , flagPaddling );
-						document.getElementById( flagPaddling ).style.display = "";						
+						document.getElementById( flagPaddling ).style.display = "";		
+						
+						document.getElementById( str_ ).innerHTML = "";		///	対処療法、後メッシュも消す		
 					} 
 					
 					str = str.split("Pd▲").join("");
@@ -4790,7 +4796,7 @@
 		
 			//	網掛けのセット/クリア
 			function setNet( ij, color ){		//	color: "" , "red" , "grey"
-				//console.log("1738 ij=%s", ij );
+				console.log("1738 ij=%s", ij );
 				var ij_ = ij.split("_")[0] + "_" + 	ij.split("_")[1];
 																		 
 				net[ ij.split("_")[0] ][ ij.split("_")[1] ] = color;
@@ -4876,11 +4882,12 @@
 		//dummyOn( 'PR;["G","W","B","Y","R"]' );
 		
 			//dummyOn( 'J2;{"idNo":"2","IJ":"1_3","val":"Pd△"}' );	
-		
+		//dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"Pd△"}' );	
 		//	
+	
+		//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"2.0"}' );
 		/*
-		dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"2.0"}' );
-		dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"2.0"}' );
+			dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"2.0"}' );
 		dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.0"}' );
 		dummyOn( 'J2;{"idNo":"2","IJ":"0_1","val":"1.0"}' );
 		

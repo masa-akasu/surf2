@@ -22,7 +22,16 @@
 		font-size: 16pt;
 	}
 	-->
-
+	
+		<script>
+			.td_common{
+				border-width:8px;
+				border-color:red;
+				background-color:red;
+				line-height:20
+			}
+		</script>
+		
 	</STYLE>	
 	<script language="javascript" ><!--	
 			
@@ -2093,14 +2102,7 @@
 	<div  >
 		<table >
 		<tr  > <td style="color:#ffffff;background-color:grey">&nbsp;priority&nbsp;</td></tr>
-		<script>
-			.td_common{
-				border-width:8px;
-				border-color:red;
-				background-color:red;
-				line-height:20
-			}
-		</script>
+
 
 
 
@@ -2496,6 +2498,22 @@
               //console.log('1900 ' , ar2 );
               break;
               
+            case 'J1':
+            case 'J2':
+            case 'J3':
+            case 'J4':
+            case 'J5':
+            	//	他のJudgeからのHJへの通知があり、（5x20のその場所が）自分は未だ空白の場合、「！」を（5x20の１行目に）表示する
+            	console.log('1007 id=%s ar[0]=%s hash.IJ=%s', id, ar[0] ,hash.IJ );
+            	if( id != ar[0] ){
+						console.log('1009 ');
+						if( document.getElementById( hash.IJ + "_2" ).innerHTML == "&nbsp;&nbsp;&nbsp;" ){
+							document.getElementById( hash.IJ + "_2" ).innerHTML = "&nbsp;&nbsp;&nbsp;!";
+							console.log('1013');
+						}
+					}
+            	break;
+            	
             case 'HJ':
             	var hash = JSON.parse(ar[1]);
             	console.log( "776 ", hash.IJ + " " + hash.val + " hash.IJ.length=" + hash.IJ.length);
@@ -2664,6 +2682,7 @@
 		//console.log('746');
 		dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"rnd 1","ht":"ht 2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5"}'); 
 		//dummyOn( 'PR;["G","W","B","Y","_"]' );
+		//dummyOn(	'J3;{"idNo":"30","IJ":"0_1","val":"1.1"}');
 		//PR;["_","_","_","_","R"]
 		//dummyOn( 'HJ;{"IJ":["0_0","0_1"],"val":["1.2","1.3"]}' );
 		//dummyOn( 	'HJ;{"IJ":["0_0"],"val":["1.10"]}' );;

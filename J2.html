@@ -62,17 +62,20 @@
 								fun,			//	daialog毎の特別処理	ex.	table内の場合、色を付ける
 								obj ){		//	this
 			
-			console.log('78 ', div_id);
+			console.log('78 %s %o', div_id, flagOnDialog);
 			
-			/*
+			
 			//	dialogが表示中なら、終了
-			if( !flagOnDialog ||  ( prevIJ != "" && div_id == "dialogPaddling" ) ){
+			//if( !flagOnDialog ||  ( prevIJ != "" && div_id == "dialogPaddling" ) ){
+			if( !flagOnDialog  ){
 				flagOnDialog = true;
 			} else{
 				console.log('85');
 				return;
 			}
-			*/
+			
+			
+			
 			console.log('105 ', prevIJ );
 			if( div_id != "dialogPaddling" ){
 				prevIJ = obj.id;
@@ -330,7 +333,7 @@
 		function on10_Riding(n){
 			
 			console.log( "306 ", document.getElementById("Wave").style.backgroundColor);
-			if( document.getElementById("Wave").style.backgroundColor == "lightgrey" ){
+			if( document.getElementById("Wave").style.backgroundColor == "grey" ){
 				return;
 			}
 			
@@ -467,11 +470,19 @@
 			}	
 
 			if( n == "X" ){
+				
 				//	後処理
-				obj2 = document.getElementById( "dialogTable" );
-				obj2.style.display = "none";
+
 				flagOnDialog = false;
 				obj.innerHTML = "";
+				
+				[ "WaveNo", "echoback_TB", "Wave"].forEach( (val)=>{
+					obj = document.getElementById( val );	
+					[ 'border-top-color', 'border-bottom-color' , 'border-left-color', 'border-right-color', 'background-color'].forEach( (val2)=>{ 
+						obj.style[val2] = "grey"; 
+					});					
+				});
+				
 			}	
 						
 		}
@@ -2189,34 +2200,38 @@
 
 						
 		<tr>
-			<td name="colored" style="font-size:32pt;background-color:grey;border-color:lightgrey;height:70px" id='Wave'>&nbsp;Wave:&nbsp;</td>
-			<td name="colored" style="font-size:32pt;border-color:lightgrey;background-color:grey;border-color:lightgrey" id="WaveNo">&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('7')">&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('8')">&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('9')">&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:20pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('NP')">△<br>Non Prioroty</td>
+			<td name="colored" style="font-size:28pt;background-color:grey;border-color:lightgrey;height:50px" id='Wave'>&nbsp;Wave:&nbsp;</td>
+			<td name="colored" style="font-size:28pt;border-color:lightgrey;background-color:grey;border-color:lightgrey" id="WaveNo">&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('7')">&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('8')">&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('9')">&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:14pt;border-color:lightgrey;background-color:black;color:white;white-space: nowrap;" onclick="on10_Riding('NP')">△ <br>&nbsp;Non Priority&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('X')">&nbsp;X&nbsp;</td>
 		</tr>
 		
 		<tr>
 			<td name="colored" colspan="2" rowspan="2" id="echoback_TB" 
-				style="font-weight:bold;font-size:34pt;border-color:lightgrey;background-color:grey;color:black;border-color:lightgrey;"></td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;height:70px" onclick="on10_Riding('4')">&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('5')">&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('6')">&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:20pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('P')">▲<br>&nbsp;&nbsp;&nbsp;&nbsp;Prioroty&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				style="font-weight:bold;font-size:28pt;border-color:lightgrey;background-color:grey;color:black;border-color:lightgrey;"></td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;height:50px" onclick="on10_Riding('4')">&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('5')">&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('6')">&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:14pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('P')">▲ <br>&nbsp;&nbsp;&nbsp;&nbsp;Priority&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td></td>
 		</tr>
 		<tr>
 			
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;height:70px" onclick="on10_Riding('1')">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('2')">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('3')">&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Miss')">Miss</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;height:50px" onclick="on10_Riding('1')">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('2')">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('3')">&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Miss')">Miss</td>
+						<td></td>
 		</tr>
 		<tr>
-			<td colspan="2" style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;height:70px" onclick="on10_Riding('Enter')">Enter</td>
-			<td colspan="2" style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;"  onclick="on10_Riding('0')">0</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('10')">10</td>
-			<td style="font-size:34pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Clear')">Clear</td>
+			<td colspan="2" style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;height:50px" onclick="on10_Riding('Enter')">Enter</td>
+			<td colspan="2" style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;"  onclick="on10_Riding('0')">0</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('10')">10</td>
+			<td style="font-size:28pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Clear')">Clear</td>
+						<td></td>
 		</tr>								
 	</table>
 

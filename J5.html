@@ -343,9 +343,10 @@
 			}
 			
 			if( n == "Enter" ){
-								
+				console.log('369 ', obj.innerHTML);
+				
 				ar = obj.innerHTML.split( " " );
-				document.getElementById( prevIJ + "_2" ).innerHTML = ar[0];
+				document.getElementById( prevIJ + "_2" ).innerHTML = ar[0] == "" ? "&nbsp;" : ar[0];
 				document.getElementById( prevIJ + "_3" ).innerHTML = ar.length > 1 ? ar[1] : "";				
 
 				//str = document.getElementById( prevIJ + "_1" ).innerHTML;

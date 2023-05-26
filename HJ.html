@@ -231,10 +231,11 @@
 		
 		
 		//	Judgeに反映
-		function emitHJ(){
+		function emitHJ( prevIJ__ ){
+			console.log('239 ', prevIJ__ );
 				hashToJudge = { "IJ":[""],"val":[""]};
-				hashToJudge.IJ[0] = prevIJ;
-				var str = document.getElementById( prevIJ ).innerHTML;
+				hashToJudge.IJ[0] = prevIJ__;
+				var str = document.getElementById( prevIJ__ ).innerHTML;
 				console.log('241 ', str );
 				console.log('242 ', str.indexOf(">") );
 				str = str.substring(  str.indexOf(">") + 1 );
@@ -369,7 +370,7 @@
 				totalReculc({"IJ":obj.id });		//	合計の再計算
 				getSeqAndNeedPoint();		//	順位とneedの計算
 				setApproveNo();						//	ApproveNo表示
-				emitHJ();
+				emitHJ(prevIJ);
 				
 			}
 			
@@ -2213,7 +2214,7 @@
 			console.log("937 prevIJ=%s", prevIJ );
 			
 			//	OK をJudgeに反映
-			emitHJ();
+			emitHJ(prevIJ);
 			
 			totalReculc({"IJ":prevIJ });			//	このイベントは通知ではないが、パラメータは通知を前提、
 			
@@ -2469,8 +2470,9 @@
 								
 			}
 			
+			console.log('612 ', prevIJ_);
 			setApproveNo();				
-			emitHJ();						
+			emitHJ(prevIJ_);						
 			totalReculc({"IJ": prevIJ_ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
 			getSeqAndNeedPoint();
 		

@@ -3637,6 +3637,7 @@
 					case 'J4':
 					case 'J5':
 					
+						console.log('1002');
 						setDetail( hash['IJ'] , ar[0].substr(1), hash['val'] );
 						
 						setAverageByDetail( hash['IJ'] );			//	下段の警告マークはここで点灯している	※	ave[行][列]をセット	行:0...4	列：0...19	網掛けなので、Totalには反映しない
@@ -3914,7 +3915,7 @@
 		var average = 0.0;
 		function setAverageByDetail( ij ){		//	セルのIJ	ex.	"0_0"
 
-			//console.log('1755 ij=%s' , ij );
+			console.log('1755 ij=%s' , ij );
 			average = 0.0;
 			var bunbo=0;
 			//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
@@ -3928,8 +3929,15 @@
 			str = document.getElementById( ij ).innerHTML;
 			str = str.split("▲").join("");			//	ridingErrorを除去
 			str = str.split("△").join("");			//
-			//console.log('1978 ', str );
+			console.log('1978 ', str );
+			str = str.substring( str.indexOf(">") +1);
+			str_ = str.substring( 0, str.indexOf("<") );
+			str = str.split("</label>").join("");
+			console.log('1978 ', str );
+
 			var arStr = str.split("<br>");
+			console.log('1306 ', arStr );
+			arStr[0] = str_;
 			for( var i=1; i<6; i++ ){										
 				bunbo += ! isNaN( arStr[i] ) ? 1 : 0; 					
 				if( ! isNaN( arStr[i] )	){
@@ -3978,7 +3986,7 @@
 			arStr[0] = arStr[0].substring( 0, arStr[0].indexOf(">" ) +1 ) + average.toFixed(2) + arStr[0].substring( arStr[0].indexOf("</" ) ) ;
 			//str = arStr.join("<br>");
 			console.log('2687 ', average );
-			//console.log( '3425 ', arStr );
+			console.log( '3425 ', arStr );
 			document.getElementById( ij ).innerHTML = arStr.join("<br>");
 			
 			ave[ parseInt( ij.split("_")[0]) ][ parseInt(ij.split("_")[1]) ] = average;
@@ -4020,6 +4028,7 @@
 	////console.log('746');
 	
 	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5"}'); 
+	/*
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
 
 	//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.1"}' );	
@@ -4031,10 +4040,10 @@
 	//dummyOn( 'J2;{"idNo":"12","IJ":"1_2","val":"▲1.1"}' );	
 	//dummyOn( 'J3;{"idNo":"13","IJ":"1_2","val":"▲1.2"}' );	
 	//dummyOn( 'J4;{"idNo":"14","IJ":"1_2","val":"▲1.3"}' );	
-	//dummyOn( 'J5;{"idNo":"15","IJ":"1_2","val":"▲1.4"}' );	
+	dummyOn( 'J5;{"idNo":"15","IJ":"1_2","val":"1.4"}' );	
 	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"1_2","val":"1.0"}' );	
-	
+	*/
 /*
 	dummyOn( 'J1;{"idNo":"1","IJ":"1_3","val":"1.0"}' );	
 	dummyOn( 'J2;{"idNo":"2","IJ":"1_3","val":"1.0"}' );	

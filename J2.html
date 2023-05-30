@@ -2166,7 +2166,10 @@
 		<tr>	<td id="rnd">Round </td><td>&nbsp;</td></tr>
 		<tr>
 			<td  id="ht">Heat</td>
-			<td id="timer">xx:xx</td>
+			<td ><img src="https://sozaic.com/wp-content/uploads/2022/03/life410.jpg" width="36px" height="24px" ></img>&nbsp;
+				<label id="timer">xx:xx</label>
+				<label style="padding:1px 10px 1px 10px;background-color:black;border-radius:10px;color:white;" id="timer_BTN" > aaa</label>
+			</td>
 		</tr>
 		
 
@@ -2480,6 +2483,13 @@
 						document.getElementById( "rnd" ).innerHTML = hash.rnd;
 						document.getElementById( "ht" ).innerHTML = hash.ht;
 
+
+						//	timer表示	
+						console.log('925 hash[timer]=%s ', hash['timer']);
+						document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
+						document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'];					
+
+						/*
 						time = new Date(hash.time);
 						timeNow = new Date();
 						diff = timeNow.getTime() - time.getTime();	
@@ -2489,7 +2499,8 @@
 						timerVal = hash.timer * 60000 - timeNow.getTime() + time.getTime()  ;	// * time.getTime() + hash.timer * 60000  ;
 						timerVal = timerVal >= 0 ? timerVal : 0; 
 						console.log( "689 " , timerVal );
-
+						*/
+						
 						console.log( "958 " , hash.nJ );
 						nJ = hash.nJ;
 						
@@ -2681,13 +2692,22 @@
 			
 			console.log('798 ' , timerVal  /* + hash.tSt */ );
 
+		var ar = objTimer.innerHTML.split(":");
+		var n = parseInt(ar[0])*60 + parseInt(ar[1]);
+		console.log('1995 n=%d %s', n , ar[0]);
+		n -= n > 0 ? 1: 0;
+		if( document.getElementById('timer_BTN').innerHTML != "pause" ){
+			objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
+		}
+
+			/*
 			if( hash.tSt == "start" && timerVal > 0){
 				timerVal -= timerVal >= 0 ? 1000 : 0;
 			}
 
 			intTimer = parseInt(timerVal/1000);
 			objTimer.innerHTML = parseInt(intTimer/60) + "\:" + parseInt(intTimer % 60)  ;
-
+			*/
 		}
 		//const timer = setInterval(onTimer, 1000);
 		const timer = setInterval(onTimer2, 1000);

@@ -2452,7 +2452,7 @@
 			}
 			
 			if( par == "set" ){
-				//console.log('1761');
+				console.log('1761 ', str_ );
 				document.getElementById( prevIJ_  ).innerHTML = str_;			
 				document.getElementById( prevIJ_ + "_00" ).style.fontWeight = "bold";
 									
@@ -2520,25 +2520,18 @@
 				document.getElementById(  jNo_.split("_")[0] + "_1"  ).innerHTML = document.getElementById(  "tenVal" ).innerHTML;
 				
 				
-				//	Jn		n=1...5	の平均値を求める
-				var bunbo=0;
 				var ave=0.0;
+				//	Jn		n=1...5	の平均値を求める
+				var arStr = ["","","","","",""];
 				for( var i=1; i<6; i++ ){
 					str = document.getElementById("J"  + i + "_1" ).innerHTML;
-					str = str.split("Pd▲").join('');
-					str = str.split("Pd△").join('');
 					str = str.split("▲").join('');
 					str = str.split("△").join('');
-					if( ! isNaN(str) ){
-						bunbo += 1;
-						ave += parseFloat(str);
-					}
+					arStr[ i ] = str;
 				}	
-				if( bunbo > 0 ){
-					ave = ave / bunbo;
-					////console.log('341 ' , ave.toFixed(2) );					
-					document.getElementById("echoback_TB_0" ).innerHTML = ave.toFixed(2);
-				}			
+				ave =  getAverage( arStr );
+				console.log('672 ave=%f', ave );				
+				document.getElementById("echoback_TB_0" ).innerHTML = ave.toFixed(2);
 				
 				onX_tenkey();
 				
@@ -2900,13 +2893,51 @@
 					}
 					
 					if( par=="RidingInterfere_" ){
+						
+						//	doubleの場合、相手のwaveNo（1...20)を表示する
 					 	if( n=="3" ){
 							document.getElementById("WaveNoAite" ).style.display = "";
 						} else {
 							document.getElementById("WaveNoAite" ).style.display = "none";
 						}
+						
+						console.log('73 %s|',n );
+						
+						//	平均値の欄を（妨害種別に沿って）反映させる
+						switch( n ){					
+							case 0:							
+								var ave=0.0;
+								//	Jn		n=1...5	の平均値を求める
+								var arStr = ["","","","","",""];
+								for( var i=1; i<6; i++ ){
+									str = document.getElementById("J"  + i + "_1" ).innerHTML;
+									str = str.split("▲").join('');
+									str = str.split("△").join('');
+									arStr[ i ] = str;
+								}	
+								ave =  getAverage( arStr );
+								console.log('672 ave=%f', ave );				
+								document.getElementById("echoback_TB_0" ).innerHTML = ave.toFixed(2);						
+							
+								break;
+							case 1:
+								document.getElementById("echoback_TB_0" ).innerHTML = "▲ 0.00";
+								break;
+							case 2:
+								document.getElementById("echoback_TB_0" ).innerHTML = "△ 0.00";
+								break;							
+							case 3:
+								console.log('98');
+								document.getElementById("echoback_TB_0" ).innerHTML = "△ 0.00";
+								break;								
+						}
+						console.log('102');
+						
+						
 					} 
 					
+					
+				
 					
 				}
 				
@@ -3916,11 +3947,10 @@
 		function setAverageByDetail( ij ){		//	セルのIJ	ex.	"0_0"
 
 			console.log('1755 ij=%s' , ij );
-			average = 0.0;
-			var bunbo=0;
+
 			//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
 			
-			var arPoint = [];
+			//var arPoint = [];
 			var flagPaddling = "";		//	paddling 有無flag			※	これは保留	・・・・・・・・・・・・・・・・・・・・・・・・・・・
 				//	分母を求める
 			//console.log('1857 ' , document.getElementById( ij ).innerHTML );
@@ -3934,49 +3964,11 @@
 			str_ = str.substring( 0, str.indexOf("<") );
 			str = str.split("</label>").join("");
 			console.log('1978 ', str );
-
 			var arStr = str.split("<br>");
-			console.log('1306 ', arStr );
-			arStr[0] = str_;
-			for( var i=1; i<6; i++ ){										
-				bunbo += ! isNaN( arStr[i] ) ? 1 : 0; 					
-				if( ! isNaN( arStr[i] )	){
-					arPoint.push( arStr[i] );
-				}
-			}
-			console.log('2646 ', arPoint );
-			//	平均
-			switch( bunbo ){
-			case 0:
-			case 1:	
-						average = parseFloat(arPoint[0]);
-						break;
-			case 2: 
-					average = (parseFloat(arPoint[0]) + parseFloat(arPoint[1]) ) / 2.0 ;
-					////console.log('765 ' , average + " " + arPoint[0] + " " + arPoint[1]);
-					break;
-					
-			case 3: 
-					average = ( parseFloat(arPoint[0]) + parseFloat(arPoint[1]) + parseFloat(arPoint[2]) ) / 3.0 ;
-					break;
-			case 4: 
-			case 5:
-					arPoint = arPoint.sort( function(a,b){
-						if( a<b )return -1;
-						if( a>b )return 1;
-						return 0;
-					});		
-					average = 0.0;
-					for( var i=1; i< arPoint.length-1; i++ ){
-						average += parseFloat(arPoint[i]);
-					}				
-					average = average / parseFloat(arPoint.length-2);
-					
-					break;
-				
-			}
-			console.log('1931 average=%f bunbo=%d', average, bunbo );
-			if( isNaN(average) )average = 0.00;
+			
+			getAverage( arStr );
+			console.log('1391 average=%f ', average );
+			
 			
 			//	平均値average	ijの先頭行	にセット
 			str = document.getElementById( ij ).innerHTML;
@@ -4024,14 +4016,72 @@
 		}
 		
 		
+		//	平均ルールに従って平均する	※共通化した　setAverageByDetail()とon10_TB()から呼ぶ
+		function getAverage( 					//	戻り値：　平均値（float)
+													arStr ){	//	平均する配列		1...5	[0]は対象外
+			var arPoint = [];
+			average = 0.0;
+			var bunbo=0;
+			console.log('1306 ', arStr );
+			arStr[0] = str_;
+			for( var i=1; i<6; i++ ){										
+				bunbo += ! isNaN( arStr[i] ) ? 1 : 0; 					
+				if( ! isNaN( arStr[i] )	){
+					arPoint.push( arStr[i] );
+				}
+			}
+			console.log('2646 ', arPoint );
+			//	平均
+			switch( bunbo ){
+			case 0:
+			case 1:	
+						average = parseFloat(arPoint[0]);
+						break;
+			case 2: 
+					average = (parseFloat(arPoint[0]) + parseFloat(arPoint[1]) ) / 2.0 ;
+					////console.log('765 ' , average + " " + arPoint[0] + " " + arPoint[1]);
+					break;
+					
+			case 3: 
+					average = ( parseFloat(arPoint[0]) + parseFloat(arPoint[1]) + parseFloat(arPoint[2]) ) / 3.0 ;
+					break;
+			case 4: 
+			case 5:
+					arPoint = arPoint.sort( function(a,b){
+						if( a<b )return -1;
+						if( a>b )return 1;
+						return 0;
+					});		
+					average = 0.0;
+					for( var i=1; i< arPoint.length-1; i++ ){
+						average += parseFloat(arPoint[i]);
+					}				
+					average = average / parseFloat(arPoint.length-2);
+					console.log('1436 ',arPoint );
+					
+					break;
+				
+			}
+			console.log('1931 average=%f bunbo=%d', average, bunbo );
+			if( isNaN(average) )average = 0.00;
+
+			return average;
+		}
+		
+		
 	//	php test: ;	json形式
 	////console.log('746');
 	
 	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5"}'); 
-	/*
+	
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
-
-	//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.1"}' );	
+	/*
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
+	dummyOn( 'J2;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
+	dummyOn( 'J3;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
+	dummyOn( 'J4;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
+	dummyOn( 'J5;{"idNo":"1","IJ":"0_0","val":"△2.0"}' );	
+	*/
 	//dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"0.9"}' );	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"0_2","val":"1.0"}' );	
 	
@@ -4040,10 +4090,10 @@
 	//dummyOn( 'J2;{"idNo":"12","IJ":"1_2","val":"▲1.1"}' );	
 	//dummyOn( 'J3;{"idNo":"13","IJ":"1_2","val":"▲1.2"}' );	
 	//dummyOn( 'J4;{"idNo":"14","IJ":"1_2","val":"▲1.3"}' );	
-	dummyOn( 'J5;{"idNo":"15","IJ":"1_2","val":"1.4"}' );	
+	//dummyOn( 'J5;{"idNo":"15","IJ":"1_2","val":"1.4"}' );	
 	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"1_2","val":"1.0"}' );	
-	*/
+	
 /*
 	dummyOn( 'J1;{"idNo":"1","IJ":"1_3","val":"1.0"}' );	
 	dummyOn( 'J2;{"idNo":"2","IJ":"1_3","val":"1.0"}' );	

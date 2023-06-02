@@ -2220,6 +2220,7 @@
 			setApproveNo();
 			console.log("937 prevIJ=%s", prevIJ );
 			
+			/*
 			//	OK をJudgeに反映
 			emitHJ(prevIJ);
 			
@@ -2229,12 +2230,14 @@
 			
 			//console.log('931 ', prevIJ);
 			//setApproveNo();
-			
+			*/			
+						
 			on10_TB("X");
 			
 			//flagOnDialog = false;
 			//document.getElementById( "ridingDialog" ).style.display = "none";
 			////console.log('910');
+
 			
 		}
 		
@@ -2414,6 +2417,7 @@
 			var fWeight = document.getElementById( prevIJ_ + "_00" ).style.fontWeight;
 			//console.log('1756 ',fWeight );
 			
+			var str_ = "";
 			str = xInt['sINT'].split("dbl").join("");
 			if( prevIJ_ == prevIJ ){
 				
@@ -2442,15 +2446,29 @@
 				//	赤の網掛け
 				setNet( prevIJ_, "red");		//	赤アミカケにすれば、合計などから除外される
 				
-				//	妨害のセット
-				if( interfere[ prevI ][0] == 0.0 ){
-					interfere[ prevI ][0] = str_ =="" ? 0.0 : str_ =="△" ? 1.0 : 2.0;
-				} else if( interfere[ prevI ][1] == "" ){ 
-					interfere[ prevI ][1] = str_ =="" ? 0.0 : str_ =="△" ? 1.0 : 2.0;
-				}				
-		
-			}
-			
+				//	妨害(interfere)をセット		その色（行）について発生順に２つまでセット		interfere[色：0...4][回数0...1]：コモン領域
+				console.log('578 ', str );
+				interfere[ prevI ][0] = 0.0;
+				interfere[ prevI ][1] = 0.0;
+				var ind = 0;		
+				for( var i=0; i<20; i++ ){
+					//console.log( "582", document.getElementById( prevI + "_" + i + "_00"  ).innerHTML );
+					if(  document.getElementById( prevI + "_" + i + "_00"  ).innerHTML.indexOf("▲" ) >= 0 ){
+						if( ind <2 ){
+							interfere[ prevI ][ ind ] = 2.0;		//	▲ 2.0をセットする
+							ind += 1;
+						}
+					} 
+					if(  document.getElementById( prevI + "_" + i + "_00"  ).innerHTML.indexOf("△" ) >= 0 ){
+						if( ind <2 ){
+							interfere[ prevI ][ ind ] = 1.0;
+							ind += 1;
+						}
+					} 
+				}
+				
+			} 
+				
 			if( par == "set" ){
 				console.log('1761 ', str_ );
 				document.getElementById( prevIJ_  ).innerHTML = str_;			
@@ -2459,6 +2477,9 @@
 				setAverageByDetail( prevIJ_  );
 				
 				setNet( prevIJ_, "");		
+				
+				interfere[ prevI ][ 0 ] = 0.0;		//	妨害をクリア
+				interfere[ prevI ][ 1 ] = 0.0;
 						
 			}
 			
@@ -2472,16 +2493,21 @@
 					setNet( prevIJ_, "");		
 				} else {
 					setNet( prevIJ_, "grey");		
-				}						
-				
+				}
+										
+				interfere[ prevI ][ 0 ] = 0.0;			//	妨害をクリア
+				interfere[ prevI ][ 1 ] = 0.0;
 								
 			}
 			
+			
+			console.log('611 ', interfere );
 			console.log('612 ', prevIJ_);
 			setApproveNo();				
 			emitHJ(prevIJ_);						
 			totalReculc({"IJ": prevIJ_ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
 			getSeqAndNeedPoint();
+			
 		
 		}
 
@@ -3396,7 +3422,9 @@
 				}
 				
 			}	
+			
 			//console.log('1320 ', seqAns );
+			//console.log('1320 ', interfere );
 			
 			
 			//	sort		※	合計値を第一に考慮
@@ -3408,8 +3436,10 @@
 				return 0;
 			 });
 			seqAns.forEach( val =>{
-				//console.log("863", val[0] + " " + val[1]);
+				console.log("863", val[0] + " " + val[1]);
 			});
+
+
 
 			//console.log('1280');
 			arSeq = ["st", "nd", "rd", "th", "th"];
@@ -3493,7 +3523,7 @@
 							//	妨害ありの場合、
 							//
 							//console.log('1314 %s %s cons_=%d', interfere[ seqAns[cons_][1] ][0],interfere[ seqAns[cons_][1] ][1], cons_ );
-							
+							/*
 							var prev = cons_ == 1 ? 0 : 1;		//	※	2位の上は1位、3位以降の上は2位
 							
 							//	△＿		（ノンプライオリティ妨害が1回(だけ)）	2位が1位（3位以降なら2位）になるNeed		
@@ -3543,6 +3573,8 @@
 								str_ =  seqAns[ prev ][0][0] * 2.0;
 								//console.log('1487');
 							}
+							
+							*/
 							
 							//console.log('1439 str_=%s cons_=%d', str_ , cons_);
 							//console.log('', document.getElementById( str ).innerHTML );
@@ -3711,12 +3743,63 @@
 		//	該当行の20列から、
 		//	網掛けがないセルについて
 		//	最大２つを取得、Total列の該当行（１行、２行）を表示する
-		
+		//	※	つまり、合計、１位、２位を求める（だけ）	順位などはgetSeqAndNeedPoint()で求める
+				
 		function totalReculc(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
-			//console.log('1596 ' ,hash);			
+			console.log('1596a ' ,hash);			
 			var seq = getTop2_and_setTotal0( [ hash['IJ'].split("_")[0]  ], 0 );		//	最大２つを取得、
-			//console.log('1597 ', seq );
+			console.log('1597 ', seq );
 			
+			console.log('1057 ', interfere );
+			console.log( "1058 ", interfere[ hash['IJ'].split("_")[0] ][0] );
+			console.log( "1059 ", interfere[ hash['IJ'].split("_")[0] ][1] );
+			
+			//	妨害があった場合、１位、２位を変更する
+			if( interfere[ hash['IJ'].split("_")[0] ][0] == 1.0 ){
+				if( interfere[ hash['IJ'].split("_")[0] ][1] == 0.0 ){					//	△　＿
+					seq[1] = parseFloat(seq[1]) / 2.0;
+				} else if( interfere[ hash['IJ'].split("_")[0] ][1] == 2.0 ){		//	△　▲
+					seq[0] = seq[0] / 2.0;
+					seq[1] = 0.0;
+				} else {																								//	△　△
+					seq[0] = seq[0] / 2.0;
+					seq[1] = seq[1] / 2.0;
+				}
+			}
+			if( interfere[ hash['IJ'].split("_")[0] ][0] == 2.0 ){
+				if( interfere[ hash['IJ'].split("_")[0] ][1] == 0.0 ){					//	▲　＿
+					seq[1] = 0.0;
+				} else if( interfere[ hash['IJ'].split("_")[0] ][1] == 1.0 ){		//	▲　△
+					seq[0] = seq[0] / 2.0;
+					seq[1] = 0.0;
+				} else {																								//	▲　▲
+					seq[0] = 0.0;
+					seq[1] = 0.0;
+				}
+			}
+			
+			/*
+			var n=1;
+			if( interfere[ hash['IJ'].split("_")[0] ][0] != 0.0 ){			//	１つでも妨害が登録されていれば
+				console.log("1065");
+				if( interfere[ hash['IJ'].split("_")[0] ][0] == 1.0 ){
+					 seq[n] = parseFloat(seq[1]) / 2.0;
+					 n -= 1;
+				}
+				if( interfere[ hash['IJ'].split("_")[0] ][0] == 2.0 ){
+					 seq[n] = 0.0;
+					 n -= 1;
+				}
+				if( interfere[ hash['IJ'].split("_")[0] ][1] == 1.0 ){
+					 seq[n] = parseFloat(seq[0]) / 2.0;
+					 n -= 1;
+				}				
+				if( interfere[ hash['IJ'].split("_")[0] ][1] == 2.0 ){
+					 seq[n] = 0.0;
+					 n -= 1;
+				}				
+			}
+			*/
 			ind = hash['IJ'].split("_")[0] ;
 			total_and_top2[ ind ][0] = parseFloat(seq[0]) + parseFloat(seq[1]);		//	合計	var total_and_top2 = Array( Array(20), Array(20), Array(20), Array(20), Array(20) )
 			total_and_top2[ ind ][1] = parseFloat(seq[0]);						//	１位
@@ -3769,6 +3852,7 @@
 			if( seq[0][0] != 0 ){ top2[0] = seq[0][0]; }
 			if( seq[1][0] != 0 ){ top2[1] = seq[1][0]; }
 			
+			
 			//	その2つを色替えする
 			var cnt2=0;
 			seq.forEach( val => {			
@@ -3786,6 +3870,7 @@
 				cnt2 += 1;														
 			});			
 			
+			//console.log("1144 ", top2 );
 			return top2;
 		}
 
@@ -4027,7 +4112,7 @@
 			for( var i=1; i<6; i++ ){										
 				bunbo += ! isNaN( arStr[i] ) ? 1 : 0; 					
 				if( ! isNaN( arStr[i] )	){
-					arPoint.push( arStr[i] );
+					arPoint.push( parseFloat( arStr[i]) );
 				}
 			}
 			console.log('2646 ', arPoint );
@@ -4075,13 +4160,63 @@
 	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5"}'); 
 	
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
+
 	/*
-	dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
-	dummyOn( 'J2;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
-	dummyOn( 'J3;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
-	dummyOn( 'J4;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
-	dummyOn( 'J5;{"idNo":"1","IJ":"0_0","val":"△2.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.2"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"3_0","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"4_0","val":"1.0"}' );	
+
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"2_1","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"3_1","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"4_1","val":"1.0"}' );	
+
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_2","val":"1.0"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"1_2","val":"0.9"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"2_2","val":"0.8"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"3_2","val":"0.7"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"4_2","val":"0.6"}' );	
 	*/
+	
+	/*
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.0"}' );	
+	dummyOn( 'J2;{"idNo":"1","IJ":"0_0","val":"△1.1"}' );	
+	dummyOn( 'J3;{"idNo":"1","IJ":"0_0","val":"1.2"}' );	
+	dummyOn( 'J4;{"idNo":"1","IJ":"0_0","val":"1.3"}' );	
+	dummyOn( 'J5;{"idNo":"1","IJ":"0_0","val":"1.4"}' );	
+
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"1.0"}' );	
+		dummyOn( 'J2;{"idNo":"1","IJ":"1_0","val":"1.1"}' );	
+		dummyOn( 'J3;{"idNo":"1","IJ":"1_0","val":"1.2"}' );	
+		dummyOn( 'J4;{"idNo":"1","IJ":"1_0","val":"1.3"}' );	
+		dummyOn( 'J5;{"idNo":"1","IJ":"1_0","val":"1.4"}' );	
+	
+		dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.0"}' );	
+		dummyOn( 'J1;{"idNo":"1","IJ":"3_0","val":"1.0"}' );	
+		dummyOn( 'J1;{"idNo":"1","IJ":"4_0","val":"1.0"}' );	
+	
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.0"}' );	
+	dummyOn( 'J2;{"idNo":"1","IJ":"0_1","val":"1.1"}' );	
+	dummyOn( 'J3;{"idNo":"1","IJ":"0_1","val":"1.2"}' );	
+	dummyOn( 'J4;{"idNo":"1","IJ":"0_1","val":"1.3"}' );	
+	dummyOn( 'J5;{"idNo":"1","IJ":"0_1","val":"1.4"}' );	
+		
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_3","val":"1.0"}' );	
+	dummyOn( 'J2;{"idNo":"1","IJ":"0_3","val":"1.1"}' );	
+	dummyOn( 'J3;{"idNo":"1","IJ":"0_3","val":"1.2"}' );	
+	dummyOn( 'J4;{"idNo":"1","IJ":"0_3","val":"1.4"}' );	
+	dummyOn( 'J5;{"idNo":"1","IJ":"0_3","val":"1.4"}' );	
+*/
+	//dummyOn( 'J1;{"idNo":"1","IJ":"0_19","val":"1.0"}' );	
+	//dummyOn( 'J2;{"idNo":"1","IJ":"0_19","val":"1.1"}' );	
+	//dummyOn( 'J3;{"idNo":"1","IJ":"0_19","val":"1.2"}' );	
+	//dummyOn( 'J4;{"idNo":"1","IJ":"0_19","val":"1.3"}' );	
+	//dummyOn( 'J5;{"idNo":"1","IJ":"0_19","val":"1.4"}' );	
+
+
 	//dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"0.9"}' );	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"0_2","val":"1.0"}' );	
 	

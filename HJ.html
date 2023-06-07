@@ -73,8 +73,8 @@
 								fun,			//	daialog毎の特別処理	ex.	table内の場合、色を付ける
 								obj_ ){		//	this
 			//alert(div_id);
-			console.log('139 div_id=%s ', div_id );
-			console.log('139  ',  flagOnDialogChild );
+			//console.log('139 div_id=%s ', div_id );
+			//console.log('139  ',  flagOnDialogChild );
 			//	dialogが表示中なら、終了		※	二重起動を禁止
 			
 			//	何らかのdialogが表示中でない場合、表示中とする・・・処理は中断しない
@@ -90,13 +90,13 @@
 				}
 			}
 			
-			console.log('105 prevIJ=%s', prevIJ );
+			//console.log('105 prevIJ=%s', prevIJ );
 			if( div_id != "dialogPaddling" && div_id != "paddlingDialog" && div_id != "tenkeyDialog" ){
 				prevIJ = obj_.id;			//	今回のi_j
 				prevI = prevIJ.split("_")[0];						
 				prevJ = prevIJ.split("_")[1];						
 			}
-			console.log('105 prevIJ=%s', prevIJ );
+			//console.log('105 prevIJ=%s', prevIJ );
 			
 			var obj = document.getElementById( div_id ).style;
 			//console.log('153 ', obj );
@@ -111,7 +111,7 @@
 			if( fun ){
 				fun();
 			}
-			console.log('161 ', obj.display );
+			//console.log('161 ', obj.display );
 			//	dialog表示
 			obj.display = "";		
 			//document.getElementById(div_id).style.display="";
@@ -202,7 +202,7 @@
 							
 			});
 			
-			console.log('436 hashHJ=', hashHJ );
+			//console.log('436 hashHJ=', hashHJ );
 			
 						
 			//	網掛けセルのあった行だけLoop		Total列の再計算			※１
@@ -225,30 +225,30 @@
 			//console.log('473');
 			setApproveNo();
 			
-			console.log('510 ave=', ave );
+			//console.log('510 ave=', ave );
 		}
 		
 		
 		
 		//	Judgeに反映
 		function emitHJ( prevIJ__ ){
-			console.log('239 ', prevIJ__ );
+			//console.log('239 ', prevIJ__ );
 				hashToJudge = { "IJ":[""],"val":[""]};
 				hashToJudge.IJ[0] = prevIJ__;
 				var str = document.getElementById( prevIJ__ ).innerHTML;
-				console.log('241 ', str );
-				console.log('242 ', str.indexOf(">") );
+				//console.log('241 ', str );
+				//console.log('242 ', str.indexOf(">") );
 				str = str.substring(  str.indexOf(">") + 1 );
 				str = str.substring( 0, str.indexOf("<"));
 				hashToJudge.val[0] = str;
-				console.log( "281 ", hashToJudge );
+				//console.log( "281 ", hashToJudge );
 				emit( hashToJudge );					
 		}
 		//	broadcastする
 		function emit(str){
 			////console.log('350 str=', str);
 			var str = id + ";" + JSON.stringify(str) ;
-			console.log('474 str=' , str );
+			//console.log('474 str=' , str );
 			socket.emit("post", { text: str } );
 		}
 		
@@ -355,7 +355,7 @@
 			} 
 			timerFlag=false;
 			
-			console.log( 'onTimer3' );
+			//console.log( 'onTimer3' );
 			onOpenDialog('ridingDialog', ridingSpecial, objPar );
 		}
 			
@@ -365,14 +365,14 @@
 			clearInterval(timer3);
 			
 			prevIJ = obj.id;
-			console.log('384 ', prevIJ );
+			//console.log('384 ', prevIJ );
 			prevI = prevIJ.split("_")[0];
 			prevJ = prevIJ.split("_")[1];
 			
-			console.log('385 buttonDoubleclick prevIJ=%s %s %s %s', obj.id, net[prevI][prevJ], prevI, prevJ);		//	行_列	ex. "0_2"			
+			//console.log('385 buttonDoubleclick prevIJ=%s %s %s %s', obj.id, net[prevI][prevJ], prevI, prevJ);		//	行_列	ex. "0_2"			
 			if( net[prevI][prevJ] == "grey" ){
 			
-				console.log('393 ');
+				//console.log('393 ');
 				setNet( obj.id, "" );					//	網掛けクリア
 				totalReculc({"IJ":obj.id });		//	合計の再計算
 				getSeqAndNeedPoint();		//	順位とneedの計算
@@ -403,12 +403,12 @@
 		var bAth = 0;	//	起動元	（色）：0		Athlete（色）：１
 		function aaa( n, par ){		//	n:0...4(色）	par＝bAth	起動元	0：Athlete（色）でない＝（色）	1:Athlete（色）
 			bAth = par;
-			console.log('691 bAth=%d n=%d', bAth, n );
+			//console.log('691 bAth=%d n=%d', bAth, n );
 			
 			
 			//	起動するdialogの種別（Pad/rid）を判定し、そのdialogを表示する
 			var str = document.getElementById( n + "_Ath" ).innerHTML;
-			console.log('399 str=%s', str );
+			//console.log('399 str=%s', str );
 			if( str.indexOf("Pd") >= 0 || bAth == 0 ){
 				
 				//	Athlete(色）最下に既に２行分の登録がある場合、skip
@@ -425,7 +425,7 @@
 				prevIJ = n;		//	色:0...4
 				prevI = n;			//prevIJ.split("_")[0];						
 				prevJ = "";			//prevIJ.split("_")[1];							
-				console.log('708 ', prevIJ );
+				//console.log('708 ', prevIJ );
 				onOpenDialog('paddlingDialog', paddlingSpecial, obj );
 				
 			} else {	
@@ -433,7 +433,7 @@
 				//	rid妨害		※	Ath(色）を選択しても、ridDialog（overwrite）を起動できる			ex. ▲ 3→Red
 				var str = str.split("→")[0].split(" ")[1];				
 				str = n + "_" + ( parseInt(str) - 1);
-				console.log('427 ', str );
+				//console.log('427 ', str );
 				objPar = document.getElementById( str );				
 				onOpenDialog( 'ridingDialog', ridingSpecial, objPar );
 				
@@ -456,9 +456,9 @@
 						  
 						 onclick="aaa(id,0)"
 						 
-				>Red	
+				><br>Red	
 				<br><label id="0_seq">&nbsp;</label>
-				<br>&nbsp;<br>&nbsp;<br>&nbsp;<br><label id="0_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				<br>&nbsp;<br>&nbsp;<br><label id="0_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 			
 		<!-- Athleteの列-->
@@ -497,9 +497,9 @@
 						  
 						 onclick="aaa(id,0)"
 						 
-				>White	
+				><br>White	
 				<br><label id="1_seq">&nbsp;</label>
-				<br>&nbsp;<br>&nbsp;<br>&nbsp;<br><label id="1_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				<br>&nbsp;<br>&nbsp;<br><label id="1_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 			
 		<!-- Athleteの列-->
@@ -538,9 +538,9 @@
 						  
 						 onclick="aaa(id,0)"
 						 
-				>Yellow	
+				><br>Yellow	
 				<br><label id="2_seq">&nbsp;</label>
-				<br>&nbsp;<br>&nbsp;<br>&nbsp;<br><label id="2_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				<br>&nbsp;<br>&nbsp;<br><label id="2_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 			
 		<!-- Athleteの列-->
@@ -579,9 +579,9 @@
 						  
 						 onclick="aaa(id,0)"
 						 
-				>Blue	
+				><br>Blue	
 				<br><label id="3_seq">&nbsp;</label>
-				<br>&nbsp;<br>&nbsp;<br>&nbsp;<br><label id="3_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				<br>&nbsp;<br>&nbsp;<br><label id="3_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 			
 		<!-- Athleteの列-->
@@ -620,9 +620,9 @@
 						  
 						 onclick="aaa(id,0)"
 						 
-				>Green	
+				><br>Green	
 				<br><label id="4_seq">&nbsp;</label>
-				<br>&nbsp;<br>&nbsp;<br>&nbsp;<br><label id="4_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				<br>&nbsp;<br>&nbsp;<br><label id="4_seq5" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 			
 		<!-- Athleteの列-->
@@ -2037,7 +2037,7 @@
 			//
 			//	インターフェア		妨害ボタンをハイライト		※	「△double」は初回ハイライトされる事はない
 			//
-			console.log( "211 str=%s prevIJ=%s", str, prevIJ );
+			//console.log( "211 str=%s prevIJ=%s", str, prevIJ );
 			
 			if( str.indexOf( "▲" ) >= 0 ) {
 				document.getElementById( "RidingInterfere_1" ).style.backgroundColor = "black";
@@ -2147,7 +2147,7 @@
 			for( var i=0; i<4; i++ ){
 				if( document.getElementById( "RidingInterfere_" + i ).style.backgroundColor == "black" ) nRidingInterfere=i;
 			}
-			console.log('1181 ', nRidingInterfere);
+			//console.log('1181 ', nRidingInterfere);
 
 			//
 			//	妨害のコモンをセットする
@@ -2187,10 +2187,10 @@
 			xInt['prevLink'] = "";
 			arAth.forEach( (val,key)=>{
 				str = document.getElementById( prevI + val ).innerHTML;
-				console.log('1305 prevI=%s val=%s str=%s', prevI , val, str );
+				//console.log('1305 prevI=%s val=%s str=%s', prevI , val, str );
 				
 				if( str != "" ) {
-					console.log('1308 ', str );
+					//console.log('1308 ', str );
 					//if( str.split("→")[0].indexOf( "dbl" ) > 0 && str.split("→")[0].split(" ")[1] == (parseInt(prevJ)+1) + "" ){
 					if(  str.split("→")[0].split(" ")[1] == (parseInt(prevJ)+1) + "" ){
 						console.log('1309 ', key)
@@ -2201,11 +2201,11 @@
 				
 			});					
 						
-			console.log('1237 ', nRidingInterfere );			
+			//console.log('1237 ', nRidingInterfere );			
 			if( nRidingInterfere == 3 ){					
 				xInt['sLink'] = xInt['sRight'];
 			}
-			console.log("1182", xInt );
+			//console.log("1182", xInt );
 			
 			
 			//	登録可能か？
@@ -2218,7 +2218,7 @@
 			doAction();							
 										
 			setApproveNo();
-			console.log("937 prevIJ=%s", prevIJ );
+			//console.log("937 prevIJ=%s", prevIJ );
 			
 			/*
 			//	OK をJudgeに反映
@@ -2246,17 +2246,17 @@
 		function onJind( obj ){
 			//alert( "onJind " + n );
 			
-			console.log( "1266 ", prevIJ );
+			//console.log( "1266 ", prevIJ );
 			
 			//	JNo
-			console.log( "260 ", obj.id );
+			//console.log( "260 ", obj.id );
 			jNo_ = obj.id;
 			jNo_ = "J" + jNo_.charAt(1) + "_0";
 			document.getElementById( "tenJNo" ).innerHTML = document.getElementById( jNo_ ).innerHTML;
 			//console.log('264 ', document.getElementById( jNo_ ).innerHTML );
 			
 			//	val
-			console.log('264 ', document.getElementById( obj.id ).innerHTML );
+			//console.log('264 ', document.getElementById( obj.id ).innerHTML );
 			document.getElementById( "tenVal" ).innerHTML = document.getElementById( obj.id ).innerHTML;
 			
 			
@@ -2269,7 +2269,7 @@
 		//	登録可能か？		※	判定処理だけ
 		//
 		function isAlreadyFull(){		//	戻り	-1:OK登録可能		n>=0：その色で登録ができない
-			console.log('1470');
+			//console.log('1470');
 
 			//	自分が、妨害「なし」の場合、無条件にOK
 			if( xInt['sINT'] == "" ) return -1;		
@@ -2301,7 +2301,7 @@
 			
 		
 		function doAction(){
-			console.log('1556 doAction ============%o %s', xInt );
+			//console.log('1556 doAction ============%o %s', xInt );
 						
 			//	新規（妨害）の場合、または「なし」（＝正常値の登録）
 			str = xInt['sLeft'].split("dbl").join("");
@@ -2324,18 +2324,18 @@
 					}
 								
 					//	push
-					console.log('1565 push ', xInt['sINT']);
+					//console.log('1565 push ', xInt['sINT']);
 					document.getElementById( prevI + "_Ath_").innerHTML = document.getElementById( prevI + "_Ath").innerHTML;
 					document.getElementById( prevI + "_Ath").innerHTML = (xInt['sINT'] =="△dbl" ? "△" : xInt['sINT'] ) + " " + (parseInt(prevJ)+1) + "→" + xInt['sRight']; 
 								
 				//}
 				set_5X20( prevIJ, "red" );
-				console.log('1558 push!', xInt );
+				//console.log('1558 push!', xInt );
 				
 			} else {
 				
 				//	同じ妨害		 overwrite（相手の変更） or delete
-				console.log('468 sINT=%s prevINT%s sRight=%s prevI=%s ', xInt['sINT'] , xInt['prevINT'], xInt['sRight'], prevI );
+				//console.log('468 sINT=%s prevINT%s sRight=%s prevI=%s ', xInt['sINT'] , xInt['prevINT'], xInt['sRight'], prevI );
 				if( arColor_[prevI] == xInt['sRight'] && xInt['sINT'] != "" ){
 					alert( "自分を相手の色として設定できません" );
 					return;
@@ -2364,7 +2364,7 @@
 			// double処理
 			//
 
-			console.log('1596 ====link===', xInt );
+			//console.log('1596 ====link===', xInt );
 			
 			if( xInt['sINT'] == "△dbl" ){
 				
@@ -2412,8 +2412,8 @@
 											par					//	"set " "red" "gray" ""
 											){			//	▲、△、△dbl		※	この他、Pdの処理にgreyがある
 			
-			console.log('1632 %s %s', prevIJ_, par );
-			console.log('669 ',document.getElementById( prevIJ_ + "_00" ).style.fontWeight );
+			//console.log('1632 %s %s', prevIJ_, par );
+			//console.log('669 ',document.getElementById( prevIJ_ + "_00" ).style.fontWeight );
 			var fWeight = document.getElementById( prevIJ_ + "_00" ).style.fontWeight;
 			//console.log('1756 ',fWeight );
 			
@@ -2446,8 +2446,8 @@
 				//	赤の網掛け
 				setNet( prevIJ_, "red");		//	赤アミカケにすれば、合計などから除外される
 				
-				//	妨害(interfere)をセット		その色（行）について発生順に２つまでセット		interfere[色：0...4][回数0...1]：コモン領域
-				console.log('578 ', str );
+				
+				/*
 				interfere[ prevI ][0] = 0.0;
 				interfere[ prevI ][1] = 0.0;
 				var ind = 0;		
@@ -2466,11 +2466,14 @@
 						}
 					} 
 				}
+				*/
+				
+				
 				
 			} 
 				
 			if( par == "set" ){
-				console.log('1761 ', str_ );
+				//console.log('1761 ', str_ );
 				document.getElementById( prevIJ_  ).innerHTML = str_;			
 				document.getElementById( prevIJ_ + "_00" ).style.fontWeight = "bold";
 									
@@ -2494,15 +2497,36 @@
 				} else {
 					setNet( prevIJ_, "grey");		
 				}
-										
-				interfere[ prevI ][ 0 ] = 0.0;			//	妨害をクリア
-				interfere[ prevI ][ 1 ] = 0.0;
-								
+																		
 			}
 			
 			
-			console.log('611 ', interfere );
-			console.log('612 ', prevIJ_);
+
+			//	妨害(interfere)をセット		その色（行）について発生順に２つまでセット		interfere[色：0...4][回数0...1]：コモン領域				
+			interfere[ prevI ][0] = 0.0;
+			interfere[ prevI ][1] = 0.0;
+			var ind = 0;		
+			for( var i=0; i<20; i++ ){
+				//console.log( "582", document.getElementById( prevI + "_" + i + "_00"  ).innerHTML );
+				if(  document.getElementById( prevI + "_" + i + "_00"  ).innerHTML.indexOf("▲" ) >= 0 ){
+					if( ind <2 ){
+						interfere[ prevI ][ ind ] = 2.0;		//	▲ 2.0をセットする
+						ind += 1;
+					}
+				} 
+				if(  document.getElementById( prevI + "_" + i + "_00"  ).innerHTML.indexOf("△" ) >= 0 ){
+					if( ind <2 ){
+						interfere[ prevI ][ ind ] = 1.0;
+						ind += 1;
+					}
+				} 
+			}
+			
+			
+		
+			
+			//console.log('611 ', interfere );
+			//console.log('612 ', prevIJ_);
 			setApproveNo();				
 			emitHJ(prevIJ_);						
 			totalReculc({"IJ": prevIJ_ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
@@ -2556,7 +2580,7 @@
 					arStr[ i ] = str;
 				}	
 				ave =  getAverage( arStr );
-				console.log('672 ave=%f', ave );				
+				//console.log('672 ave=%f', ave );				
 				document.getElementById("echoback_TB_0" ).innerHTML = ave.toFixed(2);
 				
 				onX_tenkey();
@@ -2578,11 +2602,11 @@
 			}	
 
 			if( n == "X" ){
-				console.log('757');
+				//console.log('757');
 				
 				if( flagOnDialogChild )return;		//	子dialogが開いている場合、無視
 			
-				console.log('761');
+				//console.log('761');
 				
 				//	後始末					
 				//	2段目、各judgeの背景色
@@ -3436,7 +3460,7 @@
 				return 0;
 			 });
 			seqAns.forEach( val =>{
-				console.log("863", val[0] + " " + val[1]);
+				//console.log("863", val[0] + " " + val[1]);
 			});
 
 
@@ -3457,136 +3481,99 @@
 					document.getElementById( str ).innerHTML = "";
 				}
 				
-				//str = "Total_" + val[1] + "_2";
-				str = "Total_" + val[1];
-				////console.log('1296 str=', str );
+				//
+				//	Total（色）の３行目（	Win by  |  Needs ）を表示する
+				//
+				
+				str = "Total_" + val[1];		//		val[1]：index		0...4		※	str	注意↓
+				
+				//console.log('1296 str=%s cons_=%d', str, cons_ );
+				var upper = 0;
 				switch (cons_){
 				case 0:
-							//	document.getElementById( str ).innerHTML = "Win by " +  parseFloat(val[0][0]).toFixed(2); 		
-							break;
-							
-				//case 1:	break;			// defaultで行う
 
-							
+							//	１位
+							var ar = document.getElementById( str ).innerHTML.split("<br>");
+							ar[2] = "Win by " +  parseFloat(val[0][0]).toFixed(2); 					
+							document.getElementById( str ).innerHTML = ar.join("<br>"	);
+							//console.log( '771 ', document.getElementById( str ).innerHTML );
+							break;
+
+				case 1:			
 				case 2:
 				case 3:
 				case 4:
-
-							//	3位以下の人が2位になるためのneeds
-							//	1.		2位の合計点	-	3位以下の１番目の点数
-							str_ =  seqAns[1][0][0] - seqAns[cons_][0][1]; 
-							
-							//	2.		2位の合計点	-	3位以下の1番目の点数	<=	2位の1番目の点数		->	＋0.01	
-							if(  (seqAns[1][0][0] - seqAns[cons_][0][1])   <= seqAns[1][0][1] && seqAns[cons_][0][0] != 0.0 ){
-								str_ += 0.01;		
-							}			
-							//document.getElementById( str ).innerHTML = "Needs " + str_.toFixed(2) ;
-							
-				default:		
+							upper = cons_ == 1 ? 0 : 1;		//	目指す上位		2位->1位 	3...5位->2位		final 2...5位->1位
+							if( document.getElementById( "rnd" ).innerHTML.indexOf("final") >= 0 ){ upper = 0;}
+							//console.log('788 cons_=%d upper=%d %s', cons_, upper, document.getElementById( "rnd" ).innerHTML );							
 														
-							//	2位の場合、	または（3位以下でも）Finalの場合、1位になるためのNeedを求める
-							//if(  cons_ == 1 ||  ( document.getElementById( "rnd" ).innerHTML.indexOf( "Final" ) == 0 && seqAns[cons_][0][0] != 0.0 ) 		){						
-
-							if(  cons_  > 0 ){
-																							
-								//	１．	１位の合計点－２(n)位の1番目の点数	
+							var my1 		= isNaN( seqAns[cons_][0][1] )? 0.0 : parseFloat(seqAns[cons_][0][1]) ;
+							var upperT 	= isNaN( seqAns[upper][0][0] )? 0.0 : parseFloat(seqAns[upper][0][0]) ;
+							var upper1 	= isNaN( seqAns[upper][0][1] )? 0.0 : parseFloat(seqAns[upper][0][1]) ;
+							
 								
-								var second = isNaN( seqAns[cons_][0][1] )? 0.0 : parseFloat(seqAns[cons_][0][1]) ;
-								//console.log('1415 seqAns[0][0][0]=%f seqAns[cons_][0][1]=%f', seqAns[0][0][0], seqAns[cons_][0][1] );
-								
-								//str_ =  seqAns[0][0][0] - seqAns[cons_][0][1]; 
-								str_ =  parseFloat(seqAns[0][0][0]) - second; 
-								//console.log( '1418 ', seqAns[0][0][0]);
-								//console.log('1411 cons_=%d str_=%f %f %f', cons_, str_, seqAns[0][0][0],seqAns[cons_][0][1]  );
-								
-								//console.log('1421 str_=', str_ );
-								//	２．	もし、（1位の合計点-2(n)位の１番目の点数）<=1位の１番目の点数	->	（1位の合計点-2(n)位の１番目の点数）	+0.01
-								//if( ( seqAns[0][0][0] - seqAns[cons_][0][1] ) <= seqAns[0][0][1] && seqAns[cons_][0][0] != 0.0 ){
-								//	str_ = seqAns[0][0][0] - seqAns[cons_][0][1] + 0.01;
-								//}
-								if( ( seqAns[0][0][0] - second ) <= seqAns[0][0][1] && second != 0.0 ){
-									str_ = seqAns[0][0][0] - second + 0.01;
-								}
-								
-								//	３．	もし、2(n)位の１番目の点数	<=	1位の１番目の点数		->	（1位の合計点-2位の１番目の点数）	+0.01
-								//if(  seqAns[cons_][0][1]  <= seqAns[0][0][1] && seqAns[cons_][0][0] != 0.0  ){
-								//	str_ = seqAns[0][0][0] - seqAns[cons_][0][1] + 0.01;
-								//}	
-								if(  second  <= seqAns[0][0][1] && second != 0.0  ){
-									str_ = seqAns[0][0][0] - second + 0.01;
-								}	
-																								
+							//	１．	上位の合計点－自分の1番目の点数							
+							str_ =  upperT - my1; 
+							
+							//	２．	もし、（上位の合計点-自分の１番目の点数）<=上位の１番目の点数	->	（上位の合計点-自分の１番目の点数）	+0.01
+							if( ( upperT - my1 ) <= upper1 && my1 != 0.0 ){
+								str_ = upperT - my1 + 0.01;
+								console.log('801 ', 	cons_ );
+							}
+													
+							//	３．	もし、2(n)位の１番目の点数	<=	1位の１番目の点数		->	（1位の合計点-2位の１番目の点数）	+0.01
+							if(  my1  <= upper1 && my1 != 0.0  ){
+								str_ = upperT - my1 + 0.01;
+								console.log('807 ', 	cons_ );
 							}	
+							
+							//console.log('1296 str_=%s cons_=%d', str_, cons_ );
+																							
+							//}	
 							
 							
 							//
 							//	妨害ありの場合、
 							//
-							//console.log('1314 %s %s cons_=%d', interfere[ seqAns[cons_][1] ][0],interfere[ seqAns[cons_][1] ][1], cons_ );
-							/*
-							var prev = cons_ == 1 ? 0 : 1;		//	※	2位の上は1位、3位以降の上は2位
-							
-							//	△＿		（ノンプライオリティ妨害が1回(だけ)）	2位が1位（3位以降なら2位）になるNeed		
-							//if( interfere[ seqAns[cons_][1] ][0].indexOf( "△" ) >= 0 && interfere[ seqAns[cons_][1] ][1] == ""  ){
-							if( interfere[ seqAns[cons_][1] ][0] >= 1.0 && interfere[ seqAns[cons_][1] ][1] == 0.0 ){
-								//	もし、(1位の合計-2位の1番目)*2	<=	2位の1番目
-								prev = cons_ == 1 ? 0 : 1;		//	※	2位の上は1位、3位以降の上は2位
-								if( ( seqAns[ prev ][0][0] - seqAns[cons_][0][1] ) * 2.0 <= seqAns[cons_][0][1] ) {
-									//	(上位の合計-自分の1番目)*2
-									str_ = ( seqAns[ prev ][0][0] - seqAns[cons_][0][1] ) * 2.0;
+							var inf1 = seqAns[cons_][0][3];
+							var inf2	=	seqAns[cons_][0][4] ;
+							//console.log('819 ', inf ); 
+
+							//	△＿
+							if(  inf1 == 1.0 && inf2 == 0.0){
+								//console.log('821 ', inf1);
+								if( (upperT - my1 ) * 2.0 <= my1 ){
+									str_ = ( upperT - my1 ) * 2.0
+								 	//console.log('825 ', str_ );
 								} else {
-									str_ = seqAns[ prev ][0][0] - seqAns[cons_][0][1]/2.0;
+									str_ = upperT - my1/2.0;
+									//console.log('828 ', str_);
 								}
-								//console.log('1458');
+							}	else if(  inf1 == 1.0 && inf2 == 1.0){
+								//	△△
+								str_ = ( upperT - my1 ) * 2.0;
+								//console.log('△△');
+								
+							}	else if(  inf1 == 2.0 && inf2 == 0.0){
+								//	▲＿
+								//console.log('▲＿');
+								str_ = upperT;
+							}	else if(  inf1 == 2.0 && inf2 == 2.0){
+								//	▲▲
+								str_ = "－";
+								//console.log('▲▲');
+							}	else if(  inf1 != 0.0   && inf2 != 0.0){
+								//	▲△
+								//console.log('▲△');
+								str_ = upperT * 2.0;
 							}
-
-							//	△△	（ノンプライオリティ妨害が1,2回）	2位が1位（3位以降が2位）になるNeed		
-							//if( interfere[ seqAns[cons_][1] ][0] >= 1.0 && interfere[ seqAns[cons_][1] ][1] >= 1.0 ){
-							if( interfere[ seqAns[cons_][1] ][0] == 1.0 && interfere[ seqAns[cons_][1] ][1] == 1.0 ){
-								//	もし、(1位の合計-2位の1番目)*2	<=	2位の1番目
-								//console.log('1335　seqAns[ prev ][0][0]=%f seqAns[cons_][0][1]=%f prev=%d' , seqAns[ prev ][0][0], seqAns[cons_][0][1], prev );
-									//	(上位の合計-自分の1番目)*2
-								str_ = ( seqAns[ prev ][0][0] - seqAns[cons_][0][1] ) * 2.0;
-								//console.log('1467');
-							}
-
-							//	▲_	（プライオリティ妨害が1回）	2位が1位（3位以降が2位）になるNeed		
-							//if( interfere[ seqAns[cons_][1] ][0].indexOf( "▲" ) >= 0 && interfere[ seqAns[cons_][1] ][1] == ""  ){
-							if( interfere[ seqAns[cons_][1] ][0] == 1.0 && interfere[ seqAns[cons_][1] ][1] == 0.0  ){
-								str_ =  seqAns[ prev ][0][0];
-								//console.log('1473');
-							}
-
-							//	▲▲	（プライオリティ妨害が2回）	Need		
-							//if( interfere[ seqAns[cons_][1] ][0].indexOf( "▲" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "▲" ) >= 0  ){
-							if( interfere[ seqAns[cons_][1] ][0] == 2.0 && interfere[ seqAns[cons_][1] ][1] == 2.0  ){
-								str_ = "---";
-								//console.log('1479');
-							}
-							
-							//	▲△	or	△▲	（妨害が2回、▲と△の組み合わせ）	Need		
-							//if( ( interfere[ seqAns[cons_][1] ][0].indexOf( "▲" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "△" ) >= 0 )
-							//	|| ( interfere[ seqAns[cons_][1] ][0].indexOf( "△" ) >= 0 && interfere[ seqAns[cons_][1] ][1].indexOf( "▲" ) >= 0)
-							//  ){
-							if( ( interfere[ seqAns[cons_][1] ][0] == 2.0&& interfere[ seqAns[cons_][1] ][1] == 1.0 )
-								|| ( interfere[ seqAns[cons_][1] ][0] == 1.0 && interfere[ seqAns[cons_][1] ][1] == 2.0)){
-								str_ =  seqAns[ prev ][0][0] * 2.0;
-								//console.log('1487');
-							}
-							
-							*/
 							
 							//console.log('1439 str_=%s cons_=%d', str_ , cons_);
 							//console.log('', document.getElementById( str ).innerHTML );
-							ar22 = document.getElementById( str ).innerHTML.split("<br>");							
-							if( ! isNaN(str_) ){
-								//document.getElementById( str ).innerHTML = "Needs " + str_.toFixed(2) ;
-								ar22[2] = "Needs " + str_.toFixed(2) ;
-							} else {
-								//document.getElementById( str ).innerHTML = "Needs " + str_ ;	
-								ar22[2] = "Needs " + str_;							
-							}
-							document.getElementById( str ).innerHTML = ar22.join("<br>");
+							ar22 = document.getElementById( str ).innerHTML.split("<br>");			
+							ar22[2] = "Needs " + ( ! isNaN(str_)  ? str_.toFixed(2) : str_ ) ;
+							document.getElementById( str ).innerHTML = ar22.join("<br>");				//	str	※注意↑
+							//console.log( '895 ', ar22[2] );
 							
 				}
 
@@ -3615,7 +3602,7 @@
 			if( ar.length > 1 ){
 				
 				hash = JSON.parse(ar[1]);
-				console.log('1406 ', hash );
+				//console.log('1406 ', hash );
 				
 				switch( ar[0] ){
 					//	共通
@@ -3632,7 +3619,7 @@
 						*/
 						
 						//	timer表示	＝	 現在時刻 - 開始時刻　＋	timer値 * 60 * 1000 -
-						console.log('925 hash[timer]=%s ', hash['timer']);
+						//console.log('925 hash[timer]=%s ', hash['timer']);
 						document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
 						document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'];
 						/*
@@ -3700,7 +3687,7 @@
 					case 'J4':
 					case 'J5':
 					
-						console.log('1002');
+						//console.log('1002');
 						setDetail( hash['IJ'] , ar[0].substr(1), hash['val'] );
 						
 						setAverageByDetail( hash['IJ'] );			//	下段の警告マークはここで点灯している	※	ave[行][列]をセット	行:0...4	列：0...19	網掛けなので、Totalには反映しない
@@ -3746,13 +3733,13 @@
 		//	※	つまり、合計、１位、２位を求める（だけ）	順位などはgetSeqAndNeedPoint()で求める
 				
 		function totalReculc(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
-			console.log('1596a ' ,hash);			
+			//console.log('1596a ' ,hash);			
 			var seq = getTop2_and_setTotal0( [ hash['IJ'].split("_")[0]  ], 0 );		//	最大２つを取得、
-			console.log('1597 ', seq );
+			//console.log('1597 ', seq );
 			
 			console.log('1057 ', interfere );
-			console.log( "1058 ", interfere[ hash['IJ'].split("_")[0] ][0] );
-			console.log( "1059 ", interfere[ hash['IJ'].split("_")[0] ][1] );
+			//console.log( "1058 ", interfere[ hash['IJ'].split("_")[0] ][0] );
+			//console.log( "1059 ", interfere[ hash['IJ'].split("_")[0] ][1] );
 			
 			//	妨害があった場合、１位、２位を変更する
 			if( interfere[ hash['IJ'].split("_")[0] ][0] == 1.0 ){
@@ -3778,28 +3765,6 @@
 				}
 			}
 			
-			/*
-			var n=1;
-			if( interfere[ hash['IJ'].split("_")[0] ][0] != 0.0 ){			//	１つでも妨害が登録されていれば
-				console.log("1065");
-				if( interfere[ hash['IJ'].split("_")[0] ][0] == 1.0 ){
-					 seq[n] = parseFloat(seq[1]) / 2.0;
-					 n -= 1;
-				}
-				if( interfere[ hash['IJ'].split("_")[0] ][0] == 2.0 ){
-					 seq[n] = 0.0;
-					 n -= 1;
-				}
-				if( interfere[ hash['IJ'].split("_")[0] ][1] == 1.0 ){
-					 seq[n] = parseFloat(seq[0]) / 2.0;
-					 n -= 1;
-				}				
-				if( interfere[ hash['IJ'].split("_")[0] ][1] == 2.0 ){
-					 seq[n] = 0.0;
-					 n -= 1;
-				}				
-			}
-			*/
 			ind = hash['IJ'].split("_")[0] ;
 			total_and_top2[ ind ][0] = parseFloat(seq[0]) + parseFloat(seq[1]);		//	合計	var total_and_top2 = Array( Array(20), Array(20), Array(20), Array(20), Array(20) )
 			total_and_top2[ ind ][1] = parseFloat(seq[0]);						//	１位
@@ -3817,6 +3782,7 @@
 			arTotal[1] = parseFloat( seq[0] ).toFixed(2)  + " + " + parseFloat( seq[1] ).toFixed(2);
 			arTotal[2] = "win by " + arTotal[0];																							/////
 			document.getElementById( str ).innerHTML = arTotal.join("<br>");
+			console.log('1103 ',str );
 			//console.log('1671 total_and_top2[ ind ]=', total_and_top2[ ind ] );
 		}		
 		
@@ -4031,7 +3997,7 @@
 		var average = 0.0;
 		function setAverageByDetail( ij ){		//	セルのIJ	ex.	"0_0"
 
-			console.log('1755 ij=%s' , ij );
+			//console.log('1755 ij=%s' , ij );
 
 			//		(5X20の表）平均値を計算する			(i)_(j)_1	通知されたval
 			
@@ -4044,15 +4010,15 @@
 			str = document.getElementById( ij ).innerHTML;
 			str = str.split("▲").join("");			//	ridingErrorを除去
 			str = str.split("△").join("");			//
-			console.log('1978 ', str );
+			//console.log('1978 ', str );
 			str = str.substring( str.indexOf(">") +1);
 			str_ = str.substring( 0, str.indexOf("<") );
 			str = str.split("</label>").join("");
-			console.log('1978 ', str );
+			//console.log('1978 ', str );
 			var arStr = str.split("<br>");
 			
 			getAverage( arStr );
-			console.log('1391 average=%f ', average );
+			//console.log('1391 average=%f ', average );
 			
 			
 			//	平均値average	ijの先頭行	にセット
@@ -4062,8 +4028,8 @@
 			
 			arStr[0] = arStr[0].substring( 0, arStr[0].indexOf(">" ) +1 ) + average.toFixed(2) + arStr[0].substring( arStr[0].indexOf("</" ) ) ;
 			//str = arStr.join("<br>");
-			console.log('2687 ', average );
-			console.log( '3425 ', arStr );
+			//console.log('2687 ', average );
+			//console.log( '3425 ', arStr );
 			document.getElementById( ij ).innerHTML = arStr.join("<br>");
 			
 			ave[ parseInt( ij.split("_")[0]) ][ parseInt(ij.split("_")[1]) ] = average;
@@ -4107,7 +4073,7 @@
 			var arPoint = [];
 			average = 0.0;
 			var bunbo=0;
-			console.log('1306 ', arStr );
+			//console.log('1306 ', arStr );
 			//arStr[0] = str_;
 			for( var i=1; i<6; i++ ){										
 				bunbo += ! isNaN( arStr[i] ) ? 1 : 0; 					
@@ -4115,7 +4081,7 @@
 					arPoint.push( parseFloat( arStr[i]) );
 				}
 			}
-			console.log('2646 ', arPoint );
+			//console.log('2646 ', arPoint );
 			//	平均
 			switch( bunbo ){
 			case 0:
@@ -4142,12 +4108,12 @@
 						average += parseFloat(arPoint[i]);
 					}				
 					average = average / parseFloat(arPoint.length-2);
-					console.log('1436 ',arPoint );
+					//console.log('1436 ',arPoint );
 					
 					break;
 				
 			}
-			console.log('1931 average=%f bunbo=%d', average, bunbo );
+			//console.log('1931 average=%f bunbo=%d', average, bunbo );
 			if( isNaN(average) )average = 0.00;
 
 			return average;
@@ -4162,18 +4128,20 @@
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
 
 	/*
-	dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.2"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.3"}' );	
 	dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"3_0","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"4_0","val":"1.0"}' );	
+	//dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.0"}' );	
+	//dummyOn( 'J1;{"idNo":"1","IJ":"3_0","val":"1.0"}' );	
+	//dummyOn( 'J1;{"idNo":"1","IJ":"4_0","val":"1.0"}' );	
 
-	dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"2_1","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"3_1","val":"1.0"}' );	
-	dummyOn( 'J1;{"idNo":"1","IJ":"4_1","val":"1.0"}' );	
-
+	dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.2"}' );	
+	dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"0.9"}' );	
+	//dummyOn( 'J1;{"idNo":"1","IJ":"2_1","val":"0.9"}' );	
+	//dummyOn( 'J1;{"idNo":"1","IJ":"3_1","val":"0.9"}' );	
+	//dummyOn( 'J1;{"idNo":"1","IJ":"4_1","val":"0.9"}' );	
+	*/
+	
+	/*
 	dummyOn( 'J1;{"idNo":"1","IJ":"0_2","val":"1.0"}' );	
 	dummyOn( 'J1;{"idNo":"1","IJ":"1_2","val":"0.9"}' );	
 	dummyOn( 'J1;{"idNo":"1","IJ":"2_2","val":"0.8"}' );	
@@ -4249,6 +4217,7 @@
 	dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"4.4"}' );
 	dummyOn( 'J2;{"idNo":"2","IJ":"1_0","val":"4.4"}' );		
 	*/
+	
 	/*
 		dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"0.9"}' );
 	dummyOn( 'J2;{"idNo":"2","IJ":"1_1","val":"0.9"}' );			

@@ -464,7 +464,7 @@
 		<!-- Athleteの列-->
 		
 		<td style="background-color:#FFCCCB;border-right-color:#FFCCCB;vertical-align:top;font-size:10pt;" id="Athlete_0">
-		佐藤 一郎<br>サトウ イチロウ<br>東京<br>&nbsp;
+		<br><br><br>&nbsp;
 		<br><label onclick="aaa(0,1)" style="color:red" id="0_Ath_"></label>
 		<br><label onclick="aaa(0,1)" style="color:red;font-weight:bold;" id="0_Ath"></label>
 		
@@ -505,7 +505,7 @@
 		<!-- Athleteの列-->
 		
 		<td style="background-color:White;border-right-color:White;vertical-align:top;font-size:10pt;" id="Athlete_1">
-		鈴木 二郎<br>スズキ ジロウ<br>神奈川<br>&nbsp;
+		<br><br><br>&nbsp;
 		<br><label onclick="aaa(1,1)" style="color:red" id="1_Ath_"></label>
 		<br><label onclick="aaa(1,1)" style="color:red;font-weight:bold;" id="1_Ath"></label>
 		
@@ -546,7 +546,7 @@
 		<!-- Athleteの列-->
 		
 		<td style="background-color:LightYellow;border-right-color:LightYellow;vertical-align:top;font-size:10pt;" id="Athlete_2">
-		田中 三郎<br>タナカ サブロウ<br>千葉<br>&nbsp;
+		<br><br><br>&nbsp;
 		<br><label onclick="aaa(2,1)" style="color:red" id="2_Ath_"></label>
 		<br><label onclick="aaa(2,1)" style="color:red;font-weight:bold;" id="2_Ath"></label>
 		
@@ -587,7 +587,7 @@
 		<!-- Athleteの列-->
 		
 		<td style="background-color:LightBlue;border-right-color:LightBlue;vertical-align:top;font-size:10pt;" id="Athlete_3">
-		高橋 四郎<br>タカハシ シロウ<br>愛知<br>&nbsp;
+		<br><br><br>&nbsp;
 		<br><label onclick="aaa(3,1)" style="color:red" id="3_Ath_"></label>
 		<br><label onclick="aaa(3,1)" style="color:red;font-weight:bold;" id="3_Ath"></label>
 		
@@ -628,7 +628,7 @@
 		<!-- Athleteの列-->
 		
 		<td style="background-color:#c0ffc0;border-right-color:#c0ffc0;vertical-align:top;font-size:10pt;" id="Athlete_4">
-		山本 五郎<br>ヤマモト ゴロウ<br>宮崎<br>&nbsp;
+		<br><br><br>&nbsp;
 		<br><label onclick="aaa(4,1)" style="color:red" id="4_Ath_"></label>
 		<br><label onclick="aaa(4,1)" style="color:red;font-weight:bold;" id="4_Ath"></label>
 		
@@ -3143,36 +3143,36 @@
 			//	dialog内の「バドリングインターフェア」を、Athlete（色）の最下行に反映させる	
 			console.log('1608 ', prevIJ );
 			
-			var str="";
-			//	妨害の表示内容を求める	①　②→③		①妨害種別	②自分（色）→③相手（色）		ex.	Pd△dbl White→Red
+			//	妨害の表示内容を求める			廃止	①　②→③		①妨害種別	②自分（色）→③相手（色）		ex.	Pd△dbl White→Red
 			//	(※変更）	妨害の表示内容を求める	①　→③		①妨害種別	→③相手（色）		ex.	Pd△ →Red		また、doubleは表示しない
 
 			var strRid="";		
-			//	ライディング（自分のwave番号）を付加		ex.	Red3		3:wave番号	1...20			但し、非表示
+			//	ライディング（自分のwave番号）を（あれば）付加		ex.	3		3:wave番号	1...20			但し、非表示
 			for( var i=1; i<21; i++ ){
 				if( document.getElementById("rid_" + i ).style.backgroundColor == "black" ){
 					strRid = i + "";
 				}
 			}
 						
-			//	①妨害の種別		②自分	→
+			var str="";
+			var obj;
+			//	①妨害の種別	→					ex. 		Pd▲ <label style='display:none'>1</label>→
 			for( var i=0; i<4; i++ ){
-				var obj = document.getElementById("padInt" + i );
+				obj = document.getElementById("padInt" + i );
 				if( obj.style.backgroundColor == "black" ){
 					str =  obj.innerHTML;
 					if( str.indexOf("なし") > 0 ){
 						str = "";
 					} else if( str.indexOf("Double")> 0 ) {
-						str = "Pd△dbl"+ " " + arColor_[ prevIJ ]  + "<label style='display:none'>" + strRid +"</label>→";				
-						//str = "Pd△dbl"+ " "   + "<label style='display:none'>" + strRid +"</label>→";				
+						str = "Pd△dbl <label style='display:none'>" + strRid +"</label>→";				
 					} else{	
-						str = str.split(" ")[0] + " " + arColor_[ prevIJ ] + "<label style='display:none'>" + strRid +"</label>→";			
-						//str = str.split(" ")[0] + " "  + "<label style='display:none'>" + strRid +"</label>→";			
+						str = str.split(" ")[0] +  " <label style='display:none'>" + strRid +"</label>→";			
 					}
 				}
 			}
 			console.log('249 ', str );
-			
+
+
 			//	ライディングありの場合
 			if( strRid != "" && str != ""){
 				//	該当の5X20セルの背景をlightgrey	、
@@ -3180,24 +3180,29 @@
 				
 				var bAllSpace=true;
 				for( var i=parseInt( strRid ); i<20; i++ ){
-					if( document.getElementById( prevIJ + "_" + i + "_00" ).innerHTML != "" 
-					&&  document.getElementById( prevIJ + "_" + i + "_00" ).innerHTML != "&nbsp;" ){
+					obj = document.getElementById( prevIJ + "_" + i + "_00" );
+					console.log('303 ', obj.innerHTML );
+					if( obj.innerHTML != "" 
+					&&  obj.innerHTML != "&nbsp;" ){
 						bAllSpace = false;
 					}
 				}
+				console.log('309 ', bAllSpace );
 				
 				//	その5X20セルの最上行がスペースでない
-				if( document.getElementById( prevIJ + "_" + (strRid-1) + "_00" ).innerHTML != "" 
-				&& document.getElementById( prevIJ + "_" + (strRid-1) + "_00" ).innerHTML != "&nbsp;"
-				&& bAllSpace){
-				//console.log('1681 prevIJ=%s n=%s strRid=%d' , prevIJ, n, strRid );			
+				obj =  document.getElementById( prevIJ + "_" + (strRid-1) + "_00" );
+				if( obj.innerHTML == "" || obj.innerHTML == "&nbsp;" ){
+						alert( 	arColor_[prevI] + " の waveNo= " + strRid + " は未登録です" );
+						return;
+				} else	if( ! bAllSpace ){
+						alert( 	"waveNo= " + strRid + " は " + arColor_[prevI] + " の最終のライディングではありません" );
+						return;
+					
+				} else {
 					setNet( prevIJ + "_" + (strRid-1), "greygrey" );		//	網掛けクリア ※これは特別処理
 
-					document.getElementById( prevIJ + "_" + (strRid-1) + "_00" ).innerHTML = "Pdl Int";
+					obj.innerHTML = "Pdl Int";
 				}
-				// else {
-				//	alert("ライディングの番号が正しくありません");
-				//}
 			}
 			
 			//console.log('1622 ', prevIJ );
@@ -3241,23 +3246,29 @@
 				//	ライディングありの場合、5X20セルを元の状態に戻す
 				if( strRid != "" ){
 					//console.log('1721 strRid=%s font-weight=%s', strRid , document.getElementById( prevIJ + "_" + (strRid-1) + "_00").style.fontWeight );
-					if( document.getElementById( prevIJ + "_" + (strRid-1) + "_00").style.fontWeight == "normal" 	//	5X20セルにgreyの網掛けがある事を示す
+					obj = document.getElementById( prevIJ + "_" + (parseInt(strRid)-1) + "_00");
+					if( obj.style.fontWeight == "normal" 	//	5X20セルにgreyの網掛けがある事を示す
+						//&& obj.innerHTML != "&nbsp;"
 					 ){
 						setNet( prevIJ + "_" + (strRid-1) , "grey" );
 					} else {
 						setNet( prevIJ + "_" + (strRid-1) , "" );		
 					}
+
 					
 					//	再計算
+					
 					setAverageByDetail(prevIJ + "_" + (strRid-1));						
 					totalReculc({"IJ":prevIJ + "_" + (strRid-1)} );
 					getSeqAndNeedPoint();	
+
 									
 				}
 				
 				
 				//	消すAthlete(色）に「dbl」がある場合、Athlete（相手色）も消す		
 				//	※（但し）Athlete（相手色）を消す場合、その行（上下）は判定する必要がある
+				/*
 				if( strDel.indexOf("dbl") > 0 && strDel.indexOf("Pd") >= 0){
 										
 					var ar = strDel.split(" " );
@@ -3280,29 +3291,28 @@
 						});					 
 					}					
 				}
+				*/
 				
 			} 
 			
 			
 			//
-			//	doubleの場合
+			//	doubleの場合		-＞Athlete（相手色）に、	相手→自分　も（追加）表示する
 			//
-			
-			//	Athlete（相手色）に、	相手→自分　も（追加）表示する		
-			console.log('357 ', str );							//	ex.	 Pd△dbl Red<label style='display:none'></label>→White
+				
+			//console.log('357 ', str );							//	ex.	 Pd△dbl Red<label style='display:none'></label>→White
 			var bAlert=false;
 			if( str.indexOf( "dbl" ) > 0 ){
 				
-				console.log('1790 ', str );							//	ex.	 Pd△dbl Red<label style='display:none'></label>→White
 				var ar = str.split(" " );										//	ex.	 Pd△dbl || Red<label || style='display:none'></label>→White
 				if( ar.length > 2 ){
-					console.log('1794 ', ar[2] );
-					var ar_  = [  ar[2].split( "→")[1] , ar[1].substring( 0, ar[1].indexOf("<") ) ];		//	[相手の色、自分の色]	
-					console.log('367 ', ar_ );			
+					//console.log('1794 ', ar[2] );
+					var ar_  = [  ar[2].split( "→")[1] , arColor_[ prevI ]  ];		//	[相手の色、自分の色]	
+					//console.log('367 ', ar_ );			
 					arColor_.forEach( (val,key) =>{
 						if( val == ar_[0] ){
 							
-							console.log('1726 aite=%s key=%d', ar_[0], key  );
+							//console.log('1726 aite=%s key=%d', ar_[0], key  );
 							if( document.getElementById( key + "_Ath_" ).innerHTML != "" ){
 								alert( ar_[0] + " は既に2回の妨害をしています" );										//	※①ここが特殊、エラーの場合bAlertをセットする
 								bAlert=true;
@@ -3311,7 +3321,7 @@
 								if( document.getElementById( key + "_Ath" ).innerHTML != "" ){
 									document.getElementById( key + "_Ath_" ).innerHTML = document.getElementById( key + "_Ath" ).innerHTML;
 								} 
-								console.log("373 ", ar[0] );
+								//console.log("373 ", ar[0] );
 								document.getElementById( key + "_Ath" ).innerHTML = ar[0].split("dbl").join("") + " →" +ar_[1];		//// "dbl"は非表示
 							}
 						}
@@ -3320,7 +3330,7 @@
 				}
 			}
 			
-									
+			console.log('445 ', str );						
 			//
 			//	「なし」でない場合		Ath（色）に妨害の表示する
 			//
@@ -3333,12 +3343,12 @@
 				//	最下行に（表示内容）セット		//	ex.	 Pd△dbl Red<label style='display:none'></label>→White
 																		//	Pd△dbl Red<label style='display:none'></label>→White
 				str = str.split("dbl").join("");					
-				str = str.substring( 0, str.indexOf( " " ) ) + " " + str.substring( str.indexOf("<"));		
+				//str = str.substring( 0, str.indexOf( " " ) ) + " " + str.substring( str.indexOf("<"));		
 				document.getElementById( prevIJ + "_Ath" ).innerHTML = str;		
 				
 			}
 			
-			
+			//console.log('460 prevIJ=%s strRid=%s', prevIJ, strRid );
 			//	後片付け
 			onX();
 
@@ -3666,6 +3676,24 @@
 							}
 						}
 						
+						//console.log('950 hash=%s', hash["Athlete"] );
+						//	athlete列に名前、フリガナ、県名などを登録する
+						if( hash["Athlete"] != "" ){
+							var arAth = hash["Athlete"].split(",");
+							//console.log('953 ', arAth );
+							var obj;
+							var ar;
+							for( var i=0; i<5; i++ ){
+								obj = document.getElementById( "Athlete_" + i );
+								ar = obj.innerHTML.split("<br>");
+								ar[0] = arAth[ i*3 ];
+								ar[1] = arAth[ i*3 + 1 ];								
+								ar[2] = arAth[ i*3 + 2 ];
+								obj.innerHTML = ar.join("<br>");
+								//console.log('954 ', ar );
+								
+							}
+						}
 						break; 
 
 					//	judge,headJudge
@@ -4123,7 +4151,9 @@
 	//	php test: ;	json形式
 	////console.log('746');
 	
-	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5"}'); 
+	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5", \
+	"Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"\
+	}'); 
 	
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
 

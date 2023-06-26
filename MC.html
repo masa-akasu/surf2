@@ -1,0 +1,752 @@
+
+<html >
+<head>
+	<STYLE TYPE="text/css">
+	
+	BODY,TD{
+		font-size:		14pt;
+		/*border-width:	1px;*/
+		border-color:	white;
+		border-width:1px;
+		border-style:	solid;
+		text-align: center;
+		padding: 3 3 3 3;
+		line-height: 17px;
+
+	}
+
+	.scroll2{
+	  overflow: auto;
+	  /*white-space: pre;*/
+	}
+
+	p{
+		font-size: 16pt;
+
+
+	}
+
+	.back {
+		background-color:white;
+		//color:lightgrey;
+		border-color:white;
+	}
+
+
+
+	</STYLE>	
+	<script language="javascript" ><!--
+	
+		color = { R: "#ff0000" , W: "#ffffff" , Y: "#ffff00", B: "#0000ff", G: "#00ff00" ,  _: "#000000" , g:"#a0a0a0"};
+		arColor = [ "#ff0000" , "#ffffff" , "#ffff00", "#0000ff", "#00ff00" ];
+		arColor_ = [ "Red" , "White" , "Yellow", "Blue", "Green" ];
+		arTextColor = ["White", "Black", "Black", "White", "Black"];
+
+		//-->
+		
+		
+		function onl(){
+			//alert("onload");		//	for test
+			for( var i=0; i<5; i++ ){
+				document.getElementById( i + "_1" ).style.backgroundColor  = arColor[i]; 
+				document.getElementById( i + "_5" ).innerHTML = (i+1) + "";
+				
+				//document.getElementById( "col_0_" + i  ).style.backgroundColor = arColor[i]; 
+				//console.log('57 ', document.getElementById( "col_0_" + i  ).style.backgroundColor );
+				
+			}
+			
+		
+			
+		}
+		
+		function onDoneNext(){
+			//alert('onDoneNext()');
+			
+			//	backendから、athleteの名前を受け取る
+			strText = "佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎";
+			arText = strText.split(",");
+			console.log("71 ", arText );
+			
+			for( var i=0; i<5; i++ ){
+				document.getElementById( i + "_0" ).innerHTML = (i + 1) + "";
+				
+				document.getElementById( i + "_1" ).style.backgroundColor = arColor[i];
+				
+				document.getElementById( i + "_2" ).innerHTML = "<label>" + arText[ 3*i ] + "</label><br><label style='font-size:10pt'>" 
+																+ arText[ 3*i +1] + "</label><br><label style='font-size:10pt'>"+ arText[3*i+2] + "</label><br>" ;
+			}
+		}
+		
+	</script>
+</head>
+<!--
+<body  onload="onl()" >
+-->
+<body >
+<!-- 上段見出し -->
+
+<div>
+	<table style='background-color:white;width:80%;'>
+	
+		<tr><td colspan="3" style=";text-align:left" id="class" onclick="">class 	</td></tr>
+		
+		<tr>
+			<td style="text-align:left">
+				<label onclick="" style='padding:5px 10px 5px 10px;background-color:black;border-radius:10px;color:white;' >
+				<label id="rnd">round1</label>
+				<label id="ht">heat1</label>
+			</td>
+		
+			<td  >		
+				<img src="https://sozaic.com/wp-content/uploads/2022/03/life410.jpg" width="36px" height="24px" ></img>
+				
+				<label id="timer" >xx:xx</label>
+				<label>&nbsp;&nbsp;</label>
+			</td>
+			
+			<td style="width:20%">
+			  &nbsp;
+			</td>
+		
+		</tr>
+	</table>
+</div>
+
+
+
+<!-- 大きなdiv -->
+<div style="background-color:white;" >
+
+	<div >
+	
+		<table style="white-space:nowrap;font-size:13pt;line-height:15px;">
+
+		<!-- １行目	タイトル-->
+		<tr  >		
+			<td border="1" style="width:3%;" class="back" ></td>		<!-- 幅が変化してしまう対策-->
+			<td style="width:10%;" class="back"></td>
+			
+			<td style="width:25%;background-color:white;color:lightgrey;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Athlete&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+			<td style="width:25%;background-color:white;color:lightgrey">&nbsp;&nbsp;&nbsp;Total / Needs&nbsp;&nbsp;&nbsp;</td>
+			<td style="width:25%;background-color:white;color:lightgrey">Best 2 Waves</td>
+			<td class="back" style="width:5%;color:black" >&nbsp;&nbsp;&nbsp; </td>
+			<td style="width:5%;background-color:white;color:lightgrey">Priority</td>
+		</tr>
+	
+		
+<tr>	
+		<td id="0_0" style="width:5%;background-color:white;color:black;border-color:white;">1</td>
+		<td id="0_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
+		
+		<td id="0_2"> total/needs</td>
+		<td id="0_3" style="background-color:lightgrey;"> 0.0<br>win by 0.0<br>&nbsp;</td>
+
+		<td id="0_4"> best 2 waves</td>
+		<td id="0_5" class="back" style="text-align:right"> P1</td>
+		<td id="0_6" style="border-color:lightgrey;">&nbsp;</td>
+</tr><tr>	
+		<td id="1_0" style="width:5%;background-color:white;color:black;border-color:white;">2</td>
+		<td id="1_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
+		
+		<td id="1_2"> total/needs</td>
+		<td id="1_3" style="background-color:lightgrey;"> 0.0<br>win by 0.0<br>&nbsp;</td>
+
+		<td id="1_4"> best 2 waves</td>
+		<td id="1_5" class="back" style="text-align:right"> P2</td>
+		<td id="1_6" style="border-color:lightgrey;">&nbsp;</td>
+</tr><tr>	
+		<td id="2_0" style="width:5%;background-color:white;color:black;border-color:white;">3</td>
+		<td id="2_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
+		
+		<td id="2_2"> total/needs</td>
+		<td id="2_3" style="background-color:lightgrey;"> 0.0<br>win by 0.0<br>&nbsp;</td>
+
+		<td id="2_4"> best 2 waves</td>
+		<td id="2_5" class="back" style="text-align:right"> P3</td>
+		<td id="2_6" style="border-color:lightgrey;">&nbsp;</td>
+</tr><tr>	
+		<td id="3_0" style="width:5%;background-color:white;color:black;border-color:white;">4</td>
+		<td id="3_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
+		
+		<td id="3_2"> total/needs</td>
+		<td id="3_3" style="background-color:lightgrey;"> 0.0<br>win by 0.0<br>&nbsp;</td>
+
+		<td id="3_4"> best 2 waves</td>
+		<td id="3_5" class="back" style="text-align:right"> P4</td>
+		<td id="3_6" style="border-color:lightgrey;">&nbsp;</td>
+</tr><tr>	
+		<td id="4_0" style="width:5%;background-color:white;color:black;border-color:white;">5</td>
+		<td id="4_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
+		
+		<td id="4_2"> total/needs</td>
+		<td id="4_3" style="background-color:lightgrey;"> 0.0<br>win by 0.0<br>&nbsp;</td>
+
+		<td id="4_4"> best 2 waves</td>
+		<td id="4_5" class="back" style="text-align:right"> P5</td>
+		<td id="4_6" style="border-color:lightgrey;">&nbsp;</td>
+</tr>	
+		<tr>
+		
+		</tr>
+
+		</table>
+	</div>	
+	
+	
+	<!--
+	width: 80%; height: 200px; background-color: lightgrey; overflow-x: hidden; overflow-y: scroll;
+	
+	position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"
+	-->
+<div style=" center;overflow-y: scroll;height: 200px;width:80%;margin:0 100">
+<style>
+.example{
+  	overflow: auto;		/* 	scroll	barが表示され操作できる */
+    width: 100%;					/*全体の幅 */
+    height: 200px;
+    /*margin:0 0 200 ;*/		/* これを指定すると水平scrollbarが表示する　NG -> div*/
+    
+}
+.example th{
+	white-space: nowrap;							/* 固定表示 その１*/
+	/*border-right: 1px solid #999;*/
+	/*border-bottom: 1px solid #999;*/
+	//background: #f2f2f2;
+	background-color:lightgrey;						/* これがないと、tdが表示してしまう */ 
+	position: sticky;									/* 固定表示 その2*/
+	top: 0;	
+	left: 0;
+}
+
+.example td{
+	background-color:white;
+	//text-align: left;
+	
+}
+
+
+</style>
+
+		<!--	中段下	scroll	20行	-->
+		<table width="100%" class="example" style="background-color:lightgrey" >
+		<tr>
+			<th colspan="2" id="col_0_0" width="20%" style="background-color:red">&nbsp;</th>
+			<th  colspan="2"  id="col_0_1"  width="20%" style="background-color:white"></th>
+			<th  colspan="2"  id="col_0_2"  width="20%" style="background-color:yellow"></th>
+			<th  colspan="2"  id="col_0_3"  width="20%" style="background-color:blue"></th>
+			<th  colspan="2"  id="col_0_4"  width="20%" style="background-color:#00ff00"></th>
+		</tr>				
+		
+				<tr  >
+			<td id="coln0_0_0" width="3%">&nbsp;</td> <td width="17%" id="coln_0_0">&nbsp;</td>
+			<td id="coln0_0_1" width="3%">&nbsp;</td> <td id="coln_0_1">&nbsp;</td>
+			<td id="coln0_0_2" width="3%">&nbsp;</td> <td id="coln_0_2">&nbsp;</td>
+			<td id="coln0_0_3" width="3%">&nbsp;</td> <td id="coln_0_3">&nbsp;</td>
+			<td id="coln0_0_4" width="3%"></td> <td id="coln_0_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_1_0" width="3%">&nbsp;</td> <td width="17%" id="coln_1_0">&nbsp;</td>
+			<td id="coln0_1_1" width="3%">&nbsp;</td> <td id="coln_1_1">&nbsp;</td>
+			<td id="coln0_1_2" width="3%">&nbsp;</td> <td id="coln_1_2">&nbsp;</td>
+			<td id="coln0_1_3" width="3%">&nbsp;</td> <td id="coln_1_3">&nbsp;</td>
+			<td id="coln0_1_4" width="3%"></td> <td id="coln_1_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_2_0" width="3%">&nbsp;</td> <td width="17%" id="coln_2_0">&nbsp;</td>
+			<td id="coln0_2_1" width="3%">&nbsp;</td> <td id="coln_2_1">&nbsp;</td>
+			<td id="coln0_2_2" width="3%">&nbsp;</td> <td id="coln_2_2">&nbsp;</td>
+			<td id="coln0_2_3" width="3%">&nbsp;</td> <td id="coln_2_3">&nbsp;</td>
+			<td id="coln0_2_4" width="3%"></td> <td id="coln_2_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_3_0" width="3%">&nbsp;</td> <td width="17%" id="coln_3_0">&nbsp;</td>
+			<td id="coln0_3_1" width="3%">&nbsp;</td> <td id="coln_3_1">&nbsp;</td>
+			<td id="coln0_3_2" width="3%">&nbsp;</td> <td id="coln_3_2">&nbsp;</td>
+			<td id="coln0_3_3" width="3%">&nbsp;</td> <td id="coln_3_3">&nbsp;</td>
+			<td id="coln0_3_4" width="3%"></td> <td id="coln_3_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_4_0" width="3%">&nbsp;</td> <td width="17%" id="coln_4_0">&nbsp;</td>
+			<td id="coln0_4_1" width="3%">&nbsp;</td> <td id="coln_4_1">&nbsp;</td>
+			<td id="coln0_4_2" width="3%">&nbsp;</td> <td id="coln_4_2">&nbsp;</td>
+			<td id="coln0_4_3" width="3%">&nbsp;</td> <td id="coln_4_3">&nbsp;</td>
+			<td id="coln0_4_4" width="3%"></td> <td id="coln_4_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_5_0" width="3%">&nbsp;</td> <td width="17%" id="coln_5_0">&nbsp;</td>
+			<td id="coln0_5_1" width="3%">&nbsp;</td> <td id="coln_5_1">&nbsp;</td>
+			<td id="coln0_5_2" width="3%">&nbsp;</td> <td id="coln_5_2">&nbsp;</td>
+			<td id="coln0_5_3" width="3%">&nbsp;</td> <td id="coln_5_3">&nbsp;</td>
+			<td id="coln0_5_4" width="3%"></td> <td id="coln_5_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_6_0" width="3%">&nbsp;</td> <td width="17%" id="coln_6_0">&nbsp;</td>
+			<td id="coln0_6_1" width="3%">&nbsp;</td> <td id="coln_6_1">&nbsp;</td>
+			<td id="coln0_6_2" width="3%">&nbsp;</td> <td id="coln_6_2">&nbsp;</td>
+			<td id="coln0_6_3" width="3%">&nbsp;</td> <td id="coln_6_3">&nbsp;</td>
+			<td id="coln0_6_4" width="3%"></td> <td id="coln_6_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_7_0" width="3%">&nbsp;</td> <td width="17%" id="coln_7_0">&nbsp;</td>
+			<td id="coln0_7_1" width="3%">&nbsp;</td> <td id="coln_7_1">&nbsp;</td>
+			<td id="coln0_7_2" width="3%">&nbsp;</td> <td id="coln_7_2">&nbsp;</td>
+			<td id="coln0_7_3" width="3%">&nbsp;</td> <td id="coln_7_3">&nbsp;</td>
+			<td id="coln0_7_4" width="3%"></td> <td id="coln_7_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_8_0" width="3%">&nbsp;</td> <td width="17%" id="coln_8_0">&nbsp;</td>
+			<td id="coln0_8_1" width="3%">&nbsp;</td> <td id="coln_8_1">&nbsp;</td>
+			<td id="coln0_8_2" width="3%">&nbsp;</td> <td id="coln_8_2">&nbsp;</td>
+			<td id="coln0_8_3" width="3%">&nbsp;</td> <td id="coln_8_3">&nbsp;</td>
+			<td id="coln0_8_4" width="3%"></td> <td id="coln_8_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_9_0" width="3%">&nbsp;</td> <td width="17%" id="coln_9_0">&nbsp;</td>
+			<td id="coln0_9_1" width="3%">&nbsp;</td> <td id="coln_9_1">&nbsp;</td>
+			<td id="coln0_9_2" width="3%">&nbsp;</td> <td id="coln_9_2">&nbsp;</td>
+			<td id="coln0_9_3" width="3%">&nbsp;</td> <td id="coln_9_3">&nbsp;</td>
+			<td id="coln0_9_4" width="3%"></td> <td id="coln_9_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_10_0" width="3%">&nbsp;</td> <td width="17%" id="coln_10_0">&nbsp;</td>
+			<td id="coln0_10_1" width="3%">&nbsp;</td> <td id="coln_10_1">&nbsp;</td>
+			<td id="coln0_10_2" width="3%">&nbsp;</td> <td id="coln_10_2">&nbsp;</td>
+			<td id="coln0_10_3" width="3%">&nbsp;</td> <td id="coln_10_3">&nbsp;</td>
+			<td id="coln0_10_4" width="3%"></td> <td id="coln_10_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_11_0" width="3%">&nbsp;</td> <td width="17%" id="coln_11_0">&nbsp;</td>
+			<td id="coln0_11_1" width="3%">&nbsp;</td> <td id="coln_11_1">&nbsp;</td>
+			<td id="coln0_11_2" width="3%">&nbsp;</td> <td id="coln_11_2">&nbsp;</td>
+			<td id="coln0_11_3" width="3%">&nbsp;</td> <td id="coln_11_3">&nbsp;</td>
+			<td id="coln0_11_4" width="3%"></td> <td id="coln_11_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_12_0" width="3%">&nbsp;</td> <td width="17%" id="coln_12_0">&nbsp;</td>
+			<td id="coln0_12_1" width="3%">&nbsp;</td> <td id="coln_12_1">&nbsp;</td>
+			<td id="coln0_12_2" width="3%">&nbsp;</td> <td id="coln_12_2">&nbsp;</td>
+			<td id="coln0_12_3" width="3%">&nbsp;</td> <td id="coln_12_3">&nbsp;</td>
+			<td id="coln0_12_4" width="3%"></td> <td id="coln_12_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_13_0" width="3%">&nbsp;</td> <td width="17%" id="coln_13_0">&nbsp;</td>
+			<td id="coln0_13_1" width="3%">&nbsp;</td> <td id="coln_13_1">&nbsp;</td>
+			<td id="coln0_13_2" width="3%">&nbsp;</td> <td id="coln_13_2">&nbsp;</td>
+			<td id="coln0_13_3" width="3%">&nbsp;</td> <td id="coln_13_3">&nbsp;</td>
+			<td id="coln0_13_4" width="3%"></td> <td id="coln_13_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_14_0" width="3%">&nbsp;</td> <td width="17%" id="coln_14_0">&nbsp;</td>
+			<td id="coln0_14_1" width="3%">&nbsp;</td> <td id="coln_14_1">&nbsp;</td>
+			<td id="coln0_14_2" width="3%">&nbsp;</td> <td id="coln_14_2">&nbsp;</td>
+			<td id="coln0_14_3" width="3%">&nbsp;</td> <td id="coln_14_3">&nbsp;</td>
+			<td id="coln0_14_4" width="3%"></td> <td id="coln_14_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_15_0" width="3%">&nbsp;</td> <td width="17%" id="coln_15_0">&nbsp;</td>
+			<td id="coln0_15_1" width="3%">&nbsp;</td> <td id="coln_15_1">&nbsp;</td>
+			<td id="coln0_15_2" width="3%">&nbsp;</td> <td id="coln_15_2">&nbsp;</td>
+			<td id="coln0_15_3" width="3%">&nbsp;</td> <td id="coln_15_3">&nbsp;</td>
+			<td id="coln0_15_4" width="3%"></td> <td id="coln_15_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_16_0" width="3%">&nbsp;</td> <td width="17%" id="coln_16_0">&nbsp;</td>
+			<td id="coln0_16_1" width="3%">&nbsp;</td> <td id="coln_16_1">&nbsp;</td>
+			<td id="coln0_16_2" width="3%">&nbsp;</td> <td id="coln_16_2">&nbsp;</td>
+			<td id="coln0_16_3" width="3%">&nbsp;</td> <td id="coln_16_3">&nbsp;</td>
+			<td id="coln0_16_4" width="3%"></td> <td id="coln_16_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_17_0" width="3%">&nbsp;</td> <td width="17%" id="coln_17_0">&nbsp;</td>
+			<td id="coln0_17_1" width="3%">&nbsp;</td> <td id="coln_17_1">&nbsp;</td>
+			<td id="coln0_17_2" width="3%">&nbsp;</td> <td id="coln_17_2">&nbsp;</td>
+			<td id="coln0_17_3" width="3%">&nbsp;</td> <td id="coln_17_3">&nbsp;</td>
+			<td id="coln0_17_4" width="3%"></td> <td id="coln_17_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_18_0" width="3%">&nbsp;</td> <td width="17%" id="coln_18_0">&nbsp;</td>
+			<td id="coln0_18_1" width="3%">&nbsp;</td> <td id="coln_18_1">&nbsp;</td>
+			<td id="coln0_18_2" width="3%">&nbsp;</td> <td id="coln_18_2">&nbsp;</td>
+			<td id="coln0_18_3" width="3%">&nbsp;</td> <td id="coln_18_3">&nbsp;</td>
+			<td id="coln0_18_4" width="3%"></td> <td id="coln_18_4">&nbsp;</td>
+		</tr>			
+				
+				<tr  >
+			<td id="coln0_19_0" width="3%">&nbsp;</td> <td width="17%" id="coln_19_0">&nbsp;</td>
+			<td id="coln0_19_1" width="3%">&nbsp;</td> <td id="coln_19_1">&nbsp;</td>
+			<td id="coln0_19_2" width="3%">&nbsp;</td> <td id="coln_19_2">&nbsp;</td>
+			<td id="coln0_19_3" width="3%">&nbsp;</td> <td id="coln_19_3">&nbsp;</td>
+			<td id="coln0_19_4" width="3%"></td> <td id="coln_19_4">&nbsp;</td>
+		</tr>			
+				
+									
+												
+    </table>
+   
+	</div>
+	
+<br>
+	
+	<!--　下段　４ボタン　-->
+	<div>
+	<table style="margin:auto">
+		<tr>
+			<td style="border-color:white " ><label style="background-color:SlateBlue;color:white;" onclick="onDoneNext()">&nbsp;Done & Next&nbsp;</label>	</td>
+			<td style="border-color:white " ><label style="background-color:LimeGreen ; color:white ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label style="background-color:CornflowerBlue; color:white  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label style="background-color:grey ;color:white;  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+		</tr>		
+	</table>
+	</div>
+	<br>
+</div> 
+
+
+
+	<!-- メンテナンス -->
+
+	<div align="left" style='font-size:16pt;padding:10px 10px '>
+	
+		maintenance port (do not enter)
+		<!-- 発言フォーム -->
+		<form id="frm-post">
+			<input type="text" id="msg" style='width:300px;font-size:16pt;width:80%'>
+			<button>送信</button>
+		</form>
+
+		<!-- 発言ログ -->
+		<ul id="msglist">
+		</ul>
+	
+	</div>
+
+
+	<script src="https://cdn.socket.io/4.5.0/socket.io.min.js"
+		integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
+		crossorigin="anonymous"></script>
+	<script>
+	
+		const socket = io();
+
+		/**
+		//-------------------------------------
+		// Socket.ioサーバへ接続
+		//-------------------------------------
+		 * [イベント] フォームが送信された    （自分からの）入力値の受信→サーバに送信
+		 */
+		document.querySelector("#frm-post").addEventListener("submit", (e) => {
+			//alert('33');
+			// 規定の送信処理をキャンセル(画面遷移しないなど)
+			e.preventDefault();
+
+			// 入力内容を取得する
+			const msg = document.querySelector("#msg");
+			if (msg.value === "") {
+				return (false);
+			}
+
+			// Socket.ioサーバへ送信
+			//for(i=0;i<10;i++){
+			socket.emit("post", { text: msg.value });
+			//}
+
+			// 発言フォームを空にする
+			msg.value = "";
+		});
+
+
+
+		var time;		
+		var diff;
+		var timerVal=0; 
+		var hash;
+
+		//
+		//	入力	msg	ex.	'J1;{"idNo":"5","IJ":"0_0","val":"1.1"}' 
+		//							→	ar[]	
+		//									ar[0]：PR...J1...		
+		//									ar[1]→	hash
+		//
+		function dummyOn_( msg ){
+			console.log('664 ', msg);
+			//console.log( 'xxx ' , ave );
+			ar = msg.split(";");
+			////console.log( '669 ', ar.length > 1 ?	ar[1] : '' );
+			if( ar.length > 1 ){
+				
+				hash = JSON.parse(ar[1]);
+				console.log('1406', ar[0] );
+				
+				switch( ar[0] ){
+					//	共通
+					case 'MC':
+						document.getElementById( "class" ).innerHTML = hash.class ;
+						document.getElementById( "rnd" ).innerHTML = "Round " + hash.rnd;
+						document.getElementById( "ht" ).innerHTML = "/ Heat " +hash.ht;
+
+						/*
+						time = new Date(hash.time);
+						timeNow = new Date();
+						diff = timeNow.getTime() - time.getTime();	
+						//console.log('684 diff=', diff) ;
+						*/
+						
+						//	timer表示	＝	 現在時刻 - 開始時刻　＋	timer値 * 60 * 1000 -
+						//console.log('925 hash[timer]=%s ', hash['timer']);
+						document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
+						console.log('300 ', hash["Athlete"] );
+						
+						//document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'];
+						
+						/*
+						timerVal = hash.timer * 60000 - timeNow.getTime() + time.getTime()  ;	// * time.getTime() + hash.timer * 60000  ;
+						timerVal = timerVal >= 0 ? timerVal : 0; 
+						*/
+						//console.log( "689 " , timerVal );
+
+						/*
+						if(typeof hash.nP  != 'undefined') {
+							//console.log('1488 ', hash.nP );
+							var cnt = hash.nP <= 5 ? hash.nP : 5;		//	選手の人数に従って、行を表示/非表示にする
+							for( var i=0; i<5; i++ ){
+								document.getElementById( "rowL" + i ).style.display = i<cnt? "" : "none";	//	左のdiv
+								document.getElementById( "rowM" + i ).style.display = i<cnt? "" : "none";	//	中のdiv
+								document.getElementById( "rowR" + i ).style.display = i<cnt? "" : "none";	//	右のdiv
+								document.getElementById( "low" + i ).style.display = i<cnt? "" : "none";		//	padlingのdiv	※削除予定
+							}		  
+						}			
+						*/
+						
+						/*
+						//	（左div）Judge列の#Jを、（hash.nJを超えた行は）消す
+						str = document.getElementById( "Judge_0"  ).innerHTML;
+						arJ = str.split("<br>");
+						for( var j=1; j<6; j++ ){
+							if( j > hash.nJ ) arJ[j] = "&nbsp;";
+						}
+						str = arJ.join("<br>");						
+						//console.log('1498 hash.nJ=%s str=%s', hash.nJ, str );
+						for( var i=0; i<5; i++ ){
+							document.getElementById( "Judge_" + i ).innerHTML = str;
+						}
+						
+						//	(中Ddiv)	5X20の表のnJ（ジャッジの数）を超えた行はクリアする
+						for( var i=0; i<5; i++ ){							
+							for(var j=0; j<20; j++ ){
+								////console.log('1504', document.getElementById( i +'_' + j ).innerHTML );
+								str = document.getElementById( i + "_" + j ).innerHTML;
+								arJ = str.split("<br>");
+								for( var k=0; k<6; k++ ){
+									if( k > hash.nJ ) arJ[k] = "&nbsp;";
+								}
+								document.getElementById( i + "_" + j ).innerHTML = arJ.join("<br>");
+							}
+						}
+						
+						//console.log('950 hash=%s', hash["Athlete"] );
+						//	athlete列に名前、フリガナ、県名などを登録する
+						if( hash["Athlete"] != "" ){
+							var arAth = hash["Athlete"].split(",");
+							//console.log('953 ', arAth );
+							var obj;
+							var ar;
+							for( var i=0; i<5; i++ ){
+								obj = document.getElementById( "Athlete_" + i );
+								ar = obj.innerHTML.split("<br>");
+								ar[0] = arAth[ i*3 ];
+								ar[1] = arAth[ i*3 + 1 ];								
+								ar[2] = arAth[ i*3 + 2 ];
+								obj.innerHTML = ar.join("<br>");
+								//console.log('954 ', ar );
+								
+							}
+						}
+						*/
+						break; 
+
+					//	judge,headJudge
+					case 'PR':    //  ex. PR;["G","W","B","Y","W"]
+
+						var ar2 = JSON.parse(ar[1]);
+						for( ele in ar2){
+							//console.log('1908', color[ar2[ele]] );
+							//obj = document.getElementById( ele + '_99');
+							obj = document.getElementById( ele + '_6');
+							obj.style.backgroundColor = color[ar2[ele]] ;
+						}
+						////console.log('1900 ' , ar2 );
+						break;
+					
+					//	I_J の通知
+					case 'J1':
+					case 'J2':
+					case 'J3':
+					case 'J4':
+					case 'J5':
+					
+						console.log('1002 %o', hash );
+						break;
+				
+				case "HJ":
+				
+						console.log('447 %o', hash );
+						
+						//console.log("448 ", typeof(hash) );		//	どちらもobject
+						
+						if( hash.length == 5 ){			//	一応、これでもOKらしい
+							
+							//	上表
+							for( var i=0; i<5; i++ ){
+								console.log( "450 ", hash[i] );
+								
+								//	色の列
+								if( hash[i][0] != "" ){
+									document.getElementById( i + "_1" ).style.backgroundColor = arColor[hash[i][0]];
+								} else {
+									document.getElementById( i + "_1" ).style.backgroundColor = "black";
+								}
+								
+								//	Total / Needs
+									document.getElementById( i + "_3" ).innerHTML = "<label style='font-weight:bold;font-size:15pt'>" +hash[i][1] + "</label><br>" 
+												+ ( i==0? "Win by " : "Needs " ) + 	hash[i][2] + "<br>" + (hash[i][3] == "" ? "" : "to 1st ") + hash[i][3] +   "<br>";
+												
+								//	Best 2 Waves				
+								document.getElementById( i + "_4" ).innerHTML =  "<label style='font-weight:bold;font-size:15pt'>" +  hash[i][4] 
+								+ "</label> + <label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][6] == "" ? "" : "red" ) +  "'>" + hash[i][5] + "</label><br><label style='color:red'>" +  hash[i][6] + "</label>" ;
+							}
+						} else {
+							
+							//	下表(scrollする表)
+							console.log("469 ", hash);
+							console.log("472 %s %s", hash["IJ"][0] , hash["val"][0] );
+							console.log('479 ', hash["IJ"].length );
+							for( var i=0; i<hash["IJ"].length; i++ ){
+								var str  = hash["IJ"][i];		//(parseInt( hash["IJ"][i].split("_")[0] ) + 1 ) + "_" + hash["IJ"][i].split("_")[1];
+								console.log('475 ', str );
+								str = str.split("_")[1] + "_" + str.split("_")[0];	//	行<-->列
+								
+								document.getElementById( "coln0_" + str ).innerHTML = ( parseInt( hash["IJ"][i].split("_")[1] ) + 1) + "";			////////////
+								document.getElementById( "coln_" + str ).innerHTML = hash["val"][i] ;
+								console.log('486 ', hash["opt"] );
+								
+								//	top2の場合、green
+								document.getElementById( "coln_" + str ).style.backgroundColor =  hash["opt"][i].indexOf( "gr" ) >= 0 ? "lightgreen" : "white";
+								//document.getElementById( "col_" + str ).style.backgroundColor =  hash["opt"][i].indexOf( "gr" ) >= 0 ? "lightgreen" : "white";
+								console.log('488 %s %s', str , hash["opt"]);
+																
+								//	妨害の場合、削除線
+								document.getElementById( "coln_" + str ).style.textDecoration = hash["opt"][i].indexOf( "del" ) >= 0 ? "line-through": "";
+								
+							}
+						}
+						
+						break;
+				
+				}		//	end switch
+				//console.log('1684 ave[0][2]=', ave[0][2] );
+				console.log('417');
+				
+			}
+		}
+		
+		var listLength=0;
+		function dummyOn(msg){
+			//console.log('80===== msg.text=', msg);
+			const list = document.querySelector("#msglist");
+			// const list = document.querySelector("msglist");  //NG
+			//alert(list);    //  [object HTMLUListElement]
+			const li = document.createElement("li");
+			//li.innerHTML = `${msg.text}`; //  下と同じ
+			li.innerHTML = msg;			
+
+			list.insertBefore(li, list.firstChild);
+			
+			//	10行を超えない対策	
+			listLength += 1;
+			if( listLength > 10 ){
+				listLength = 10;
+				c_ = list.lastElementChild;
+				list.removeChild( c_ );
+			}
+			////console.log('838 listLength=', listLength);
+			//console.log('1853 before dummyOn_ %s %s', ave[0][2], msg );		
+			dummyOn_( msg );
+			//console.log('1855 after dummyOn_ %s %s', ave[0][2], msg );
+			
+		}
+
+		//console.log('xxx ave=', ave );
+
+		socket.on("member-post", (msg) => {
+			//alert(msg.text);  //  そのもの
+			//console.log('80===== msg.text=', msg.text);
+			const list = document.querySelector("#msglist");
+			// const list = document.querySelector("msglist");  //NG
+			//alert(list);    //  [object HTMLUListElement]
+			const li = document.createElement("li");
+			//li.innerHTML = `${msg.text}`; //  下と同じ
+			li.innerHTML = msg.text;
+			list.insertBefore(li, list.firstChild);
+
+			//console.log('1871 ', ave );
+			dummyOn_( li.innerHTML );
+
+
+		});
+
+		/**
+		 * [イベント] ページの読込み完了    無くてもOK
+		 */
+		window.onload = () => {
+			// テキストボックスを選択する
+			//alert('69');
+			document.querySelector("#msg").focus();
+		}
+
+
+		//
+		//	config
+		//
+		var id = 'MC';		//	i am Head Judge 
+		
+				//dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", ""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "" ]]' );
+
+		/*
+		
+		dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5", \
+	"Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"\
+	}'); 
+		dummyOn( 'PR;["G","W","B","Y","_"]' );
+		dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", ""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "" ]]' );
+
+		//dummyOn( 	'HJ;{"IJ":["0_0", "0_1"],"val":["1.10", "10.0"]}' );;
+		//dummyOn( 	'HJ;{"IJ":["0_0"],"val":["1.10"],"opt":["grdel"]}' );
+		*/
+		//dummyOn( 'HJ;{"IJ":["4_0"],"val":["1.10"]}' );
+		//dummyOn( 	'HJ;{"IJ":["0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19","0_0"],"val":["1.11","1.12","1.13","1.4","1.5","1.16","1.17","1.18","1.19","1.20","1.21","1.22","1.23","1.24","1.25","1.26","1.27","1.28","1.29","1.30"],"opt":["grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel"]}' );
+		
+		//dummyOn( 	'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],"opt":["gr","","","","","","","","","","","","","","","","","","",""]}' );
+</script>
+
+</body>
+</html>
+

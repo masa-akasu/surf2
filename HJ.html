@@ -224,6 +224,7 @@
 			
 			//	順位およびneedPointを決める
 			getSeqAndNeedPoint();
+			console.log('228')			
 			
 			//console.log('473');
 			setApproveNo();
@@ -235,21 +236,44 @@
 		
 		//	Judgeに反映
 		function emitHJ( prevIJ__ , opt ){
-			//console.log('239 ', prevIJ__ );
-				hashToJudge = { "IJ":[""],"val":[""],"opt":[""]};
-				hashToJudge.IJ[0] = prevIJ__;
-				var str = document.getElementById( prevIJ__ ).innerHTML;
-				//console.log('241 ', str );
-				//console.log('242 ', str.indexOf(">") );
-				str = str.substring(  str.indexOf(">") + 1 );
-				str = str.substring( 0, str.indexOf("<"));
-				hashToJudge.val[0] = str;
+			console.log( "1392 emitHJ");
+			hashToJudge = { "IJ":[],"val":[],"opt":[]};
+			for( var i=0; i<20; i++ ){
+				//console.log('1392x' );
+				var str = prevIJ__.split("_")[0] + "_" + i ;
+				hashToJudge.IJ.push( str );								//	行＿列
 				
-				hashToJudge.opt[0] = opt;
+				str_ = document.getElementById( str  ).innerHTML;
+				//console.log('1392y ', str_ );
+				str_ = str_.substring(  str_.indexOf(">") + 1 );
+				str_ = str_.substring( 0, str_.indexOf("<"));
+				if( str_ == "&nbsp;" ) str_ = "";
+				hashToJudge.val.push( str_ );
 				
-				//console.log( "281 ", hashToJudge );
-				emit( hashToJudge );					
+				str_ = "";
+				console.log('1392h ', document.getElementById( str  ).style.backgroundColor);
+				//if( document.getElementById( str  ).style.backgroundColor == "lightgreen" || document.getElementById( str  ).style.backgroundColor == "initial" ){
+				if( document.getElementById( str  ).style.backgroundColor == "lightgreen"  ){
+				//var ind = prevIJ__.split("_")[0];
+				//console.log('1392d0 ', top2Index[ ind ]   );
+				//if( top2Index[ ind ] [ 0 ] == i || top2Index[ ind ] [ 1 ] == i ){
+					str_ = "gr";
+				}
+				console.log('1392h2 %d %s ',i, document.getElementById( str  ).style.textDecoration );
+				if( document.getElementById( str + "_00" ).style.textDecoration == "line-through" ){
+					str_ += "del";
+				}
+				hashToJudge.opt.push( str_ );
+				
+			}
+			
+			console.log( "1392b ", hashToJudge );
+			console.log( "1392c ", prevIJ__ );
+			//console.log( "1392d " , top2Index );
+			emit( hashToJudge );					
 		}
+		
+		
 		//	broadcastする
 		function emit(str){
 			////console.log('350 str=', str);
@@ -384,6 +408,7 @@
 				getSeqAndNeedPoint();		//	順位とneedの計算
 				setApproveNo();						//	ApproveNo表示
 				emitHJ(prevIJ, "" );
+				console.log("414");
 				
 			}
 			
@@ -721,7 +746,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_0_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_0_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -732,7 +757,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_1_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_1_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -743,7 +768,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_2_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_2_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -754,7 +779,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_3_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_3_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -765,7 +790,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_4_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_4_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -776,7 +801,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_5_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_5_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -787,7 +812,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_6_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_6_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -798,7 +823,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_7_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_7_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -809,7 +834,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_8_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_8_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -820,7 +845,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_9_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_9_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -831,7 +856,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_10_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_10_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -842,7 +867,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_11_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_11_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -853,7 +878,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_12_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_12_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -864,7 +889,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_13_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_13_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -875,7 +900,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_14_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_14_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -886,7 +911,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_15_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_15_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -897,7 +922,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_16_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_16_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -908,7 +933,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_17_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_17_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -919,7 +944,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_18_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_18_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -930,7 +955,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="0_19_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="0_19_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -945,7 +970,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_0_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_0_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -956,7 +981,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_1_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_1_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -967,7 +992,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_2_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_2_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -978,7 +1003,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_3_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_3_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -989,7 +1014,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_4_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_4_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1000,7 +1025,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_5_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_5_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1011,7 +1036,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_6_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_6_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1022,7 +1047,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_7_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_7_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1033,7 +1058,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_8_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_8_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1044,7 +1069,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_9_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_9_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1055,7 +1080,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_10_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_10_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1066,7 +1091,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_11_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_11_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1077,7 +1102,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_12_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_12_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1088,7 +1113,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_13_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_13_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1099,7 +1124,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_14_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_14_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1110,7 +1135,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_15_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_15_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1121,7 +1146,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_16_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_16_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1132,7 +1157,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_17_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_17_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1143,7 +1168,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_18_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_18_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1154,7 +1179,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="1_19_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="1_19_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1169,7 +1194,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_0_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_0_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1180,7 +1205,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_1_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_1_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1191,7 +1216,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_2_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_2_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1202,7 +1227,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_3_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_3_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1213,7 +1238,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_4_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_4_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1224,7 +1249,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_5_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_5_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1235,7 +1260,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_6_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_6_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1246,7 +1271,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_7_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_7_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1257,7 +1282,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_8_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_8_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1268,7 +1293,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_9_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_9_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1279,7 +1304,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_10_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_10_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1290,7 +1315,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_11_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_11_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1301,7 +1326,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_12_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_12_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1312,7 +1337,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_13_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_13_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1323,7 +1348,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_14_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_14_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1334,7 +1359,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_15_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_15_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1345,7 +1370,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_16_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_16_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1356,7 +1381,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_17_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_17_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1367,7 +1392,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_18_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_18_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1378,7 +1403,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="2_19_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="2_19_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1393,7 +1418,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_0_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_0_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1404,7 +1429,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_1_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_1_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1415,7 +1440,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_2_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_2_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1426,7 +1451,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_3_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_3_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1437,7 +1462,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_4_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_4_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1448,7 +1473,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_5_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_5_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1459,7 +1484,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_6_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_6_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1470,7 +1495,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_7_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_7_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1481,7 +1506,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_8_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_8_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1492,7 +1517,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_9_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_9_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1503,7 +1528,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_10_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_10_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1514,7 +1539,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_11_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_11_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1525,7 +1550,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_12_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_12_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1536,7 +1561,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_13_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_13_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1547,7 +1572,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_14_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_14_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1558,7 +1583,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_15_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_15_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1569,7 +1594,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_16_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_16_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1580,7 +1605,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_17_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_17_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1591,7 +1616,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_18_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_18_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1602,7 +1627,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="3_19_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="3_19_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1617,7 +1642,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_0_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_0_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1628,7 +1653,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_1_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_1_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1639,7 +1664,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_2_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_2_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1650,7 +1675,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_3_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_3_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1661,7 +1686,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_4_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_4_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1672,7 +1697,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_5_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_5_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1683,7 +1708,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_6_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_6_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1694,7 +1719,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_7_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_7_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1705,7 +1730,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_8_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_8_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1716,7 +1741,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_9_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_9_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1727,7 +1752,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_10_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_10_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1738,7 +1763,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_11_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_11_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1749,7 +1774,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_12_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_12_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1760,7 +1785,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_13_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_13_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1771,7 +1796,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_14_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_14_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1782,7 +1807,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_15_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_15_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1793,7 +1818,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_16_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_16_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1804,7 +1829,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_17_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_17_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1815,7 +1840,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_18_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_18_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -1826,7 +1851,7 @@
 				onclick="buttonclick(this)" 
 				ondblclick="buttonDoubleclick(this)"
 				
-				><label style="font-weight:normal;font-size:11pt" id="4_19_00">&nbsp;</label>
+				><label style="font-weight:normal;font-size:11pt;" id="4_19_00">&nbsp;</label>
 				<label><br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;</label></td>
 				
 
@@ -2541,11 +2566,11 @@
 			console.log('612 ', prevIJ_);
 			setApproveNo();				
 			
-			emitHJ(prevIJ_, "" );					//	prevIJ_ 行列	ex.	0_1		par2：	del	gr	そのセルが削除（del)またはtop2(gr)
 				
 			totalReculc({"IJ": prevIJ_ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
 			getSeqAndNeedPoint();
-			
+			emitHJ(prevIJ_, "" );					//	prevIJ_ 行列	ex.	0_1		par2：	del	gr	そのセルが削除（del)またはtop2(gr)
+			console.log( '763')	;
 		
 		}
 
@@ -3385,7 +3410,7 @@
 						totalReculc({"IJ":prevIJ + "_"  } );
 					}
 					getSeqAndNeedPoint();		
-			
+					console.log('492');
 			
 			//	後片付け
 			onX();
@@ -3466,7 +3491,7 @@
 		 */
 
 		//
-		//	順位およびneedPointを決める
+		//	順位およびneedPointを決める		total、top2は既に求められている
 		//
 		function getSeqAndNeedPoint(){
 			//console.log('1305');
@@ -3512,12 +3537,16 @@
 
 			console.log("749", total_and_top2 );
 
+			var arEmitHJ = [ [ "", "", "", "", "", "", "" ] , [ "", "", "","","","", "" ], ["","", "","", "", "", "" ], ["", "", "","", "", "", ""], ["", "", "","", "", "", "" ]];	
+			//	dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", ""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "" ]]' );
+
 			//console.log('1280');
 			arSeq = ["st", "nd", "rd", "th", "th"];
 			//		Total(列)の再計算		6/22mail	2枚目
 			var cons_=0;
 			var str_=0.0;
-			seqAns.forEach( (val) =>{
+			var ar22= ["","","","",""];
+			seqAns.forEach( (val,key) =>{
 				//console.log('869', val[1] );
 				
 				//	順位	1...5	を色（Red,White,...）の下に表示する
@@ -3533,6 +3562,9 @@
 				//
 				
 				str = "Total_" + val[1];		//		val[1]：index		0...4		※	str	注意↓
+				
+	
+				
 				
 				//console.log('1296 str=%s cons_=%d', str, cons_ );
 				var upper = 0;
@@ -3580,7 +3612,7 @@
 							
 							
 							//
-							//	妨害ありの場合、
+							//	妨害ありの場合、Needsの計算
 							//
 							var inf1 = seqAns[cons_][0][3];
 							var inf2	=	seqAns[cons_][0][4] ;
@@ -3623,10 +3655,29 @@
 							//console.log( '895 ', ar22[2] );
 							
 				}
-
+				
+				//	通知メッセージを作る
+				arEmitHJ[key][0] = val[1];				//	[0]	色	0...4
+					
+				var str_ = document.getElementById( "Total_" + key ).innerHTML.split("\n").join("");
+				str_ = str_.split("\t").join("");
+				var arTotal_ = str_.split("<br>");
+				if( val[0][0] != "" ){
+					arEmitHJ[key][1] =  cons_ == 0 ? ar[2].split(" ")[2]  : val[0][0];	//	[1]	total		
+				} else {
+					arEmitHJ[key][1] ="";
+				}	
+				arEmitHJ[key][2] = cons_ == 0 ? ar[2].split(" ")[2]  : ar22[2].split(" ")[1] 	;	//	[2]	needs			
+						
+				arEmitHJ[key][3] = ""				;//	[3]						
+				arEmitHJ[key][4] = val[0][1];		//[4]	top1
+				arEmitHJ[key][5] = val[0][2];		//	[5]	top2
+				arEmitHJ[key][6] = "";					//	[6]	Athlete(色)の表示		ex.	△→White
+				
 				cons_ += 1;
-			});			
-			//console.log('1392');
+			});	
+			console.log('1392 ', seqAns );		
+			console.log('1392a ', arEmitHJ );
 			
 		}	//	end	getSeqAndNeedPoint
 		
@@ -3764,7 +3815,7 @@
 						
 						totalReculc(hash);
 						getSeqAndNeedPoint();
-
+						console.log('1005');
 						
 
 						break;
@@ -3809,10 +3860,12 @@
 			
 
 			//
-			//	top2に対し、妨害があれば減点する
+			//	top2（＝seq)に対し、妨害があれば減点する
 			//
+			
 			var nInt = 0;
-			var arInt = [ "", "" ];
+			var arInt = [ "", "" ];			
+			//	妨害のパターンを保存する		ex.　arInt = [ "△", "▲" ];		※ここではAthlete（色）を参照する、即ちPd△なども考慮される
 			["_Ath", "_Ath_"].forEach( (val)=>{			
 				["▲", "△"].forEach( (val2)=>{
 					if( document.getElementById( hash['IJ'].split("_")[0]  + val ).innerHTML.indexOf(val2) >= 0 ){
@@ -3822,9 +3875,10 @@
 					}						
 				});
 			});
-			console.log( "1099z ", arInt );
-			console.log( "1099v ", top2Index );
+			//console.log( "1099z ", arInt );
+			//console.log( "1099v ", top2Index );
 			
+			//	妨害のパターンからtop2を減点する
 			if( arInt[0] == "△" && arInt[1] == ""  ) {
 				seq[1] = parseFloat(seq[1]) / 2.0;								//	△　＿
 			}
@@ -3845,12 +3899,10 @@
 			}	
 			
 
-			
-
-			//	妨害の場合、削除線
+			//	妨害の減点がある場合、削除線			ex.　arInt = [ "△", "▲" ]=>top1,2両方に削除線を引く
 			
 			//	その行について、	①top2（上位２位）が確定していて、②妨害がある場合、取消線を（５X20の平均値に）引く
-			//	①top2Index[行][2]		行:0...4		2:0.1　1位、2位
+			//	①入力	top2Index[行][2]		行:0...4		2:0.1　1位、2位			ex.	[1,0]->	１位が1番目、２位が0番目
 			//	②arInt[2] 
 			console.log( "1099y %o %s", top2Index , hash['IJ'].split("_")[0]);
 			var row_ =hash['IJ'].split("_")[0];
@@ -3870,6 +3922,7 @@
 			
 			console.log( "1081 ", top2Index );
 
+
 			//	減点処理した値を、順位判定用のコモン領域にセットする
 			ind = hash['IJ'].split("_")[0] ;
 			total_and_top2[ ind ][0] = parseFloat(seq[0]) + parseFloat(seq[1]);		//	合計	var total_and_top2 = Array( Array(20), Array(20), Array(20), Array(20), Array(20) )
@@ -3877,7 +3930,8 @@
 			total_and_top2[ ind ][2] = parseFloat(seq[1]);						//	２位
 			//console.log( '1603 ind=%d %o',ind , total_and_top2[ind] );
 
-			//	total（色）に表示値をセットする
+
+			//	total（色）に表示値をセットする		※この時点では未だ順位は求めていない、単にその行の合計、top2を求めるだけ
 			str =  "Total_" + hash['IJ'].split("_")[0] ;	
 			str_ = document.getElementById( str ).innerHTML;
 			arTotal = ["","",""];
@@ -3942,11 +3996,13 @@
 					
 				if( cnt2 < 2 && top2[cnt2] > 0 ){
 					document.getElementById( str2 ).style.background = "lightgreen";				//	background-color」ではなく「background」になっていることに注意	
+					//document.getElementById( str2 ).style.backgroundColor = "lightgreen";	
 					console.log('1188 ', iSav[k] );
 					top2Index[iSav[k] ][cnt2]=	 val[1] ;					
 				} 	else {
 					if( document.getElementById( str2 ).style.background != "" ){
 						document.getElementById( str2 ).style.background = "white";
+						//document.getElementById( str2 ).style.backgroundColor = "white";
 					} 
 				}		
 				cnt2 += 1;														

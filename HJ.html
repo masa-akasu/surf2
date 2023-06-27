@@ -211,11 +211,13 @@
 			//	網掛けセルのあった行だけLoop		Total列の再計算			※１
 			var hash={"IJ":""};
 			for( var k=0; k<iSav.length; k++ ){				
-				totalReculc({"IJ":iSav[k] + "_"});									
+				totalReculc({"IJ":iSav[k] + "_"});	
+				console.log( "217 ", 	iSav[k] + "_" );
+				emitHJ( 	iSav[k] + "_" );					//	Broadcast（反映）、１行分（色）、平均値、green（top2)および取消線（妨害減点のweveNo）
 			}	
 			
 			//	Broadcast（反映）
-			emit( hashHJ );
+			//emit( hashHJ );
 			
 			//	後始末	数値（ex.	①）	をクリア
 			document.getElementById( "Approve" ).innerHTML = "&nbsp;";
@@ -224,6 +226,8 @@
 			
 			//	順位およびneedPointを決める
 			getSeqAndNeedPoint();
+			
+			
 			console.log('228')			
 			
 			//console.log('473');
@@ -234,8 +238,9 @@
 		
 		
 		
-		//	Judgeに反映
-		function emitHJ( prevIJ__ , opt ){
+		//	Judgeに反映,１行分、getSeq…()の後
+		//function emitHJ( prevIJ__ , opt ){
+		function emitHJ( prevIJ__  ){
 			console.log( "1392 emitHJ");
 			hashToJudge = { "IJ":[],"val":[],"opt":[]};
 			for( var i=0; i<20; i++ ){
@@ -243,15 +248,19 @@
 				var str = prevIJ__.split("_")[0] + "_" + i ;
 				hashToJudge.IJ.push( str );								//	行＿列
 				
-				str_ = document.getElementById( str  ).innerHTML;
-				//console.log('1392y ', str_ );
-				str_ = str_.substring(  str_.indexOf(">") + 1 );
-				str_ = str_.substring( 0, str_.indexOf("<"));
+				//console.log( "1392n ", net[ prevIJ__.split("_")[0] ][i] );
+				str_ = "";
+				if( net[ prevIJ__.split("_")[0] ][i] == "" ){								//	grey,redの場合、MCの下段表示の平均値は""（スペース）とする
+					str_ = document.getElementById( str  ).innerHTML;
+					//console.log('1392y ', str_ );
+					str_ = str_.substring(  str_.indexOf(">") + 1 );
+					str_ = str_.substring( 0, str_.indexOf("<"));
+				}
 				if( str_ == "&nbsp;" ) str_ = "";
 				hashToJudge.val.push( str_ );
 				
 				str_ = "";
-				console.log('1392h ', document.getElementById( str  ).style.backgroundColor);
+				//console.log('1392h ', document.getElementById( str  ).style.backgroundColor);
 				//if( document.getElementById( str  ).style.backgroundColor == "lightgreen" || document.getElementById( str  ).style.backgroundColor == "initial" ){
 				if( document.getElementById( str  ).style.backgroundColor == "lightgreen"  ){
 				//var ind = prevIJ__.split("_")[0];
@@ -259,7 +268,7 @@
 				//if( top2Index[ ind ] [ 0 ] == i || top2Index[ ind ] [ 1 ] == i ){
 					str_ = "gr";
 				}
-				console.log('1392h2 %d %s ',i, document.getElementById( str  ).style.textDecoration );
+				//console.log('1392h2 %d %s ',i, document.getElementById( str  ).style.textDecoration );
 				if( document.getElementById( str + "_00" ).style.textDecoration == "line-through" ){
 					str_ += "del";
 				}
@@ -273,12 +282,14 @@
 			emit( hashToJudge );					
 		}
 		
+
+		
 		
 		//	broadcastする
 		function emit(str){
 			////console.log('350 str=', str);
 			var str = id + ";" + JSON.stringify(str) ;
-			//console.log('474 str=' , str );
+			console.log('1392 str=' , str );
 			socket.emit("post", { text: str } );
 		}
 		
@@ -407,7 +418,8 @@
 				totalReculc({"IJ":obj.id });		//	合計の再計算
 				getSeqAndNeedPoint();		//	順位とneedの計算
 				setApproveNo();						//	ApproveNo表示
-				emitHJ(prevIJ, "" );
+				//emitHJ(prevIJ, "" );
+				emitHJ(prevIJ );
 				console.log("414");
 				
 			}
@@ -2569,7 +2581,9 @@
 				
 			totalReculc({"IJ": prevIJ_ });		//	total再計算 	※releaseと同じ対策、socket通知でないが、パラメータを通知と同じにする
 			getSeqAndNeedPoint();
-			emitHJ(prevIJ_, "" );					//	prevIJ_ 行列	ex.	0_1		par2：	del	gr	そのセルが削除（del)またはtop2(gr)
+			//emitHJ(prevIJ_, "" );					//	prevIJ_ 行列	ex.	0_1		par2：	del	gr	そのセルが削除（del)またはtop2(gr)
+			emitHJ(prevIJ_ );					//	prevIJ_ 行列	ex.	0_1		par2：	del	gr	そのセルが削除（del)またはtop2(gr)
+			
 			console.log( '763')	;
 		
 		}
@@ -3412,6 +3426,9 @@
 					getSeqAndNeedPoint();		
 					console.log('492');
 			
+					emitHJ( prevIJ + "_" );
+
+					
 			//	後片付け
 			onX();
 		}
@@ -3678,7 +3695,7 @@
 			});	
 			console.log('1392 ', seqAns );		
 			console.log('1392a ', arEmitHJ );
-			
+			emit(arEmitHJ);
 		}	//	end	getSeqAndNeedPoint
 		
 		var time;		
@@ -4305,15 +4322,15 @@
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
 
 	
-	//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.2"}' );	
-	//dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"1.0"}' );	
+		dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.2"}' );	
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"1.0"}' );	
 	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"2_0","val":"1.0"}' );	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"3_0","val":"1.0"}' );	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"4_0","val":"1.0"}' );	
 
-	//dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.3"}' );	
-	//dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"0.9"}' );	
+		dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"1.3"}' );	
+		dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"0.9"}' );	
 	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"2_1","val":"0.9"}' );	
 	//dummyOn( 'J1;{"idNo":"1","IJ":"3_1","val":"0.9"}' );	

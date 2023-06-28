@@ -60,12 +60,23 @@
 			
 		}
 		
+		var hash_;
 		function onDoneNext(){
 			//alert('onDoneNext()');
 			
-			//	backendから、athleteの名前を受け取る
-			strText = "佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎";
-			arText = strText.split(",");
+			//	backendから、athleteの名前を受け取る		////	test
+			var strClass = "MEN";
+			var strRnd = "1";
+			var strHt = "1";
+			var strTime = "";
+			var str_tSt = "Done Next";
+
+			var strTimer = "15";
+			var str_nP = "5";
+			var str_nJ = "5";
+			var strText = "佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎";
+			
+			arText = strText.split(",");			
 			console.log("71 ", arText );
 			
 			for( var i=0; i<5; i++ ){
@@ -76,7 +87,68 @@
 				document.getElementById( i + "_2" ).innerHTML = "<label>" + arText[ 3*i ] + "</label><br><label style='font-size:10pt'>" 
 																+ arText[ 3*i +1] + "</label><br><label style='font-size:10pt'>"+ arText[3*i+2] + "</label><br>" ;
 			}
+			
+			document.getElementById('timer').innerHTML = strTimer  + ":00";
+			document.getElementById('timer_BTN').innerHTML = "Done Next";
+			document.getElementById('timer_BTN').style.backgroundColor = "SlateBlue";
+			
+			//		dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5", \
+			//				"Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"\
+			//			}'); 
+			hash_ = { "class":strClass,"rnd":strRnd,"ht":strHt,"time":strTime,"tSt":str_tSt,"timer":strTimer,"nP":str_nP,"nJ":str_nJ, 	"Athlete":strText};
+			emit( hash_ );
 		}
+		
+		function onStart(){
+			//alert( "onStart" );	
+			hash_["tSt"] = "Start";
+			
+			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;";
+			document.getElementById('timer_BTN').style.backgroundColor = "LimeGreen";
+			console.log( "113 ", hash_ );			
+			emit( hash_ );
+			
+		}
+		
+		function onReset(){
+			//alert("onReset ");
+			hash_["tSt"] = "Resume";
+			
+			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;Resume&nbsp;&nbsp;";
+			document.getElementById('timer_BTN').style.backgroundColor = "CornflowerBlue";			
+			emit( hash_ );
+		}
+		
+		function onPause(){
+			//alert("onPause");
+			hash_["tSt"] = "Pause";
+			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;Pause&nbsp;&nbsp;";
+			document.getElementById('timer_BTN').style.backgroundColor = "grey";			
+			emit( hash_ );
+		}
+		
+
+		
+		const onTimer2 = function(){
+			
+			var objTimer = document.getElementById('timer');
+			//console.log( "132 ", objTimer.innerHTML );
+			
+			var ar = objTimer.innerHTML.split(":");
+			if( ! isNaN( ar[0] ) ){
+				//console.log( "132a %s %s", objTimer.innerHTML, document.getElementById('timer_BTN').innerHTML  );	
+				var n = parseInt(ar[0])*60 + parseInt(ar[1]);
+				n -= n > 0 ? 1: 0;
+				if( document.getElementById('timer_BTN').innerHTML.split("&nbsp;").join("") == "Start"  ){
+					//console.log( "132b ", objTimer.innerHTML );	
+					objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
+				}
+			}
+			
+		}
+		//const timer = setInterval(onTimer, 1000);
+		const timer = setInterval(onTimer2, 1000);
+
 		
 	</script>
 </head>
@@ -98,11 +170,11 @@
 				<label id="ht">heat1</label>
 			</td>
 		
-			<td  >		
+			<td>		
 				<img src="https://sozaic.com/wp-content/uploads/2022/03/life410.jpg" width="36px" height="24px" ></img>
 				
 				<label id="timer" >xx:xx</label>
-				<label>&nbsp;&nbsp;</label>
+				<label style="padding:5px 10px 5px 10px;background-color:white;border-radius:10px;color:white;" id="timer_BTN" onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 			
 			<td style="width:20%">
@@ -411,9 +483,9 @@
 	<table style="margin:auto">
 		<tr>
 			<td style="border-color:white " ><label style="background-color:SlateBlue;color:white;" onclick="onDoneNext()">&nbsp;Done & Next&nbsp;</label>	</td>
-			<td style="border-color:white " ><label style="background-color:LimeGreen ; color:white ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
-			<td style="border-color:white " ><label style="background-color:CornflowerBlue; color:white  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
-			<td style="border-color:white " ><label style="background-color:grey ;color:white;  ">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label style="background-color:LimeGreen ; color:white " onclick="onStart()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label style="background-color:CornflowerBlue; color:white  " onclick="onReset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resume&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label style="background-color:grey ;color:white;  " onclick="onPause()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
 		</tr>		
 	</table>
 	</div>
@@ -444,6 +516,16 @@
 		integrity="sha384-7EyYLQZgWBi67fBtVxw60/OWl1kjsfrPFcaU0pp0nAh+i8FD068QogUvg85Ewy1k"
 		crossorigin="anonymous"></script>
 	<script>
+	
+	
+		//	broadcastする
+		function emit(str){
+			////console.log('350 str=', str);
+			var str = id + ";" + JSON.stringify(str) ;
+			console.log('1392 str=' , str );
+			socket.emit("post", { text: str } );
+		}	
+	
 	
 		const socket = io();
 
@@ -746,7 +828,7 @@
 		//dummyOn( 'HJ;{"IJ":["4_0"],"val":["1.10"]}' );
 		//dummyOn( 	'HJ;{"IJ":["0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19","0_0"],"val":["1.11","1.12","1.13","1.4","1.5","1.16","1.17","1.18","1.19","1.20","1.21","1.22","1.23","1.24","1.25","1.26","1.27","1.28","1.29","1.30"],"opt":["grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel"]}' );
 		
-		dummyOn( 	'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],"opt":["gr","","","","","","","","","","","","","","","","","","",""]}' );
+		//dummyOn( 	'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],"opt":["gr","","","","","","","","","","","","","","","","","","",""]}' );
 </script>
 
 </body>

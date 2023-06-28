@@ -344,7 +344,7 @@
 			
 			<label id="timer">xx:xx</label>
 			<label>&nbsp;&nbsp;</label>
-			<label style="padding:5px 10px 5px 10px;background-color:black;border-radius:10px;color:white;" id="timer_BTN" onclick="onTimer_BTN()"> aaa</label>
+			<label style="padding:5px 10px 5px 10px;background-color:black;border-radius:10px;color:white;" id="timer_BTN" onclick="onTimer_BTN()"> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
 			</td>
 		
 			<!-- 追加分	「承認ボタン」 -->
@@ -3717,7 +3717,7 @@
 			if( ar.length > 1 ){
 				
 				hash = JSON.parse(ar[1]);
-				//console.log('1406 ', hash );
+				console.log('1406 ', hash );
 				
 				switch( ar[0] ){
 					//	共通
@@ -3735,8 +3735,10 @@
 						
 						//	timer表示	＝	 現在時刻 - 開始時刻　＋	timer値 * 60 * 1000 -
 						//console.log('925 hash[timer]=%s ', hash['timer']);
-						document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
-						document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'];
+						if( hash['tSt'] == "Done Next" || hash['tSt'] == "Start"){
+							document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
+						}
+						document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'] == "Resume" ? "Start" : hash['tSt'];
 						/*
 						timerVal = hash.timer * 60000 - timeNow.getTime() + time.getTime()  ;	// * time.getTime() + hash.timer * 60000  ;
 						timerVal = timerVal >= 0 ? timerVal : 0; 
@@ -4112,12 +4114,14 @@
 		const onTimer2 = function(){
 			
 			var ar = objTimer.innerHTML.split(":");
-			var n = parseInt(ar[0])*60 + parseInt(ar[1]);
-			n -= n > 0 ? 1: 0;
-			if( document.getElementById('timer_BTN').innerHTML != "pause" ){
-				objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
+			if( ! isNaN( ar[0] ) ){
+				var n = parseInt(ar[0])*60 + parseInt(ar[1]);
+				n -= n > 0 ? 1: 0;
+				if( document.getElementById('timer_BTN').innerHTML == "Start" || document.getElementById('timer_BTN').innerHTML == "Resume"  ){
+					objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
+				}
 			}
-
+			
 			/*
 			if( hash.tSt ){
 				//console.log('798 ' , timerVal + hash.tSt );
@@ -4315,10 +4319,13 @@
 	//	php test: ;	json形式
 	////console.log('746');
 	
+	//dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"","tSt":"Done & Next","timer":"15","nP":"5","nJ":"5","Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"}' );
+	
+	/*
 	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5", \
 	"Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"\
 	}'); 
-	
+	*/
 	//dummyOn( 'PR;["G","W","B","Y","R"]' );
 
 	

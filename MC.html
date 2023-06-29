@@ -61,6 +61,7 @@
 		}
 		
 		var hash_;
+		var arName ;
 		function onDoneNext(){
 			//alert('onDoneNext()');
 			
@@ -76,16 +77,16 @@
 			var str_nJ = "5";
 			var strText = "佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎";
 			
-			arText = strText.split(",");			
-			console.log("71 ", arText );
+			arName = strText.split(",");			
+			console.log("71 ", arName );
 			
 			for( var i=0; i<5; i++ ){
 				document.getElementById( i + "_0" ).innerHTML = (i + 1) + "";
 				
 				document.getElementById( i + "_1" ).style.backgroundColor = arColor[i];
 				
-				document.getElementById( i + "_2" ).innerHTML = "<label>" + arText[ 3*i ] + "</label><br><label style='font-size:10pt'>" 
-																+ arText[ 3*i +1] + "</label><br><label style='font-size:10pt'>"+ arText[3*i+2] + "</label><br>" ;
+				document.getElementById( i + "_2" ).innerHTML = "<label>" + arName[ 3*i ] + "</label><br><label style='font-size:10pt'>" 
+																+ arName[ 3*i +1] + "</label><br><label style='font-size:10pt'>"+ arName[3*i+2] + "</label><br>" ;
 			}
 			
 			document.getElementById('timer').innerHTML = strTimer  + ":00";
@@ -707,6 +708,11 @@
 								} else {
 									document.getElementById( i + "_1" ).style.backgroundColor = "black";
 								}
+								
+								//	名前
+								n = parseInt(hash[i][0]);
+								document.getElementById( i + "_2" ).innerHTML = "<label>" + arName[ 3*n ] + "</label><br><label style='font-size:10pt'>" 
+																+ arName[ 3*n +1] + "</label><br><label style='font-size:10pt'>"+ arName[3*n+2] + "</label><br>" ;
 								
 								//	Total / Needs
 									document.getElementById( i + "_3" ).innerHTML = "<label style='font-weight:bold;font-size:15pt'>" +hash[i][1] + "</label><br>" 

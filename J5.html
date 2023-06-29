@@ -2480,26 +2480,21 @@
 				switch( ar[0] ){
 					case 'MC':
 						document.getElementById( "class" ).innerHTML = hash.class;
-						document.getElementById( "rnd" ).innerHTML = hash.rnd;
-						document.getElementById( "ht" ).innerHTML = hash.ht;
+						document.getElementById( "rnd" ).innerHTML = "Round " + hash.rnd;
+						document.getElementById( "ht" ).innerHTML = "Heat " + hash.ht;
 
-
+						/*
 						//	timer表示	
 						console.log('925 hash[timer]=%s ', hash['timer']);
 						document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
 						document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'];					
-
-						/*
-						time = new Date(hash.time);
-						timeNow = new Date();
-						diff = timeNow.getTime() - time.getTime();	
-						console.log('684 diff=', diff) ;
-
-						//	timer表示	＝	 現在時刻 - 開始時刻　＋	timer値 * 60 * 1000 -
-						timerVal = hash.timer * 60000 - timeNow.getTime() + time.getTime()  ;	// * time.getTime() + hash.timer * 60000  ;
-						timerVal = timerVal >= 0 ? timerVal : 0; 
-						console.log( "689 " , timerVal );
 						*/
+						//	timer表示	※	共通
+						if( hash['tSt'] == "Done Next" || hash['tSt'] == "Start"){
+							document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
+						}
+						document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'] == "Resume" ? "Start" : hash['tSt'];
+
 						
 						console.log( "958 " , hash.nJ );
 						nJ = hash.nJ;
@@ -2685,38 +2680,47 @@
 			socket.emit("post", { text: id + ';' + n });
 		}
 
-
+	/*
 		objTimer = document.getElementById('timer');
 		const onTimer2 = function(){
 
 			
-			console.log('798 ' , timerVal  /* + hash.tSt */ );
-
+		
 		var ar = objTimer.innerHTML.split(":");
 		var n = parseInt(ar[0])*60 + parseInt(ar[1]);
 		console.log('1995 n=%d %s', n , ar[0]);
 		n -= n > 0 ? 1: 0;
-		if( document.getElementById('timer_BTN').innerHTML != "pause" ){
+			if( document.getElementById('timer_BTN').innerHTML == "Start" || document.getElementById('timer_BTN').innerHTML == "Resume"  ){
 			objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
 		}
+		
 
-			/*
-			if( hash.tSt == "start" && timerVal > 0){
-				timerVal -= timerVal >= 0 ? 1000 : 0;
-			}
+		
 
-			intTimer = parseInt(timerVal/1000);
-			objTimer.innerHTML = parseInt(intTimer/60) + "\:" + parseInt(intTimer % 60)  ;
-			*/
+
 		}
 		//const timer = setInterval(onTimer, 1000);
 		const timer = setInterval(onTimer2, 1000);
+*/
 
-
-
+		objTimer = document.getElementById('timer');
+		const onTimer2 = function(){
+			
+			var ar = objTimer.innerHTML.split(":");
+			if( ! isNaN( ar[0] ) ){
+				var n = parseInt(ar[0])*60 + parseInt(ar[1]);
+				n -= n > 0 ? 1: 0;
+				if( document.getElementById('timer_BTN').innerHTML == "Start" || document.getElementById('timer_BTN').innerHTML == "Resume"  ){
+					objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
+				}
+			}
+			
+		}
+		const timer = setInterval(onTimer2, 1000);
+		
 		//	※PHP　テスト	以下のコメントを外す	（本番ではコメントにする）、phpでは以下の仮想イベントでしかテストできない、node.js環境ではsocket通信する
 		//console.log('746');
-		dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"rnd 1","ht":"ht 2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5"}'); 
+		//dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"1","ht":"2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"Start","timer":"15","nP":"5","nJ":"5"}'); 
 		//dummyOn( 'PR;["G","W","B","Y","_"]' );
 		//dummyOn(	'J3;{"idNo":"30","IJ":"0_1","val":"1.1"}');
 		//PR;["_","_","_","_","R"]

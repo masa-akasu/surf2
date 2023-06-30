@@ -289,7 +289,7 @@
 		function emit(str){
 			////console.log('350 str=', str);
 			var str = id + ";" + JSON.stringify(str) ;
-			console.log('1392 str=' , str );
+			console.log('1392d str=' , str );
 			socket.emit("post", { text: str } );
 		}
 		
@@ -3548,13 +3548,13 @@
 				}
 				return 0;
 			 });
-			seqAns.forEach( val =>{
+			//seqAns.forEach( val =>{
 				//console.log("863", val[0] + " " + val[1]);
-			});
+			//});
 
 			console.log("749", total_and_top2 );
 
-			var arEmitHJ = [ [ "", "", "", "", "", "", "" ] , [ "", "", "","","","", "" ], ["","", "","", "", "", "" ], ["", "", "","", "", "", ""], ["", "", "","", "", "", "" ]];	
+			var arEmitHJ = [ [ "", "", "", "", "", "", "","" ] , [ "", "", "","","","", "","" ], ["","", "","", "", "", "","" ], ["", "", "","", "", "", "",""], ["", "", "","", "", "", "","" ]];	
 			//	dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", ""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "" ]]' );
 
 			//console.log('1280');
@@ -3689,13 +3689,27 @@
 				arEmitHJ[key][3] = ""				;//	[3]						
 				arEmitHJ[key][4] = val[0][1];		//[4]	top1
 				arEmitHJ[key][5] = val[0][2];		//	[5]	top2
-				arEmitHJ[key][6] = "";					//	[6]	Athlete(色)の表示		ex.	△→White
+				
+				["_Ath", "_Ath_"].forEach( (val2,key2)=>{
+					str_ = document.getElementById( key + val2 ).innerHTML;		//Pd▲ <label style=\"display:none\"></label>→White
+					if( str_.indexOf( "<" ) > 0 ){
+						str_ = str_.split("</label>").join("");
+						str_ = str_.substring( 0, str_.indexOf("<") ) + str_.substring( parseInt( str_.indexOf( ">" ) +1 ));  
+					}
+					arEmitHJ[key][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
+				});
+
+				//console.log( "1392 key=%d Ath=%s ", key, str_ );
+				//console.log( "1392 key=%d Ath_=%s ", key, str_ );
+				//arEmitHJ[key][7] = document.getElementById( key + "_Ath_"  ).innerHTML;						//	[7]		１行上
 				
 				cons_ += 1;
 			});	
 			console.log('1392 ', seqAns );		
 			console.log('1392a ', arEmitHJ );
+			
 			emit(arEmitHJ);
+			
 		}	//	end	getSeqAndNeedPoint
 		
 		var time;		

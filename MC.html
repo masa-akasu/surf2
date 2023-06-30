@@ -61,7 +61,7 @@
 		}
 		
 		var hash_;
-		var arName ;
+		var arName = Array(15);
 		function onDoneNext(){
 			//alert('onDoneNext()');
 			
@@ -81,7 +81,8 @@
 			console.log("71 ", arName );
 			
 			for( var i=0; i<5; i++ ){
-				document.getElementById( i + "_0" ).innerHTML = (i + 1) + "";
+				
+				//document.getElementById( i + "_0" ).innerHTML = (i + 1) + "";
 				
 				document.getElementById( i + "_1" ).style.backgroundColor = arColor[i];
 				
@@ -209,7 +210,7 @@
 	
 		
 <tr>	
-		<td id="0_0" style="width:5%;background-color:white;color:black;border-color:white;">1</td>
+		<td id="0_0" style="width:5%;background-color:white;color:black;border-color:white;">1st</td>
 		<td id="0_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
 		
 		<td id="0_2"> total/needs</td>
@@ -219,7 +220,7 @@
 		<td id="0_5" class="back" style="text-align:right"> P1</td>
 		<td id="0_6" style="border-color:lightgrey;">&nbsp;</td>
 </tr><tr>	
-		<td id="1_0" style="width:5%;background-color:white;color:black;border-color:white;">2</td>
+		<td id="1_0" style="width:5%;background-color:white;color:black;border-color:white;">2nd</td>
 		<td id="1_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
 		
 		<td id="1_2"> total/needs</td>
@@ -229,7 +230,7 @@
 		<td id="1_5" class="back" style="text-align:right"> P2</td>
 		<td id="1_6" style="border-color:lightgrey;">&nbsp;</td>
 </tr><tr>	
-		<td id="2_0" style="width:5%;background-color:white;color:black;border-color:white;">3</td>
+		<td id="2_0" style="width:5%;background-color:white;color:black;border-color:white;">3rd</td>
 		<td id="2_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
 		
 		<td id="2_2"> total/needs</td>
@@ -239,7 +240,7 @@
 		<td id="2_5" class="back" style="text-align:right"> P3</td>
 		<td id="2_6" style="border-color:lightgrey;">&nbsp;</td>
 </tr><tr>	
-		<td id="3_0" style="width:5%;background-color:white;color:black;border-color:white;">4</td>
+		<td id="3_0" style="width:5%;background-color:white;color:black;border-color:white;">4th</td>
 		<td id="3_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
 		
 		<td id="3_2"> total/needs</td>
@@ -249,7 +250,7 @@
 		<td id="3_5" class="back" style="text-align:right"> P4</td>
 		<td id="3_6" style="border-color:lightgrey;">&nbsp;</td>
 </tr><tr>	
-		<td id="4_0" style="width:5%;background-color:white;color:black;border-color:white;">5</td>
+		<td id="4_0" style="width:5%;background-color:white;color:black;border-color:white;">5th</td>
 		<td id="4_1" style="width:5%;background-color:white;color:grey;border-color:lightgrey;"> </td>
 		
 		<td id="4_2"> total/needs</td>
@@ -582,6 +583,9 @@
 				switch( ar[0] ){
 					//	共通
 					case 'MC':
+					
+						break;
+						
 						document.getElementById( "class" ).innerHTML = hash.class ;
 						document.getElementById( "rnd" ).innerHTML = "Round " + hash.rnd;
 						document.getElementById( "ht" ).innerHTML = "/ Heat " +hash.ht;
@@ -710,17 +714,19 @@
 								}
 								
 								//	名前
+								console.log( "538 %d %o" ,hash[i][0], arName);
 								n = parseInt(hash[i][0]);
 								document.getElementById( i + "_2" ).innerHTML = "<label>" + arName[ 3*n ] + "</label><br><label style='font-size:10pt'>" 
 																+ arName[ 3*n +1] + "</label><br><label style='font-size:10pt'>"+ arName[3*n+2] + "</label><br>" ;
 								
 								//	Total / Needs
-									document.getElementById( i + "_3" ).innerHTML = "<label style='font-weight:bold;font-size:15pt'>" +hash[i][1] + "</label><br>" 
+									document.getElementById( i + "_3" ).innerHTML = "<label style='font-weight:bold;font-size:15pt'>" + hash[i][1] + "</label><br>" 
 												+ ( i==0? "Win by " : "Needs " ) + 	hash[i][2] + "<br>" + (hash[i][3] == "" ? "" : "to 1st ") + hash[i][3] +   "<br>";
 												
 								//	Best 2 Waves				
-								document.getElementById( i + "_4" ).innerHTML =  "<label style='font-weight:bold;font-size:15pt'>" +  hash[i][4] 
-								+ "</label> + <label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][6] == "" ? "" : "red" ) +  "'>" + hash[i][5] + "</label><br><label style='color:red'>" +  hash[i][6] + "</label>" ;
+								document.getElementById( i + "_4" ).innerHTML =  "<label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][7] == "" ? "" : "red" )  + "'>" +  hash[i][4] 
+								+ "</label> + <label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][6] == "" ? "" : "red" ) +  "'>" + hash[i][5] 
+								+ "</label><br><label style='color:red'>" +  hash[i][6] + "</label><br><label  style='color:red'>" + hash[i][7] + "</label>" ;
 							}
 						} else {
 							
@@ -817,7 +823,7 @@
 		//
 		var id = 'MC';		//	i am Head Judge 
 		
-				//dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", ""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "" ]]' );
+				//dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "","" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ,"△ →Green1"], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White","" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", "",""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "","" ]]' );
 
 //dummyOn( 'HJ;[[0,"2.50","2.50","",1.3,1.2,""],[1,1.9,"1.51","",1,0.9,""],[2,"","1.90","",0,0,""],[3,"","1.90","",0,0,""],[4,"","1.90","",0,0,""]]');
 		/*

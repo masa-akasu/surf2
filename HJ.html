@@ -3525,18 +3525,18 @@
 			for( var i=0; i<5; i++ ){
 				seqAns[ i ][1] = i;				//	0...4 set 
 				for( var j=0; j<3; j++ ){
-					seqAns[ i ][0][ j ] = total_and_top2[ i ][ j ];		//	0..2			合計、top1、top2をセットする	
+					seqAns[ i ][0][ j ] = parseFloat(total_and_top2[ i ][ j ]);		//	0..2			合計、top1、top2をセットする	
 				}
 				for( var j=0; j<2; j++ ){
-					seqAns[ i ][0][ j+3 ] = interfere[ i ][ j ];				//	3,4			妨害をセットする
+					seqAns[ i ][0][ j+3 ] = parseFloat(interfere[ i ][ j ]);				//	3,4			妨害をセットする
 				}
 				for( var j=3; j<21; j++ ){
-					seqAns[ i ][0][ j+2 ] = total_and_top2[ i ][ j ];	//	5...24		top3以降（20迄を）をセットする
+					seqAns[ i ][0][ j+2 ] = parseFloat(total_and_top2[ i ][ j ]);	//	5...24		top3以降（20迄を）をセットする
 				}
 				
 			}	
 			
-			console.log('1320 ', seqAns );
+			console.log('1392 beforeSort ', seqAns );
 			//console.log('1320 ', interfere );
 			
 			
@@ -3552,7 +3552,7 @@
 				//console.log("863", val[0] + " " + val[1]);
 			//});
 
-			console.log("749", total_and_top2 );
+			console.log("1392 afterSort", seqAns );
 
 			var arEmitHJ = [ [ "", "", "", "", "", "", "","" ] , [ "", "", "","","","", "","" ], ["","", "","", "", "", "","" ], ["", "", "","", "", "", "",""], ["", "", "","", "", "", "","" ]];	
 			//	dummyOn( 'HJ;[ [ "1", "4.67", "4.67", "", "4.67", "0.00", "" ] , [ "0", "4.60", "3.13","","3.10","1.50", "△ →Green1" ], ["2","3.43", "4.60","4.67", "3.43", "0.00", "Pd▲ →White" ], ["3", "0.50", "2.01","4.67", "0.50", "0.00", ""], ["", "0.00", "2.33","4.67", "0.00", "0.00", "" ]]' );
@@ -3564,7 +3564,7 @@
 			var str_=0.0;
 			var ar22= ["","","","",""];
 			seqAns.forEach( (val,key) =>{
-				//console.log('869', val[1] );
+				//console.log('1392f ind=%s %d', val[1],key );		//	val[1]：	sort前のseqAnsのindex		key：sort後のindex
 				
 				//	順位	1...5	を色（Red,White,...）の下に表示する
 				str = "" + val[1] + "_seq";	
@@ -3679,16 +3679,19 @@
 				var str_ = document.getElementById( "Total_" + key ).innerHTML.split("\n").join("");
 				str_ = str_.split("\t").join("");
 				var arTotal_ = str_.split("<br>");
-				if( val[0][0] != "" ){
-					arEmitHJ[key][1] =  cons_ == 0 ? ar[2].split(" ")[2]  : val[0][0];	//	[1]	total		
+				//if( val[0][0] != "" ){
+				if( ! isNaN( val[0][0] )  ){
+					arEmitHJ[key][1] =  cons_ == 0 ? ar[2].split(" ")[2]  : val[0][0].toFixed(2);	//	[1]	total		
 				} else {
 					arEmitHJ[key][1] ="";
 				}	
 				arEmitHJ[key][2] = cons_ == 0 ? ar[2].split(" ")[2]  : ar22[2].split(" ")[1] 	;	//	[2]	needs			
 						
-				arEmitHJ[key][3] = ""				;//	[3]						
+				arEmitHJ[key][3] = "";	//	[3]						
 				arEmitHJ[key][4] = val[0][1];		//[4]	top1
 				arEmitHJ[key][5] = val[0][2];		//	[5]	top2
+				
+				//console.log('1392 4 ', val[0] );
 				
 				["_Ath", "_Ath_"].forEach( (val2,key2)=>{
 					str_ = document.getElementById( key + val2 ).innerHTML;		//Pd▲ <label style=\"display:none\"></label>→White
@@ -3696,7 +3699,9 @@
 						str_ = str_.split("</label>").join("");
 						str_ = str_.substring( 0, str_.indexOf("<") ) + str_.substring( parseInt( str_.indexOf( ">" ) +1 ));  
 					}
-					arEmitHJ[key][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
+					//arEmitHJ[key][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
+					arEmitHJ[ val[1] ][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
+					//console.log('1392e %d %d %s', key, key2, str_ );
 				});
 
 				//console.log( "1392 key=%d Ath=%s ", key, str_ );
@@ -3871,12 +3876,12 @@
 		//	※	、合計、１位、２位を求める（だけ）	順位,needsはgetSeqAndNeedPoint()で求める
 				
 		function totalReculc(hash){		//	socketからの通知パラメータ		ex.	{"idNo":"5","IJ":"0_0","val":"1.2"}
-			console.log('1596 ' ,hash);			
+			//console.log('1596 ' ,hash);			
 			
 			var seq = getTop2_and_setTotal0( [ hash['IJ'].split("_")[0]  ], 0 );		//	top2の元の値を取得
 			//console.log('1597 ', seq );
 			
-			console.log('1057 ', interfere );
+			//console.log('1057 ', interfere );
 			//console.log( "1058 ", interfere[ hash['IJ'].split("_")[0] ][0] );
 			//console.log( "1059 ", interfere[ hash['IJ'].split("_")[0] ][1] );
 			
@@ -3891,7 +3896,7 @@
 			["_Ath", "_Ath_"].forEach( (val)=>{			
 				["▲", "△"].forEach( (val2)=>{
 					if( document.getElementById( hash['IJ'].split("_")[0]  + val ).innerHTML.indexOf(val2) >= 0 ){
-						console.log("1051 %s %s %s", hash['IJ'].split("_")[0] ,val, val2 );
+						//console.log("1051 %s %s %s", hash['IJ'].split("_")[0] ,val, val2 );
 						arInt[ nInt ] = val2;
 						nInt += 1;
 					}						
@@ -3926,9 +3931,9 @@
 			//	その行について、	①top2（上位２位）が確定していて、②妨害がある場合、取消線を（５X20の平均値に）引く
 			//	①入力	top2Index[行][2]		行:0...4		2:0.1　1位、2位			ex.	[1,0]->	１位が1番目、２位が0番目
 			//	②arInt[2] 
-			console.log( "1099y %o %s", top2Index , hash['IJ'].split("_")[0]);
+			//console.log( "1099y %o %s", top2Index , hash['IJ'].split("_")[0]);
 			var row_ =hash['IJ'].split("_")[0];
-			console.log( "1099x row_=%s %o", row_ , arInt);
+			//console.log( "1099x row_=%s %o", row_ , arInt);
 			
 			for( var i=0; i<20; i++ ){			//	clear
 				document.getElementById( row_ + "_" + i + "_00" ).style.textDecoration = "";
@@ -3942,14 +3947,16 @@
 				document.getElementById( row_ + "_" + top2Index[row_][1] + "_00" ).style.textDecoration = "line-through";
 			}
 			
-			console.log( "1081 ", top2Index );
+			//console.log( "1081 ", top2Index );
 
 
 			//	減点処理した値を、順位判定用のコモン領域にセットする
 			ind = hash['IJ'].split("_")[0] ;
-			total_and_top2[ ind ][0] = parseFloat(seq[0]) + parseFloat(seq[1]);		//	合計	var total_and_top2 = Array( Array(20), Array(20), Array(20), Array(20), Array(20) )
-			total_and_top2[ ind ][1] = parseFloat(seq[0]);						//	１位
-			total_and_top2[ ind ][2] = parseFloat(seq[1]);						//	２位
+			//total_and_top2[ ind ][0] = parseFloat(seq[0]) + parseFloat(seq[1]);		//	合計	var total_and_top2 = Array( Array(20), Array(20), Array(20), Array(20), Array(20) )
+			total_and_top2[ ind ][1] = parseFloat(seq[0]).toFixed(2);						//	１位
+			total_and_top2[ ind ][2] = parseFloat(seq[1]).toFixed(2);						//	２位
+			total_and_top2[ ind ][0] = parseFloat( total_and_top2[ ind ][1]) + parseFloat(total_and_top2[ ind ][2]) + "";
+			
 			//console.log( '1603 ind=%d %o',ind , total_and_top2[ind] );
 
 
@@ -3961,13 +3968,16 @@
 				seq[0]=0.0;
 				seq[1]=0.0;
 			}
-			arTotal[0] =( parseFloat( seq[0] ) + parseFloat( seq[1] ) ).toFixed(2);
+			
+			//arTotal[0] =			( parseFloat( seq[0] ) + parseFloat( seq[1] ) ).toFixed(2);			//	これは「かしめ」が効かない
+			arTotal[0] =( parseFloat( total_and_top2[ ind ][1]) + parseFloat(total_and_top2[ ind ][2]) ).toFixed(2);
+			
 			arTotal[1] = parseFloat( seq[0] ).toFixed(2)  + " + " + parseFloat( seq[1] ).toFixed(2);
 			arTotal[2] = "win by " + arTotal[0];																							/////
 			document.getElementById( str ).innerHTML = arTotal.join("<br>");
 			console.log('1103 ',str );
 			//console.log('1671 total_and_top2[ ind ]=', total_and_top2[ ind ] );
-			
+			console.log('1603 ', arTotal );
 
 			
 		}		
@@ -3999,18 +4009,19 @@
 
 			//	それをsortする
 			seq =seq.sort( (a,b)=>{ return( b[0] - a[0] ); });
-			//console.log('1644 ', seq );
+			console.log('1181 sort ', seq );
 			
 			//	上位2つをtop2とする
 			var top2 = [ 0.0, 0.0 ];
-			if( seq[0][0] != 0 ){ top2[0] = seq[0][0]; }
-			if( seq[1][0] != 0 ){ top2[1] = seq[1][0]; }
+			if( seq[0][0] != 0 ){ top2[0] = seq[0][0].toFixed(2); }
+			if( seq[1][0] != 0 ){ top2[1] = seq[1][0].toFixed(2); }
 			
 			
 			//	その2つを色替えする	val[1]はそのindexを示しているので、その列の色をlightgreenにする
 			var cnt2=0;
 			//top2Index = [];		
-			console.log( "1181 ", top2Index );
+			//console.log( "1181 ", top2Index );
+			console.log( "1181 ", top2 );
 			seq.forEach( val => {			
 				str2 = iSav[k] + "_" + val[1];	// + "_0";				
 				//console.log('1651 str2=%s top2[cnt2]=%s', str2, top2[cnt2]);	
@@ -4032,7 +4043,7 @@
 			
 			console.log( "1181a ", top2Index );			
 			
-			//console.log("1144 ", top2 );
+			console.log("1181b ", top2 );
 			return top2;
 		}
 
@@ -4310,6 +4321,36 @@
 		
 	//	php test: ;	json形式
 	////console.log('746');
+	
+/*	
+dummyOn( 'J3;{"idNo":"3","IJ":"0_0","val":"8.1"}' );
+dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"8.1"}' );
+dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"8.2"}	' );
+*/	
+	
+	
+/*
+//	toFixed(2)	 「かしめ」を効かす（配列要素を切り捨てたら、それなりに合計する）
+dummyOn( 'J3;{"idNo":"3","IJ":"0_0","val":"8.6"}' );
+dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"8.5"}' );
+dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"8.5"}	' );
+
+dummyOn( 'J3;{"idNo":"3","IJ":"0_1","val":"8.6"}' );
+dummyOn( 'J2;{"idNo":"2","IJ":"0_1","val":"8.7"}' );
+dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"8.6"}	' );
+*/
+
+//	2023.7.5 
+/*
+dummyOn( 'J3;{"idNo":"3","IJ":"0_0","val":"8.5"}' );
+dummyOn( 'J2;{"idNo":"2","IJ":"0_0","val":"8.4"}' );
+dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"8.4"}	' );
+
+dummyOn( 'J1;{"idNo":"1","IJ":"0_1","val":"8.4"}	' );
+
+dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"8.4"}	' );
+dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"8.4"}	' );
+*/
 	
 	//dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"","tSt":"Done & Next","timer":"15","nP":"5","nJ":"5","Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"}' );
 	

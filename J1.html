@@ -2506,6 +2506,17 @@
 							document.getElementById( i + "_priority"  ).style.display = str;
 							document.getElementById( i + "_20"  ).style.display = str;
 						}
+
+
+						//	hash[ 'nP' ] の行数だけ表示し、それ以上は消す	
+						console.log('539 ', hash[ 'nP' ] );
+						for( var i=0; i<5; i++ ){
+							document.getElementById( i + "_color"  ).style.display = i < hash['nP' ]  ?  "": "none";
+							document.getElementById( i + "_20"  ).style.display = i < hash['nP' ]  ?  "": "none";
+							document.getElementById( i + "_priority"  ).style.display = i < hash['nP' ]  ?  "": "none";
+						}
+						
+						
 						
 						break;
 
@@ -2714,7 +2725,7 @@
 		
 		//	※PHP　テスト	以下のコメントを外す	（本番ではコメントにする）、phpでは以下の仮想イベントでしかテストできない、node.js環境ではsocket通信する
 		//console.log('746');
-		//dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"1","ht":"2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"Start","timer":"15","nP":"5","nJ":"5"}'); 
+		//dummyOn( 'MC;{"class":"ロングボード（男子）","rnd":"1","ht":"2","time":"Wed July 11 2022 14:30:18 GMT+0900 (日本標準時)","tSt":"Start","timer":"15","nP":"4","nJ":"5"}'); 
 		//dummyOn( 'PR;["G","W","B","Y","_"]' );
 		//dummyOn(	'J3;{"idNo":"30","IJ":"0_1","val":"1.1"}');
 		//PR;["_","_","_","_","R"]

@@ -3809,6 +3809,18 @@
 								
 							}
 						}
+						
+						
+						//	hash[ 'nP' ] の行数だけ表示し、それ以上は消す
+						console.log('539 ', hash[ 'nP' ] );
+						for( var i=0; i<5; i++ ){
+							document.getElementById( "rowL" + i ).style.display = i < hash['nP' ]  ?  "": "none";
+							document.getElementById( "rowM" + i ).style.display = i < hash['nP' ]  ?  "": "none";
+							document.getElementById( "rowR" + i ).style.display = i < hash['nP' ]  ?  "": "none";
+						}
+						
+						
+						
 						break; 
 
 					//	judge,headJudge

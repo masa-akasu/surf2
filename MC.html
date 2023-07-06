@@ -66,6 +66,19 @@
 			//alert('onDoneNext()');
 			
 			//	backendから、athleteの名前を受け取る		////	test
+			
+			
+			if( document.getElementById( "timer_BTN" ).innerHTML != "wait Next" ) return;
+			
+			document.getElementById( "timer_BTN" ).innerHTML = "wait Start";
+			document.getElementById( "timer_BTN" ).style.backgroundColor = "LimeGreen";
+			
+			document.getElementById( "DoneNext" ).style.backgroundColor = "grey";
+			document.getElementById( "Start" ).style.backgroundColor = "LimeGreen";
+			document.getElementById( "Reset" ).style.backgroundColor = "grey";
+			document.getElementById( "Pause" ).style.backgroundColor = "grey";
+			
+			
 			var strClass = "MEN";
 			var strRnd = "1";
 			var strHt = "1";
@@ -91,8 +104,8 @@
 			}
 			
 			document.getElementById('timer').innerHTML = strTimer  + ":00";
-			document.getElementById('timer_BTN').innerHTML = "Done Next";
-			document.getElementById('timer_BTN').style.backgroundColor = "SlateBlue";
+			//document.getElementById('timer_BTN').innerHTML = "Done Next";
+			//document.getElementById('timer_BTN').style.backgroundColor = "SlateBlue";
 			
 			//		dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5", \
 			//				"Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"\
@@ -103,30 +116,55 @@
 		
 		function onStart(){
 			//alert( "onStart" );	
+			if( document.getElementById( "timer_BTN" ).innerHTML != "wait Start" ) return;
+			
 			hash_["tSt"] = "Start";
 			
-			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;";
-			document.getElementById('timer_BTN').style.backgroundColor = "LimeGreen";
+			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;&nbsp;Running&nbsp;&nbsp;&nbsp;";
+			document.getElementById('timer_BTN').style.backgroundColor = "CornflowerBlue";
+			
+			document.getElementById('Start').style.backgroundColor = "grey";
+			document.getElementById('Reset').style.backgroundColor = "CornflowerBlue";
+			document.getElementById('Pause').style.backgroundColor = "CornflowerBlue";
+			
+			document.getElementById('Pause').innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;";
+			
 			console.log( "113 ", hash_ );			
 			emit( hash_ );
 			
 		}
 		
 		function onReset(){
-			//alert("onReset ");
-			hash_["tSt"] = "Resume";
+			hash_["tSt"] = "DoneNext";
 			
-			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;Resume&nbsp;&nbsp;";
-			document.getElementById('timer_BTN').style.backgroundColor = "CornflowerBlue";			
+			document.getElementById('timer_BTN').innerHTML = "wait Next";
+			document.getElementById('timer_BTN').style.backgroundColor = "SlateBlue";	
+			document.getElementById('DoneNext').style.backgroundColor = "SlateBlue";		
+			document.getElementById('Start').style.backgroundColor = "grey";		
+			document.getElementById('Reset').style.backgroundColor = "grey";		
+			document.getElementById('Pause').style.backgroundColor = "grey";		
+			document.getElementById('Pause').innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;";
+			
 			emit( hash_ );
+			
 		}
 		
-		function onPause(){
-			//alert("onPause");
-			hash_["tSt"] = "Pause";
-			document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;Pause&nbsp;&nbsp;";
-			document.getElementById('timer_BTN').style.backgroundColor = "grey";			
+		function onPause( obj ){
+				
+			var str = document.getElementById('timer_BTN').innerHTML;
+			if( str.indexOf( "Running" ) < 0 && str.indexOf( 'Pause' ) < 0 ) return;
+				
+			if( hash_["tSt"] != "Pause" ){
+				hash_["tSt"] = "Pause";
+				document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;";
+				obj.innerHTML = "&nbsp;&nbsp;Resume&nbsp;&nbsp;";
+			} else {
+				hash_["tSt"] = "Resume";
+				document.getElementById('timer_BTN').innerHTML = "&nbsp;&nbsp;Running&nbsp;&nbsp;";
+				obj.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;";
+			}
 			emit( hash_ );
+			
 		}
 		
 
@@ -141,7 +179,7 @@
 				//console.log( "132a %s %s", objTimer.innerHTML, document.getElementById('timer_BTN').innerHTML  );	
 				var n = parseInt(ar[0])*60 + parseInt(ar[1]);
 				n -= n > 0 ? 1: 0;
-				if( document.getElementById('timer_BTN').innerHTML.split("&nbsp;").join("") == "Start"  ){
+				if( document.getElementById('timer_BTN').innerHTML.split("&nbsp;").join("") == "Running"  ){
 					//console.log( "132b ", objTimer.innerHTML );	
 					objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
 				}
@@ -175,8 +213,8 @@
 			<td>		
 				<img src="https://sozaic.com/wp-content/uploads/2022/03/life410.jpg" width="36px" height="24px" ></img>
 				
-				<label id="timer" >xx:xx</label>
-				<label style="padding:5px 10px 5px 10px;background-color:white;border-radius:10px;color:white;" id="timer_BTN" onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+				<label id="timer" >00:00</label>
+				<label style="padding:5px 10px 5px 10px;background-color:SlateBlue;border-radius:10px;color:white;" id="timer_BTN" onclick="">wait Next</label>
 			</td>
 			
 			<td style="width:20%">
@@ -484,10 +522,10 @@
 	<div>
 	<table style="margin:auto">
 		<tr>
-			<td style="border-color:white " ><label style="background-color:SlateBlue;color:white;" onclick="onDoneNext()">&nbsp;Done & Next&nbsp;</label>	</td>
-			<td style="border-color:white " ><label style="background-color:LimeGreen ; color:white " onclick="onStart()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
-			<td style="border-color:white " ><label style="background-color:CornflowerBlue; color:white  " onclick="onReset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Resume&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
-			<td style="border-color:white " ><label style="background-color:grey ;color:white;  " onclick="onPause()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label id="DoneNext" style="background-color:SlateBlue;color:white;" onclick="onDoneNext()">&nbsp;Done & Next&nbsp;</label>	</td>
+			<td style="border-color:white " ><label id="Start" 			style="background-color:grey ; color:white " onclick="onStart()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Start&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label id="Reset" 		style="background-color:grey; color:white  " onclick="onReset()" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Reset&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
+			<td style="border-color:white " ><label id="Pause"		style="background-color:grey ;color:white;  " onclick="onPause(this)" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Pause&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>	</td>
 		</tr>		
 	</table>
 	</div>

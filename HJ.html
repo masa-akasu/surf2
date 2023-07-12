@@ -242,7 +242,7 @@
 		//function emitHJ( prevIJ__ , opt ){
 		function emitHJ( prevIJ__  ){
 			console.log( "1392 emitHJ");
-			hashToJudge = { "IJ":[],"val":[],"opt":[]};
+			hashToJudge = { "IJ":[], "val":[], "opt":[], "detail":[]};
 			for( var i=0; i<20; i++ ){
 				//console.log('1392x' );
 				var str = prevIJ__.split("_")[0] + "_" + i ;
@@ -274,6 +274,11 @@
 				}
 				hashToJudge.opt.push( str_ );
 				
+				console.log("1392d " , document.getElementById( str  ).innerHTML ); 
+				var ar = document.getElementById( str  ).innerHTML.split("<br>");
+				ar[0] = "";
+				//console.log("1392e " , ar.join( "_" ).split("</label>").join("").substring( 1 ) );
+				hashToJudge.detail.push( ar.join( "_" ).split("</label>").join("").substring( 1 ).split("&nbsp;").join("") ) ;
 			}
 			
 			console.log( "1392b ", hashToJudge );
@@ -4364,7 +4369,7 @@ dummyOn( 'J1;{"idNo":"1","IJ":"1_0","val":"8.4"}	' );
 dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"8.4"}	' );
 */
 	
-	//dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"","tSt":"Done & Next","timer":"15","nP":"5","nJ":"5","Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"}' );
+	//dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"","tSt":"Done Next","timer":"15","nP":"5","nJ":"5","Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"}' );
 	
 	/*
 	dummyOn( 'MC;{"class":"MEN","rnd":"1","ht":"1","time":"Thu August 6 2022 15:46:18 GMT+0900 (日本標準時)","tSt":"start","timer":"15","nP":"5","nJ":"5", \

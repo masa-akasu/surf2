@@ -34,6 +34,11 @@
 
 
 
+
+
+
+
+
 	</STYLE>	
 	<script language="javascript" ><!--
 	
@@ -42,6 +47,15 @@
 		arColor_ = [ "Red" , "White" , "Yellow", "Blue", "Green" ];
 		arTextColor = ["White", "Black", "Black", "White", "Black"];
 
+		var arDetail =  [ 
+			[ "","","","","","","","","","","","","","","","","","","","" ], 
+			[ "","","","","","","","","","","","","","","","","","","","" ], 
+			[ "","","","","","","","","","","","","","","","","","","","" ], 
+			[ "","","","","","","","","","","","","","","","","","","","" ], 
+			[ "","","","","","","","","","","","","","","","","","","","" ]
+		 ]
+		
+				
 		//-->
 		
 		
@@ -313,6 +327,7 @@
 	-->
 <div style=" center;overflow-y: scroll;height: 200px;width:80%;margin:0 100">
 <style>
+
 .example{
   	overflow: auto;		/* 	scroll	barが表示され操作できる */
     width: 100%;					/*全体の幅 */
@@ -338,7 +353,62 @@
 }
 
 
+
+
+
+
+
+
+
+
+
+
 </style>
+<script>
+	
+	//
+	//	自作tooltip			中段scrol表示の5X20の詳細をdialog表示する
+	//
+	var prevObj = null;	//	dialog表示中フラグ
+	function oncl( obj ){		
+		var obTooltip = document.getElementById("tooltip");
+		if( prevObj == null){			//	dialog表示中でない場合、dialog開き、処理開始
+			prevObj = obj;
+		} else {
+			prevObj = null;				//	dialog表示中の場合、処理を終わらし、dialog閉じる
+			obTooltip.style.display = "none";
+			return;
+		}
+		
+		// 元の要素の位置座標を取得
+		var clientRect = obj.getBoundingClientRect() ;
+		
+		var x = clientRect.left ;		// 画面の左端から、要素の左端までの距離		
+		var y = clientRect.top ;		// 画面の上端から、要素の上端までの距離
+		
+		console.log('407 %s %d %d', obj.id, x, y );			//	obj.id		ex. coln_13_0		0行13列	5X20のどれかを取得
+				
+		var ar = 	obj.id.split("_");
+		console.log( "407 %s %s %s", ar[1], ar[2], arDetail[ ar[2] ][ar[1] ] );
+		console.log("407b" , arDetail );
+		document.getElementById( "tooltip0" ).innerHTML = arDetail[ ar[2] ][ar[1] ].split("_").join("<br>");
+				
+		obTooltip.style.left = x;
+		obTooltip.style.top = y;
+		obTooltip.style.display = "";		//	dialog開く
+		
+	}
+	
+	
+
+</script>
+
+
+
+
+
+
+
 
 		<!--	中段下	scroll	20行	-->
 		<table width="100%" class="example" style="background-color:lightgrey" >
@@ -350,164 +420,204 @@
 			<th  colspan="2"  id="col_0_4"  width="20%" style="background-color:#00ff00"></th>
 		</tr>				
 		
-				<tr  >
-			<td id="coln0_0_0" width="3%">&nbsp;</td> <td width="17%" id="coln_0_0">&nbsp;</td>
-			<td id="coln0_0_1" width="3%">&nbsp;</td> <td id="coln_0_1">&nbsp;</td>
-			<td id="coln0_0_2" width="3%">&nbsp;</td> <td id="coln_0_2">&nbsp;</td>
-			<td id="coln0_0_3" width="3%">&nbsp;</td> <td id="coln_0_3">&nbsp;</td>
-			<td id="coln0_0_4" width="3%"></td> <td id="coln_0_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_0_0" width="3%"></td> <td width="17%" id="coln_0_0"  class="tooltip-container">0			-->
+			<td id="coln0_0_0" width="3%"></td> <td width="17%" id="coln_0_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_0_1" width="3%">&nbsp;</td> <td id="coln_0_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_0_2" width="3%">&nbsp;</td> <td id="coln_0_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_0_3" width="3%">&nbsp;</td> <td id="coln_0_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_0_4" width="3%">&nbsp;</td> <td id="coln_0_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_1_0" width="3%">&nbsp;</td> <td width="17%" id="coln_1_0">&nbsp;</td>
-			<td id="coln0_1_1" width="3%">&nbsp;</td> <td id="coln_1_1">&nbsp;</td>
-			<td id="coln0_1_2" width="3%">&nbsp;</td> <td id="coln_1_2">&nbsp;</td>
-			<td id="coln0_1_3" width="3%">&nbsp;</td> <td id="coln_1_3">&nbsp;</td>
-			<td id="coln0_1_4" width="3%"></td> <td id="coln_1_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_1_0" width="3%"></td> <td width="17%" id="coln_1_0"  class="tooltip-container">1			-->
+			<td id="coln0_1_0" width="3%"></td> <td width="17%" id="coln_1_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_1_1" width="3%">&nbsp;</td> <td id="coln_1_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_1_2" width="3%">&nbsp;</td> <td id="coln_1_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_1_3" width="3%">&nbsp;</td> <td id="coln_1_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_1_4" width="3%">&nbsp;</td> <td id="coln_1_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_2_0" width="3%">&nbsp;</td> <td width="17%" id="coln_2_0">&nbsp;</td>
-			<td id="coln0_2_1" width="3%">&nbsp;</td> <td id="coln_2_1">&nbsp;</td>
-			<td id="coln0_2_2" width="3%">&nbsp;</td> <td id="coln_2_2">&nbsp;</td>
-			<td id="coln0_2_3" width="3%">&nbsp;</td> <td id="coln_2_3">&nbsp;</td>
-			<td id="coln0_2_4" width="3%"></td> <td id="coln_2_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_2_0" width="3%"></td> <td width="17%" id="coln_2_0"  class="tooltip-container">2			-->
+			<td id="coln0_2_0" width="3%"></td> <td width="17%" id="coln_2_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_2_1" width="3%">&nbsp;</td> <td id="coln_2_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_2_2" width="3%">&nbsp;</td> <td id="coln_2_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_2_3" width="3%">&nbsp;</td> <td id="coln_2_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_2_4" width="3%">&nbsp;</td> <td id="coln_2_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_3_0" width="3%">&nbsp;</td> <td width="17%" id="coln_3_0">&nbsp;</td>
-			<td id="coln0_3_1" width="3%">&nbsp;</td> <td id="coln_3_1">&nbsp;</td>
-			<td id="coln0_3_2" width="3%">&nbsp;</td> <td id="coln_3_2">&nbsp;</td>
-			<td id="coln0_3_3" width="3%">&nbsp;</td> <td id="coln_3_3">&nbsp;</td>
-			<td id="coln0_3_4" width="3%"></td> <td id="coln_3_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_3_0" width="3%"></td> <td width="17%" id="coln_3_0"  class="tooltip-container">3			-->
+			<td id="coln0_3_0" width="3%"></td> <td width="17%" id="coln_3_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_3_1" width="3%">&nbsp;</td> <td id="coln_3_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_3_2" width="3%">&nbsp;</td> <td id="coln_3_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_3_3" width="3%">&nbsp;</td> <td id="coln_3_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_3_4" width="3%">&nbsp;</td> <td id="coln_3_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_4_0" width="3%">&nbsp;</td> <td width="17%" id="coln_4_0">&nbsp;</td>
-			<td id="coln0_4_1" width="3%">&nbsp;</td> <td id="coln_4_1">&nbsp;</td>
-			<td id="coln0_4_2" width="3%">&nbsp;</td> <td id="coln_4_2">&nbsp;</td>
-			<td id="coln0_4_3" width="3%">&nbsp;</td> <td id="coln_4_3">&nbsp;</td>
-			<td id="coln0_4_4" width="3%"></td> <td id="coln_4_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_4_0" width="3%"></td> <td width="17%" id="coln_4_0"  class="tooltip-container">4			-->
+			<td id="coln0_4_0" width="3%"></td> <td width="17%" id="coln_4_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_4_1" width="3%">&nbsp;</td> <td id="coln_4_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_4_2" width="3%">&nbsp;</td> <td id="coln_4_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_4_3" width="3%">&nbsp;</td> <td id="coln_4_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_4_4" width="3%">&nbsp;</td> <td id="coln_4_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_5_0" width="3%">&nbsp;</td> <td width="17%" id="coln_5_0">&nbsp;</td>
-			<td id="coln0_5_1" width="3%">&nbsp;</td> <td id="coln_5_1">&nbsp;</td>
-			<td id="coln0_5_2" width="3%">&nbsp;</td> <td id="coln_5_2">&nbsp;</td>
-			<td id="coln0_5_3" width="3%">&nbsp;</td> <td id="coln_5_3">&nbsp;</td>
-			<td id="coln0_5_4" width="3%"></td> <td id="coln_5_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_5_0" width="3%"></td> <td width="17%" id="coln_5_0"  class="tooltip-container">5			-->
+			<td id="coln0_5_0" width="3%"></td> <td width="17%" id="coln_5_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_5_1" width="3%">&nbsp;</td> <td id="coln_5_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_5_2" width="3%">&nbsp;</td> <td id="coln_5_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_5_3" width="3%">&nbsp;</td> <td id="coln_5_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_5_4" width="3%">&nbsp;</td> <td id="coln_5_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_6_0" width="3%">&nbsp;</td> <td width="17%" id="coln_6_0">&nbsp;</td>
-			<td id="coln0_6_1" width="3%">&nbsp;</td> <td id="coln_6_1">&nbsp;</td>
-			<td id="coln0_6_2" width="3%">&nbsp;</td> <td id="coln_6_2">&nbsp;</td>
-			<td id="coln0_6_3" width="3%">&nbsp;</td> <td id="coln_6_3">&nbsp;</td>
-			<td id="coln0_6_4" width="3%"></td> <td id="coln_6_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_6_0" width="3%"></td> <td width="17%" id="coln_6_0"  class="tooltip-container">6			-->
+			<td id="coln0_6_0" width="3%"></td> <td width="17%" id="coln_6_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_6_1" width="3%">&nbsp;</td> <td id="coln_6_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_6_2" width="3%">&nbsp;</td> <td id="coln_6_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_6_3" width="3%">&nbsp;</td> <td id="coln_6_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_6_4" width="3%">&nbsp;</td> <td id="coln_6_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_7_0" width="3%">&nbsp;</td> <td width="17%" id="coln_7_0">&nbsp;</td>
-			<td id="coln0_7_1" width="3%">&nbsp;</td> <td id="coln_7_1">&nbsp;</td>
-			<td id="coln0_7_2" width="3%">&nbsp;</td> <td id="coln_7_2">&nbsp;</td>
-			<td id="coln0_7_3" width="3%">&nbsp;</td> <td id="coln_7_3">&nbsp;</td>
-			<td id="coln0_7_4" width="3%"></td> <td id="coln_7_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_7_0" width="3%"></td> <td width="17%" id="coln_7_0"  class="tooltip-container">7			-->
+			<td id="coln0_7_0" width="3%"></td> <td width="17%" id="coln_7_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_7_1" width="3%">&nbsp;</td> <td id="coln_7_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_7_2" width="3%">&nbsp;</td> <td id="coln_7_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_7_3" width="3%">&nbsp;</td> <td id="coln_7_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_7_4" width="3%">&nbsp;</td> <td id="coln_7_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_8_0" width="3%">&nbsp;</td> <td width="17%" id="coln_8_0">&nbsp;</td>
-			<td id="coln0_8_1" width="3%">&nbsp;</td> <td id="coln_8_1">&nbsp;</td>
-			<td id="coln0_8_2" width="3%">&nbsp;</td> <td id="coln_8_2">&nbsp;</td>
-			<td id="coln0_8_3" width="3%">&nbsp;</td> <td id="coln_8_3">&nbsp;</td>
-			<td id="coln0_8_4" width="3%"></td> <td id="coln_8_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_8_0" width="3%"></td> <td width="17%" id="coln_8_0"  class="tooltip-container">8			-->
+			<td id="coln0_8_0" width="3%"></td> <td width="17%" id="coln_8_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_8_1" width="3%">&nbsp;</td> <td id="coln_8_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_8_2" width="3%">&nbsp;</td> <td id="coln_8_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_8_3" width="3%">&nbsp;</td> <td id="coln_8_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_8_4" width="3%">&nbsp;</td> <td id="coln_8_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_9_0" width="3%">&nbsp;</td> <td width="17%" id="coln_9_0">&nbsp;</td>
-			<td id="coln0_9_1" width="3%">&nbsp;</td> <td id="coln_9_1">&nbsp;</td>
-			<td id="coln0_9_2" width="3%">&nbsp;</td> <td id="coln_9_2">&nbsp;</td>
-			<td id="coln0_9_3" width="3%">&nbsp;</td> <td id="coln_9_3">&nbsp;</td>
-			<td id="coln0_9_4" width="3%"></td> <td id="coln_9_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_9_0" width="3%"></td> <td width="17%" id="coln_9_0"  class="tooltip-container">9			-->
+			<td id="coln0_9_0" width="3%"></td> <td width="17%" id="coln_9_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_9_1" width="3%">&nbsp;</td> <td id="coln_9_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_9_2" width="3%">&nbsp;</td> <td id="coln_9_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_9_3" width="3%">&nbsp;</td> <td id="coln_9_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_9_4" width="3%">&nbsp;</td> <td id="coln_9_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_10_0" width="3%">&nbsp;</td> <td width="17%" id="coln_10_0">&nbsp;</td>
-			<td id="coln0_10_1" width="3%">&nbsp;</td> <td id="coln_10_1">&nbsp;</td>
-			<td id="coln0_10_2" width="3%">&nbsp;</td> <td id="coln_10_2">&nbsp;</td>
-			<td id="coln0_10_3" width="3%">&nbsp;</td> <td id="coln_10_3">&nbsp;</td>
-			<td id="coln0_10_4" width="3%"></td> <td id="coln_10_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_10_0" width="3%"></td> <td width="17%" id="coln_10_0"  class="tooltip-container">10			-->
+			<td id="coln0_10_0" width="3%"></td> <td width="17%" id="coln_10_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_10_1" width="3%">&nbsp;</td> <td id="coln_10_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_10_2" width="3%">&nbsp;</td> <td id="coln_10_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_10_3" width="3%">&nbsp;</td> <td id="coln_10_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_10_4" width="3%">&nbsp;</td> <td id="coln_10_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_11_0" width="3%">&nbsp;</td> <td width="17%" id="coln_11_0">&nbsp;</td>
-			<td id="coln0_11_1" width="3%">&nbsp;</td> <td id="coln_11_1">&nbsp;</td>
-			<td id="coln0_11_2" width="3%">&nbsp;</td> <td id="coln_11_2">&nbsp;</td>
-			<td id="coln0_11_3" width="3%">&nbsp;</td> <td id="coln_11_3">&nbsp;</td>
-			<td id="coln0_11_4" width="3%"></td> <td id="coln_11_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_11_0" width="3%"></td> <td width="17%" id="coln_11_0"  class="tooltip-container">11			-->
+			<td id="coln0_11_0" width="3%"></td> <td width="17%" id="coln_11_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_11_1" width="3%">&nbsp;</td> <td id="coln_11_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_11_2" width="3%">&nbsp;</td> <td id="coln_11_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_11_3" width="3%">&nbsp;</td> <td id="coln_11_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_11_4" width="3%">&nbsp;</td> <td id="coln_11_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_12_0" width="3%">&nbsp;</td> <td width="17%" id="coln_12_0">&nbsp;</td>
-			<td id="coln0_12_1" width="3%">&nbsp;</td> <td id="coln_12_1">&nbsp;</td>
-			<td id="coln0_12_2" width="3%">&nbsp;</td> <td id="coln_12_2">&nbsp;</td>
-			<td id="coln0_12_3" width="3%">&nbsp;</td> <td id="coln_12_3">&nbsp;</td>
-			<td id="coln0_12_4" width="3%"></td> <td id="coln_12_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_12_0" width="3%"></td> <td width="17%" id="coln_12_0"  class="tooltip-container">12			-->
+			<td id="coln0_12_0" width="3%"></td> <td width="17%" id="coln_12_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_12_1" width="3%">&nbsp;</td> <td id="coln_12_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_12_2" width="3%">&nbsp;</td> <td id="coln_12_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_12_3" width="3%">&nbsp;</td> <td id="coln_12_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_12_4" width="3%">&nbsp;</td> <td id="coln_12_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_13_0" width="3%">&nbsp;</td> <td width="17%" id="coln_13_0">&nbsp;</td>
-			<td id="coln0_13_1" width="3%">&nbsp;</td> <td id="coln_13_1">&nbsp;</td>
-			<td id="coln0_13_2" width="3%">&nbsp;</td> <td id="coln_13_2">&nbsp;</td>
-			<td id="coln0_13_3" width="3%">&nbsp;</td> <td id="coln_13_3">&nbsp;</td>
-			<td id="coln0_13_4" width="3%"></td> <td id="coln_13_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_13_0" width="3%"></td> <td width="17%" id="coln_13_0"  class="tooltip-container">13			-->
+			<td id="coln0_13_0" width="3%"></td> <td width="17%" id="coln_13_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_13_1" width="3%">&nbsp;</td> <td id="coln_13_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_13_2" width="3%">&nbsp;</td> <td id="coln_13_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_13_3" width="3%">&nbsp;</td> <td id="coln_13_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_13_4" width="3%">&nbsp;</td> <td id="coln_13_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_14_0" width="3%">&nbsp;</td> <td width="17%" id="coln_14_0">&nbsp;</td>
-			<td id="coln0_14_1" width="3%">&nbsp;</td> <td id="coln_14_1">&nbsp;</td>
-			<td id="coln0_14_2" width="3%">&nbsp;</td> <td id="coln_14_2">&nbsp;</td>
-			<td id="coln0_14_3" width="3%">&nbsp;</td> <td id="coln_14_3">&nbsp;</td>
-			<td id="coln0_14_4" width="3%"></td> <td id="coln_14_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_14_0" width="3%"></td> <td width="17%" id="coln_14_0"  class="tooltip-container">14			-->
+			<td id="coln0_14_0" width="3%"></td> <td width="17%" id="coln_14_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_14_1" width="3%">&nbsp;</td> <td id="coln_14_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_14_2" width="3%">&nbsp;</td> <td id="coln_14_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_14_3" width="3%">&nbsp;</td> <td id="coln_14_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_14_4" width="3%">&nbsp;</td> <td id="coln_14_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_15_0" width="3%">&nbsp;</td> <td width="17%" id="coln_15_0">&nbsp;</td>
-			<td id="coln0_15_1" width="3%">&nbsp;</td> <td id="coln_15_1">&nbsp;</td>
-			<td id="coln0_15_2" width="3%">&nbsp;</td> <td id="coln_15_2">&nbsp;</td>
-			<td id="coln0_15_3" width="3%">&nbsp;</td> <td id="coln_15_3">&nbsp;</td>
-			<td id="coln0_15_4" width="3%"></td> <td id="coln_15_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_15_0" width="3%"></td> <td width="17%" id="coln_15_0"  class="tooltip-container">15			-->
+			<td id="coln0_15_0" width="3%"></td> <td width="17%" id="coln_15_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_15_1" width="3%">&nbsp;</td> <td id="coln_15_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_15_2" width="3%">&nbsp;</td> <td id="coln_15_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_15_3" width="3%">&nbsp;</td> <td id="coln_15_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_15_4" width="3%">&nbsp;</td> <td id="coln_15_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_16_0" width="3%">&nbsp;</td> <td width="17%" id="coln_16_0">&nbsp;</td>
-			<td id="coln0_16_1" width="3%">&nbsp;</td> <td id="coln_16_1">&nbsp;</td>
-			<td id="coln0_16_2" width="3%">&nbsp;</td> <td id="coln_16_2">&nbsp;</td>
-			<td id="coln0_16_3" width="3%">&nbsp;</td> <td id="coln_16_3">&nbsp;</td>
-			<td id="coln0_16_4" width="3%"></td> <td id="coln_16_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_16_0" width="3%"></td> <td width="17%" id="coln_16_0"  class="tooltip-container">16			-->
+			<td id="coln0_16_0" width="3%"></td> <td width="17%" id="coln_16_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_16_1" width="3%">&nbsp;</td> <td id="coln_16_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_16_2" width="3%">&nbsp;</td> <td id="coln_16_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_16_3" width="3%">&nbsp;</td> <td id="coln_16_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_16_4" width="3%">&nbsp;</td> <td id="coln_16_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_17_0" width="3%">&nbsp;</td> <td width="17%" id="coln_17_0">&nbsp;</td>
-			<td id="coln0_17_1" width="3%">&nbsp;</td> <td id="coln_17_1">&nbsp;</td>
-			<td id="coln0_17_2" width="3%">&nbsp;</td> <td id="coln_17_2">&nbsp;</td>
-			<td id="coln0_17_3" width="3%">&nbsp;</td> <td id="coln_17_3">&nbsp;</td>
-			<td id="coln0_17_4" width="3%"></td> <td id="coln_17_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_17_0" width="3%"></td> <td width="17%" id="coln_17_0"  class="tooltip-container">17			-->
+			<td id="coln0_17_0" width="3%"></td> <td width="17%" id="coln_17_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_17_1" width="3%">&nbsp;</td> <td id="coln_17_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_17_2" width="3%">&nbsp;</td> <td id="coln_17_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_17_3" width="3%">&nbsp;</td> <td id="coln_17_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_17_4" width="3%">&nbsp;</td> <td id="coln_17_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_18_0" width="3%">&nbsp;</td> <td width="17%" id="coln_18_0">&nbsp;</td>
-			<td id="coln0_18_1" width="3%">&nbsp;</td> <td id="coln_18_1">&nbsp;</td>
-			<td id="coln0_18_2" width="3%">&nbsp;</td> <td id="coln_18_2">&nbsp;</td>
-			<td id="coln0_18_3" width="3%">&nbsp;</td> <td id="coln_18_3">&nbsp;</td>
-			<td id="coln0_18_4" width="3%"></td> <td id="coln_18_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_18_0" width="3%"></td> <td width="17%" id="coln_18_0"  class="tooltip-container">18			-->
+			<td id="coln0_18_0" width="3%"></td> <td width="17%" id="coln_18_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_18_1" width="3%">&nbsp;</td> <td id="coln_18_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_18_2" width="3%">&nbsp;</td> <td id="coln_18_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_18_3" width="3%">&nbsp;</td> <td id="coln_18_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_18_4" width="3%">&nbsp;</td> <td id="coln_18_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
-				<tr  >
-			<td id="coln0_19_0" width="3%">&nbsp;</td> <td width="17%" id="coln_19_0">&nbsp;</td>
-			<td id="coln0_19_1" width="3%">&nbsp;</td> <td id="coln_19_1">&nbsp;</td>
-			<td id="coln0_19_2" width="3%">&nbsp;</td> <td id="coln_19_2">&nbsp;</td>
-			<td id="coln0_19_3" width="3%">&nbsp;</td> <td id="coln_19_3">&nbsp;</td>
-			<td id="coln0_19_4" width="3%"></td> <td id="coln_19_4">&nbsp;</td>
+				<tr  >	 
+			<!--
+			<td id="coln0_19_0" width="3%"></td> <td width="17%" id="coln_19_0"  class="tooltip-container">19			-->
+			<td id="coln0_19_0" width="3%"></td> <td width="17%" id="coln_19_0" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_19_1" width="3%">&nbsp;</td> <td id="coln_19_1" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_19_2" width="3%">&nbsp;</td> <td id="coln_19_2" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_19_3" width="3%">&nbsp;</td> <td id="coln_19_3" onclick="oncl(this)">&nbsp;</td>
+			<td id="coln0_19_4" width="3%">&nbsp;</td> <td id="coln_19_4" onclick="oncl(this)">&nbsp;</td>
 		</tr>			
 				
 									
@@ -534,6 +644,15 @@
 
 
 
+	<!-- tooltip dialog -->
+
+<div id="tooltip" style="position:absolute; border: 5px solid darkslategray;display:none;background-color:darkslategray;color:white;;" >
+			<label id="tooltip0"  >aaaaaa<br>aaaaaa<br>aaaaaa<br>aaaaaa<br></label>
+	</div>
+	
+	
+	
+	
 	<!-- メンテナンス -->
 
 	<div align="left" style='font-size:16pt;padding:10px 10px '>
@@ -612,7 +731,7 @@
 			console.log('664 ', msg);
 			//console.log( 'xxx ' , ave );
 			ar = msg.split(";");
-			////console.log( '669 ', ar.length > 1 ?	ar[1] : '' );
+			console.log( '669 ', ar.length > 1 ?	ar[1] : '' );
 			if( ar.length > 1 ){
 				
 				hash = JSON.parse(ar[1]);
@@ -627,85 +746,13 @@
 						document.getElementById( "class" ).innerHTML = hash.class ;
 						document.getElementById( "rnd" ).innerHTML = "Round " + hash.rnd;
 						document.getElementById( "ht" ).innerHTML = "/ Heat " +hash.ht;
-
-						/*
-						time = new Date(hash.time);
-						timeNow = new Date();
-						diff = timeNow.getTime() - time.getTime();	
-						//console.log('684 diff=', diff) ;
-						*/
 						
 						//	timer表示	＝	 現在時刻 - 開始時刻　＋	timer値 * 60 * 1000 -
 						//console.log('925 hash[timer]=%s ', hash['timer']);
 						document.getElementById( "timer" ).innerHTML =  hash['timer'] + ":00";
 						console.log('300 ', hash["Athlete"] );
 						
-						//document.getElementById( "timer_BTN" ).innerHTML  = hash['tSt'];
 						
-						/*
-						timerVal = hash.timer * 60000 - timeNow.getTime() + time.getTime()  ;	// * time.getTime() + hash.timer * 60000  ;
-						timerVal = timerVal >= 0 ? timerVal : 0; 
-						*/
-						//console.log( "689 " , timerVal );
-
-						/*
-						if(typeof hash.nP  != 'undefined') {
-							//console.log('1488 ', hash.nP );
-							var cnt = hash.nP <= 5 ? hash.nP : 5;		//	選手の人数に従って、行を表示/非表示にする
-							for( var i=0; i<5; i++ ){
-								document.getElementById( "rowL" + i ).style.display = i<cnt? "" : "none";	//	左のdiv
-								document.getElementById( "rowM" + i ).style.display = i<cnt? "" : "none";	//	中のdiv
-								document.getElementById( "rowR" + i ).style.display = i<cnt? "" : "none";	//	右のdiv
-								document.getElementById( "low" + i ).style.display = i<cnt? "" : "none";		//	padlingのdiv	※削除予定
-							}		  
-						}			
-						*/
-						
-						/*
-						//	（左div）Judge列の#Jを、（hash.nJを超えた行は）消す
-						str = document.getElementById( "Judge_0"  ).innerHTML;
-						arJ = str.split("<br>");
-						for( var j=1; j<6; j++ ){
-							if( j > hash.nJ ) arJ[j] = "&nbsp;";
-						}
-						str = arJ.join("<br>");						
-						//console.log('1498 hash.nJ=%s str=%s', hash.nJ, str );
-						for( var i=0; i<5; i++ ){
-							document.getElementById( "Judge_" + i ).innerHTML = str;
-						}
-						
-						//	(中Ddiv)	5X20の表のnJ（ジャッジの数）を超えた行はクリアする
-						for( var i=0; i<5; i++ ){							
-							for(var j=0; j<20; j++ ){
-								////console.log('1504', document.getElementById( i +'_' + j ).innerHTML );
-								str = document.getElementById( i + "_" + j ).innerHTML;
-								arJ = str.split("<br>");
-								for( var k=0; k<6; k++ ){
-									if( k > hash.nJ ) arJ[k] = "&nbsp;";
-								}
-								document.getElementById( i + "_" + j ).innerHTML = arJ.join("<br>");
-							}
-						}
-						
-						//console.log('950 hash=%s', hash["Athlete"] );
-						//	athlete列に名前、フリガナ、県名などを登録する
-						if( hash["Athlete"] != "" ){
-							var arAth = hash["Athlete"].split(",");
-							//console.log('953 ', arAth );
-							var obj;
-							var ar;
-							for( var i=0; i<5; i++ ){
-								obj = document.getElementById( "Athlete_" + i );
-								ar = obj.innerHTML.split("<br>");
-								ar[0] = arAth[ i*3 ];
-								ar[1] = arAth[ i*3 + 1 ];								
-								ar[2] = arAth[ i*3 + 2 ];
-								obj.innerHTML = ar.join("<br>");
-								//console.log('954 ', ar );
-								
-							}
-						}
-						*/
 						break; 
 
 					//	judge,headJudge
@@ -789,7 +836,15 @@
 								//	妨害の場合、削除線
 								document.getElementById( "coln_" + str ).style.textDecoration = hash["opt"][i].indexOf( "del" ) >= 0 ? "line-through": "";
 								
+								
+								//	詳細（arDetail）への登録	arDetail[行][列]	ex.	1.1_1.2_1.3	（ '_' が分離府）	下表は行<-->列
+								//console.log('479b %s %s %s', str.split("_")[0], str.split("_")[1] ,hash["detail"][i] );
+								if( hash["detail"][i] != "" ){
+									arDetail[ str.split("_")[1] ] [str.split("_")[0] ] = hash["detail"][i];
+									console.log("479c ", arDetail[ parseInt(str.split("_")[1]) ] [ parseInt(str.split("_")[0]) ]   );
+								}
 							}
+							console.log("479a ", arDetail );
 						}
 						
 						break;
@@ -878,7 +933,13 @@
 		//dummyOn( 'HJ;{"IJ":["4_0"],"val":["1.10"]}' );
 		//dummyOn( 	'HJ;{"IJ":["0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19","0_0"],"val":["1.11","1.12","1.13","1.4","1.5","1.16","1.17","1.18","1.19","1.20","1.21","1.22","1.23","1.24","1.25","1.26","1.27","1.28","1.29","1.30"],"opt":["grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel","grdel"]}' );
 		
-		//dummyOn( 	'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10"," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "],"opt":["gr","","","","","","","","","","","","","","","","","","",""]}' );
+		/*
+		dummyOn( 	'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"], \
+			"val":["1.10","1.11 ","1.12 "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "], \
+			"opt":["gr","","","","","","","","","","","","","","","","","","",""] \
+			,"detail":["1.1_1.2_1.3","2.1_1.2_1.3","3.1_1.2_1.3","4.1_1.2_1.3","5.1_1.2_1.3","6.1_1.2_1.3","7.1_1.2_1.3","8.1_1.2_1.3","9.1_1.2_1.3","10.1_1.2_1.3","11.1_1.2_1.3","12.1_1.2_1.3","13.1_1.2_1.3","14.1_1.2_1.3","15.1_1.2_1.3","16.1_1.2_1.3","17.1_1.2_1.3","18.1_1.2_1.3","19.1_1.2_1.3","20.1_1.2_1.3"] \
+			 }' );
+		*/
 </script>
 
 </body>

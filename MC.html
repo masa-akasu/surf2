@@ -677,16 +677,27 @@
 	<script>
 	
 	
-		//	broadcastする
-		function emit(str){
-			////console.log('350 str=', str);
-			var str = id + ";" + JSON.stringify(str) ;
-			console.log('1392 str=' , str );
-			socket.emit("post", { text: str } );
-		}	
+    var room = "";
+    var ar = location.href.split('#');
+    if( ar.length >1 ){
+      console.log('39 location.href=', location.href.split('#')[1] );
+      room = location.href.split('#')[1];
+    }	
+    	
+	
+			//	broadcastする
+			function emit(str){
+				////console.log('350 str=', str);
+				var str = id + ";" + JSON.stringify(str) ;
+				console.log('1392 str=' , str );
+				socket.emit("post", { text: str } );
+			}	
 	
 	
 		const socket = io();
+
+	    //  room名を送る  最初に１回だけ
+	    socket.emit("c2s_join", { text: room });		
 
 		/**
 		//-------------------------------------

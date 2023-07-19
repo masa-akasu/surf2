@@ -798,8 +798,9 @@
 						if( hash.length == 5 ){			//	一応、これでもOKらしい
 							
 							//	上表
+							console.log("450 ", hash );
 							for( var i=0; i<5; i++ ){
-								console.log( "450 ", hash[i] );
+								//console.log( "450 ", hash[i] );
 								
 								//	色の列
 								//if( hash[i][0] != "" ){
@@ -820,9 +821,19 @@
 												+ ( i==0? "Win by " : "Needs " ) + 	hash[i][2] + "<br>" + (hash[i][3] == "" ? "" : "to 1st ") + hash[i][3] +   "<br>";
 												
 								//	Best 2 Waves				
+								
 								document.getElementById( i + "_4" ).innerHTML =  "<label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][7] == "" ? "" : "red" )  + "'>" +  hash[i][4] 
 								+ "</label> + <label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][6] == "" ? "" : "red" ) +  "'>" + hash[i][5] 
 								+ "</label><br><label style='color:red'>" +  hash[i][6] + "</label><br><label  style='color:red'>" + hash[i][7] + "</label>" ;
+								
+								
+								/*
+								var col = hash[i][ 0 ];
+								console.log( "615 ", col );
+								document.getElementById( i + "_4" ).innerHTML =  "<label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][ col ] == "" ? "" : "red" )  + "'>" +  hash[i][4] 
+								+ "</label> + <label style='font-weight:bold;font-size:15pt;color:" + ( hash[i][ col ] == "" ? "" : "red" ) +  "'>" + hash[i][5] 
+								+ "</label><br><label style='color:red'>" +  hash[i][ col ] + "</label><br><label  style='color:red'>" + hash[i][7] + "</label>" ;
+								*/
 							}
 						} else {
 							
@@ -951,6 +962,12 @@
 			,"detail":["1.1_1.2_1.3","2.1_1.2_1.3","3.1_1.2_1.3","4.1_1.2_1.3","5.1_1.2_1.3","6.1_1.2_1.3","7.1_1.2_1.3","8.1_1.2_1.3","9.1_1.2_1.3","10.1_1.2_1.3","11.1_1.2_1.3","12.1_1.2_1.3","13.1_1.2_1.3","14.1_1.2_1.3","15.1_1.2_1.3","16.1_1.2_1.3","17.1_1.2_1.3","18.1_1.2_1.3","19.1_1.2_1.3","20.1_1.2_1.3"] \
 			 }' );
 		*/
+		
+		//dummyOn( 'HJ;{"IJ":["0_0","0_1","0_2","0_3","0_4","0_5","0_6","0_7","0_8","0_9","0_10","0_11","0_12","0_13","0_14","0_15","0_16","0_17","0_18","0_19"],"val":["1.10","","","","","","","","","","","","","","","","","","",""],"opt":["gr","","","","","","","","","","","","","","","","","","",""],"detail":["1.1____","____","____","____","____","____","____","____","____","____","____","____","____","____","____","____","____","____","____","____"]}' );
+
+
+		//dummyOn( 'HJ;[[0,"1.10","1.10","",1.1,0,"△","△"],[1,"0.00","1.10","",0,0,"",""],[2,"0.00","0.00","",0,0,"",""],[3,"0.00","0.00","",0,0,"",""],[4,"0.00","0.00","",0,0,"",""]]');
+
 </script>
 
 </body>

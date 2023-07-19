@@ -3712,13 +3712,14 @@
 				//console.log('1392 4 ', val[0] );
 				
 				["_Ath", "_Ath_"].forEach( (val2,key2)=>{
-					str_ = document.getElementById( key + val2 ).innerHTML;		//Pd▲ <label style=\"display:none\"></label>→White
+					//str_ = document.getElementById( key + val2 ).innerHTML;		//Pd▲ <label style=\"display:none\"></label>→White
+					str_ = document.getElementById( val[1] + val2 ).innerHTML;		//Pd▲ <label style=\"display:none\"></label>→White
 					if( str_.indexOf( "<" ) > 0 ){
 						str_ = str_.split("</label>").join("");
 						str_ = str_.substring( 0, str_.indexOf("<") ) + str_.substring( parseInt( str_.indexOf( ">" ) +1 ));  
 					}
-					//arEmitHJ[key][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
-					arEmitHJ[ val[1] ][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
+					arEmitHJ[key][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
+					//arEmitHJ[ val[1] ][6+key2] =  str_ ;					//	[6][7]	Athlete(色)		ex.	△→White	
 					//console.log('1392e %d %d %s', key, key2, str_ );
 				});
 

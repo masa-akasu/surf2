@@ -4,35 +4,26 @@
 
 	<STYLE TYPE="text/css">
 	<!--
-	BODY,TD{
-		/*font-size:		24pt;*/
-		font-size:16pt;
-		border-width:	1px;
-		border-color:	lightgrey;
-		border-style:	solid;
-		text-align: center;
-	}
+		BODY,TD{
+			/*font-size:		24pt;*/
+			font-size:16pt;
+			border-width:	1px;
+			border-color:	lightgrey;
+			border-style:	solid;
+			text-align: center;
+		}
 
-	.scroll2{
-	  overflow: auto;
-	  /*white-space: pre;*/
-	}
+		.scroll2{
+		  overflow: auto;
+		  /*white-space: pre;*/
+		}
 
-	p{
-		font-size: 16pt;
-	}
-	-->
-	
-		<script>
-			.td_common{
-				border-width:8px;
-				border-color:red;
-				background-color:red;
-				line-height:20
-			}
-		</script>
-		
+		p{
+			font-size: 16pt;
+		}
+	-->	
 	</STYLE>	
+	
 	<script language="javascript" ><!--	
 			
 		var prev = "";	//	前回のRGBWB_
@@ -40,16 +31,6 @@
 		color = { R: "#ff0000" , W: "#ffffff" , Y: "#ffff00", B: "#0000ff", G: "#00ff00" ,  _: "#000000" , g:"#a0a0a0"};
 		arColor = [ "#ff0000" , "#ffffff" , "#ffff00", "#0000ff", "#00ff00" ];
 			
-		/* var ajaxFlag = '0';
-		function onTimer(){		//alert('104');			
-			if( ajaxFlag == "0" ){			//	when priority is changed or 40 sec. timeout
-				ajaxFlag = "1";			//	set ajax flag
-				goAjax();				//	go ajax (get) again
-			}					
-		} */
-		
-		//setInterval('onTimer()',1000);		/////
-						
 		
 		//	dialogの表示パラメータ
 		var flagOnDialog = false;		//	表示中か？
@@ -62,8 +43,7 @@
 								fun,			//	daialog毎の特別処理	ex.	table内の場合、色を付ける
 								obj ){		//	this
 			
-			console.log('78 %s %o', div_id, flagOnDialog);
-			
+			//console.log('78 %s %o', div_id, flagOnDialog);
 			
 			//	dialogが表示中なら、終了
 			//if( !flagOnDialog ||  ( prevIJ != "" && div_id == "dialogPaddling" ) ){
@@ -75,12 +55,11 @@
 			}
 			
 			
-			
-			console.log('105 ', prevIJ );
+			//console.log('105 ', prevIJ );
 			if( div_id != "dialogPaddling" ){
 				prevIJ = obj.id;
 			}
-			console.log('90 ', prevIJ );
+			//console.log('90 ', prevIJ );
 			
 			if( fun == null ){				
 				obj = document.getElementById( div_id ).style;
@@ -89,6 +68,7 @@
 				obj.left 		= (w / 3) + "px";
 				obj.top 		= ( h / 4 ) +"px";
 			}
+			
 			//	callback	, dialog毎の特別処理	※	今回はinTable（だけ）用
 			if( fun ){
 				fun();
@@ -113,7 +93,7 @@
 			//	dialog中の（WebNoなどの3つのtd）色セット
 			ar = prevIJ.split("_");	
 			color_ = arColor[ parseInt(ar[0]) ];		//	行_列	※	いずれもindex値	0...
-			console.log('133 color=' , color_ );
+			//console.log('133 color=' , color_ );
 								
 			ele = document.getElementsByName( 'colored' );		//	色を変更するところ	同一name	<td name='colored'>
 			ele.forEach( (val)=>{
@@ -125,110 +105,16 @@
 			}); 
 			//	wave番号をセット	（←列番号）
 			document.getElementById( "WaveNo" ).innerHTML = "&nbsp;" + ( parseInt(ar[1]) + 1 ) + "&nbsp;";
-			console.log('135');
+			//console.log('135');
 		}
 		
 
-		//	ajax受信時のcallback関数、パラメータとする	※	これでajax側を共通化できる
-		const funcOnCheck = function onCheck(){
-			//alert('onCheck');
-			if( xmlhttp2.readyState == 4 && xmlhttp2.status == 200 ){
-				alert( "137 " + xmlhttp2.responseText );	
-		    }
-		}
 		
 		
-		//
-		//	paddlingボタン処理
-		//		
-		function onColor(obj){
-			//alert('onColor' );
-			/*
-			if( !flagOnDialog ){
-				flagOnDialog = true;
-				prevIJ = obj.id;			//	今回の親の行列名	行_列	ex)		0_1		子は３個	ex)	0_1_1	0_1_2	0_1_3 
-				console.log('164 prevIJ=' , obj.id );
-			} else{
-				return;
-			}			
-			*/
-			
-			console.log('162 ' , obj.style.backgroundColor );
-			
-			////document.getElementById( "PaddlingInterfare" ).style.color = obj.style.backgroundColor;		////
-			document.getElementById( "Pd1" ).style.color = obj.style.backgroundColor;
-			document.getElementById( "Pd2" ).style.color = obj.style.backgroundColor;
-		}
 		
 		var prevObj = "";
 		var np_or_p="";
-		function  on_PaddlingPriority(obj, np_or_p_){
-			//alert(" on_PaddlingPriority");	
-			/*
-			if( prevObj == "" ){
-				obj.innerHTML = "";
-				prevObj = obj;
-				np_or_p = np_or_p_;
-			}
-			*/
-			console.log('172', np_or_p_ ); 			//	妨害の種別		Pd▲、Pd△
-			console.log( '173', obj.style.color );	//	色	rgb(0, 0, 255)		red:	rgb(255, 0, 0)	white;
-			console.log('183 prevIJ=', prevIJ );
-			
-			prevIJ = "";
-			["rgb(255, 0, 0)", "rgb(255, 255, 255)", "rgb(255, 255, 0)" ,  "rgb(0, 0, 255)","rgb(0, 255, 0)"  ].forEach( (val,key)=>{
-				//console.log('176 ', val ); 
-				if( obj.style.color == val ){
-					console.log('178 match' , key);
-					prevIJ = key  + "";		
-					
-					//	最左の色列の文字色	青：白文字	その他：黒文字
-					document.getElementById( key + "" ).style.color = key == 3 ? 	"white" : "black";
-
-					//	またそこに、文字列「Pd△」「Pd▲」	１つまたは２つの表示
-					if( document.getElementById( key + "" ).innerHTML.length < 10 ){
-						if( document.getElementById( key + "" ).innerHTML.indexOf("<br>") == -1){
-							document.getElementById( key + "" ).innerHTML = "<br>" + np_or_p_;
-						} else {
-							document.getElementById( key + "" ).innerHTML += " " + np_or_p_;
-						}						
-					}
-				}
-			});
-			
-			document.getElementById( "Pd1" ).style.color = " grey";
-			document.getElementById( "Pd2" ).style.color = " grey";
-			
-			/*
-						str = prevIJ + "_" + ( parseInt(prevObj.innerHTML) - 1) + "_1";
-						saveN = parseInt(prevObj.innerHTML) - 1;
-						document.getElementById( str ).innerHTML = np_or_p ;
-						prevObj.innerHTML = "Before <br>Wave No.";
-												
-						//	emitする		//	併せて送る項目を、ここで参照する
-						str2 = prevIJ + "_" + saveN + "_2";
-						console.log('214 str=', str2 );
-						str2 = document.getElementById( str2 ).innerHTML ;
-						str3 = prevIJ + "_" + saveN + "_3";
-						str3 = document.getElementById( str3 ).innerHTML ;
-						str2 += str3;
-						//console.log('220 str=', str );
-						
-						//	broadcastする	他にも（あと1か所）ある
-						ar_ = str2.split('&nbsp;');
-						str2 = ar_.join('');
-						str = np_or_p + str2;
-						console.log('243 str =', str );
-			*/			
-						str = np_or_p_;
-						saveN = "1";		////	dummy
-						var h = { idNo: idNo, IJ: prevIJ + "_" + saveN, val:str };
-						emit( h ); 
-
-			
-			
-			
-		}
+		
 		
 		
 		//
@@ -260,73 +146,6 @@
 			}
 		}
 		
-		//
-		//	paddling設定でのtenKey処理
-		//
-		function on10_Paddling(n){
-			//alert('195');
-			//console.log('249--' );
-			
-			if( n == "X" ){
-				obj3 = document.getElementById( "dialogPaddling" );
-				obj3.style.display = "none";
-				flagOnDialog = false;	
-				////document.getElementById( "PaddlingInterfare" ).style.color = "grey";
-			}
-			
-			if( prevObj != "" ){
-				if( '0' <= n && n <= '9' ){
-					prevObj.innerHTML += n;
-				}
-
-				if( n == "Cancel"  ){
-					prevObj.innerHTML = "Before <br>Wave No.";
-					prevObj = "";
-				}
-				
-				if( n == "OK" ){					
-					
-					console.log('200 OK np_or_p=' , np_or_p +" " + prevIJ);
-					if( ! isNaN(prevObj.innerHTML) && parseInt(prevObj.innerHTML) <=20 ){
-
-						str = prevIJ + "_" + ( parseInt(prevObj.innerHTML) - 1) + "_1";
-						saveN = parseInt(prevObj.innerHTML) - 1;
-						document.getElementById( str ).innerHTML = np_or_p ;
-						prevObj.innerHTML = "Before <br>Wave No.";
-												
-						//	emitする		//	併せて送る項目を、ここで参照する
-						str2 = prevIJ + "_" + saveN + "_2";
-						console.log('214 str=', str2 );
-						str2 = document.getElementById( str2 ).innerHTML ;
-						str3 = prevIJ + "_" + saveN + "_3";
-						str3 = document.getElementById( str3 ).innerHTML ;
-						str2 += str3;
-						//console.log('220 str=', str );
-						
-						//	broadcastする	他にも（あと1か所）ある
-						ar_ = str2.split('&nbsp;');
-						str2 = ar_.join('');
-						str = np_or_p + str2;
-						console.log('243 str =', str );
-						var h = { idNo: idNo, IJ: prevIJ + "_" + saveN, val:str };
-						emit( h ); 
-									
-						console.log('250');
-						//	後片付け
-						prevObj = "";
-						prevIJ = "";
-						obj3 = document.getElementById( "dialogPaddling" );
-						obj3.style.display = "none";
-						flagOnDialog = false;			
-						
-						////document.getElementById( "PaddlingInterfare" ).style.color = "grey";			
-						
-						console.log('212 OK' );
-					}
-				}
-			}											
-		}
-						
 		//
 		//	テーブル内でのtenKey処理
 		//
@@ -525,31 +344,31 @@
 	<!-- ２～６行目	５色-->
 		
 		<tr id='0_color' style="display:" ><td  class="td_common" width="200px" style="border-width:8px;border-color:#ff0000;background-color:#ff0000;" 
-				onclick="onColor(this)" id="0"
+				 id="0"
 		>&nbsp;<br>&nbsp;</td></tr>
 		
 
 		
 		<tr id='1_color' style="display:" ><td  class="td_common" width="200px" style="border-width:8px;border-color:#ffffff;background-color:#ffffff;" 
-				onclick="onColor(this)" id="1"
+				 id="1"
 		>&nbsp;<br>&nbsp;</td></tr>
 		
 
 		
 		<tr id='2_color' style="display:" ><td  class="td_common" width="200px" style="border-width:8px;border-color:#ffff00;background-color:#ffff00;" 
-				onclick="onColor(this)" id="2"
+				 id="2"
 		>&nbsp;<br>&nbsp;</td></tr>
 		
 
 		
 		<tr id='3_color' style="display:" ><td  class="td_common" width="200px" style="border-width:8px;border-color:#0000ff;background-color:#0000ff;" 
-				onclick="onColor(this)" id="3"
+				 id="3"
 		>&nbsp;<br>&nbsp;</td></tr>
 		
 
 		
 		<tr id='4_color' style="display:" ><td  class="td_common" width="200px" style="border-width:8px;border-color:#00ff00;background-color:#00ff00;" 
-				onclick="onColor(this)" id="4"
+				 id="4"
 		>&nbsp;<br>&nbsp;</td></tr>
 		
 
@@ -2308,102 +2127,6 @@
 
 
 
-<!-- 「paddlingInterfare」ボタンpush時のdialog  ※	削除
-<div id="dialogPaddling" style="position:absolute; background-color:grey;display:none;border:1px solid #000000;" >
-
-	<!-- 右上　X	
-	<div align="right">
-		<input type="button" value="X" onclick="on10_Paddling('X')" style="font-size:24pt"></input>		
-	</div>
-	
-	<div style="display:flex;" >
-	
-		<!--  左　妨害ボタン 
-		<div style="width:30%;display" id="interfareDiv">
-			
-			<table align="center">
-				<tr ><td style="font-size:16pt;border-color:grey;font-weight:bold" >Non-priority(P△)</td></tr>
-				<tr><td style="border-color:grey;background-color:black;color:white;font-size:16pt;height:75px;font-weight:bold" onclick=" on_PaddlingPriority(this,'P△')"	>Before <br>Wave No.</td></tr>
-				<tr><td style="border-color:grey"></td></tr>
-				<tr><td style="font-size:16pt;border-color:grey;font-weight:bold" >Priority(P▲)</td></tr>
-				<tr><td style="border-color:grey;background-color:black;color:white;font-size:16pt;height:75px;font-weight:bold" onclick=" on_PaddlingPriority(this,'P▲')">Before <br>Wave No.</td></tr>
-			</table>
-
-		</div>
-		<div style="width:70%" id="parentDiv">
-			<table align="center" style="width:50%">
-				<tr>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('7')">&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('8')">&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('9')">&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;</td>
-				</tr>
-				<tr>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('4')">&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('5')">&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('6')">&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;</td>
-				</tr>
-				<tr>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('1')">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('2')">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('3')">&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;</td>
-				</tr>
-				<tr>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('OK')">OK</td>
-					<td style="font-size:32pt;border-color:grey;background-color:black;color:white;"  onclick="on10_Paddling('0')">0</td>
-					<td style="font-size:24pt;border-color:grey;background-color:black;color:white;" onclick="on10_Paddling('Cancel')">Cancel</td>
-				</tr>								
-			</table>
-		</div>
-	</div>
-	<br>
-</div>
--->
-
-
-<!-- 5行20列のdialog 
-<div id="dialogTable" style="position:absolute; background-color:lightgrey;border: 1px solid #000000;display:none; " >
-
-	<div align="right">	
-		<input type="button" value="X" onclick="on10_Riding('X')" style="font-size:24pt;"></input>		
-	</div>
-	
-	<table align="center" style="width:70%">
-		<tr><td colspan="6" style="font-size:16pt;border-color:lightgrey;background-color:lightgrey;color:black;font-weight:bold">Score & Interfare</td>
-		</tr>
-						
-		<tr>
-			<td name="colored" style="background-color:red;border-color:red" >&nbsp;Wave:&nbsp;</td>
-			<td name="colored" style="font-size:24pt;border-color:lightgrey;background-color:red;border-color:red" id="waveNo">&nbsp;&nbsp;1&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('7')">&nbsp;&nbsp;&nbsp;7&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('8')">&nbsp;&nbsp;&nbsp;8&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('9')">&nbsp;&nbsp;&nbsp;9&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:16pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('NP')">△<br>Non Prioroty</td>
-		</tr>
-		
-		<tr>
-			<td name="colored" colspan="2" rowspan="2" id="echoback_TB" style="font-size:32pt;border-color:lightgrey;background-color:red;color:black;border-color:red"></td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('4')">&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('5')">&nbsp;&nbsp;&nbsp;5&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('6')">&nbsp;&nbsp;&nbsp;6&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:16pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('P')">▲<br>&nbsp;&nbsp;&nbsp;&nbsp;Prioroty&nbsp;&nbsp;&nbsp;&nbsp;</td>
-		</tr>
-		<tr>
-			
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('1')">&nbsp;&nbsp;&nbsp;1&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('2')">&nbsp;&nbsp;&nbsp;2&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:32pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('3')">&nbsp;&nbsp;&nbsp;3&nbsp;&nbsp;&nbsp;</td>
-			<td style="font-size:24pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Miss')">Miss</td>
-		</tr>
-		<tr>
-			<td colspan="2" style="font-size:24pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Enter')">Enter</td>
-			<td colspan="2" style="font-size:24pt;border-color:lightgrey;background-color:black;color:white;"  onclick="on10_Riding('0')">0</td>
-			<td style="font-size:24pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('10')">10</td>
-			<td style="font-size:24pt;border-color:lightgrey;background-color:black;color:white;" onclick="on10_Riding('Clear')">Clear</td>
-		</tr>								
-	</table>
-	<br>
-</div>
--->
 
 </div>
 
@@ -2623,49 +2346,7 @@
 			list.insertBefore(li, list.firstChild);
 
 			dummyOn_( li.innerHTML );
-			//
-			//	for heat-run 
-			//
-			/* var ar = msg.text.split(":");			//	(head) : (number)
-			//	
-			if (ar.length > 0 && ar[0] in headKind) {			//	head があり、headKindに登録されているものか？
-				console.log('84 headKind=', headKind[ar[0]]);
-
-				//	そのhead　（ex.'PR'）での最初の受信なら、そのまま表示する
-				if (headKind[ar[0]] == 0) {
-					console.log('95 ar[0]=', ar[0]);
-					list.insertBefore(li, list.firstChild);
-
-				//	表示済なら、上書きする
-				} else {
-
-					c = list.children;
-					for ( i = 0; i < c.length; i++ ) {
-
-						//	該当のheadなら
-						if (c[i].innerHTML.split(':')[0] == ar[0]) {
-							//console.log('102 ' ,parseInt(msg.text.split(":")[1]));
-
-							if ((parseInt(headKind[ar[0]]) + 1 != parseInt(msg.text.split(":")[1])) && headKind[ar[0]] > 0) {
-								console.log('111');
-								headKindError[ar[0]] = msg.text.split(":")[1] + "";
-							}
-							c[i].innerHTML = msg.text + " error=" + headKindError[ar[0]];
-							break;
-						}
-					}
-
-				}
-
-				//	今回値を保存
-				headKind[ar[0]] = msg.text.split(":")[1];
-
-			//	headがない（今回の目的に沿わない）場合でも、参考までに表示しておく
-			} else {
-				list.insertBefore(li, list.firstChild);
-			} */
-
-
+			
 		});
 
 		/**
@@ -2684,42 +2365,6 @@
 		var id = 'J2';		//	i am Priority			※	重要	
 		var idNo = "2";
 
-
-		//
-		//	heat run test
-		//		
-		var n = 0;
-		const onTimer = function () {
-			//console.log('100');
-			n += 1;
-			if (n == 5000) {
-				clearInterval(timer);
-			}
-			socket.emit("post", { text: id + ';' + n });
-		}
-
-	/*
-		objTimer = document.getElementById('timer');
-		const onTimer2 = function(){
-
-			
-		
-		var ar = objTimer.innerHTML.split(":");
-		var n = parseInt(ar[0])*60 + parseInt(ar[1]);
-		console.log('1995 n=%d %s', n , ar[0]);
-		n -= n > 0 ? 1: 0;
-			if( document.getElementById('timer_BTN').innerHTML == "Start" || document.getElementById('timer_BTN').innerHTML == "Resume"  ){
-			objTimer.innerHTML = parseInt( n / 60 ) + ":" + ((n % 60) < 10 ? "0" + (n % 60): (n % 60) );
-		}
-		
-
-		
-
-
-		}
-		//const timer = setInterval(onTimer, 1000);
-		const timer = setInterval(onTimer2, 1000);
-*/
 
 		objTimer = document.getElementById('timer');
 		const onTimer2 = function(){

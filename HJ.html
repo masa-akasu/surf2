@@ -12,8 +12,6 @@
 		border-style:	solid;
 		text-align: center;
 		/*padding: 5px;*/
-
-
 	}
 
 	.scroll2{
@@ -25,8 +23,6 @@
 		font-size: 16pt;
 	}
 	-->
-
-
 
 
 	</STYLE>	
@@ -133,25 +129,7 @@
 			
 			document.getElementById( "tenkeyDialog" ).style.width = "500px";	//	※対処療法
 		}		
-						
-		//	3段目、ボタン処理		<!-- 3段目の interfare の指定-->	
-		function onclick_Non_Priority(){
-			//alert('onclick_Non_Priority');
-			//document.getElementById( "echoback_TB_1" ).innerHTML = "△";
-			obj = document.getElementById( "Interference_1" );
-			obj.style.backgroundColor = 'black';
-		}
-				
-		function onclick_Priority(){
-			//alert('onclick_Priority');
-			//document.getElementById( "echoback_TB_1" ).innerHTML = "▲";
-		}		
-		
-		function onclick_No_Interference(){
-			//alert('onclick_No_Interference');
-			//document.getElementById( "echoback_TB_1" ).innerHTML = "";
-		}				
-		
+							
 		
 		//「releaseAll」押下時		網掛けをクリアし、Totalを再集計
 		function releaseAll(){
@@ -250,7 +228,10 @@
 				
 				//console.log( "1392n ", net[ prevIJ__.split("_")[0] ][i] );
 				str_ = "";
-				if( net[ prevIJ__.split("_")[0] ][i] == "" ){								//	grey,redの場合、MCの下段表示の平均値は""（スペース）とする
+				if( net[ prevIJ__.split("_")[0] ][i] == "" 
+				|| net[ prevIJ__.split("_")[0] ][i] == "red"
+				|| net[ prevIJ__.split("_")[0] ][i] == "greygrey"
+				 ){			//	greyの場合は未定なので、MCの下段表示の平均値は""（スペース）とする
 					str_ = document.getElementById( str  ).innerHTML;
 					//console.log('1392y ', str_ );
 					str_ = str_.substring(  str_.indexOf(">") + 1 );
@@ -311,7 +292,7 @@
 
 
 		function onTimer_BTN(){
-			alert('onTimer_BTN');	
+			alert('onTimer_BTN 工事中');	
 		}
 	//-->
 	</script>
@@ -4079,6 +4060,8 @@
 		}
 
 
+
+
 		var listLength=0;
 		function dummyOn(msg){
 			//console.log('80===== msg.text=', msg);
@@ -4118,9 +4101,16 @@
 			li.innerHTML = msg.text;
 			list.insertBefore(li, list.firstChild);
 
+			//	10行を超えない対策	
+			listLength += 1;
+			if( listLength > 10 ){
+				listLength = 10;
+				c_ = list.lastElementChild;
+				list.removeChild( c_ );
+			}
+
 			//console.log('1871 ', ave );
 			dummyOn_( li.innerHTML );
-
 
 		});
 
@@ -4134,6 +4124,7 @@
 		}
 
 
+
 		//
 		//	config
 		//
@@ -4144,6 +4135,7 @@
 		//
 		//	heat run test
 		//
+		/*
 		var n = 0;
 		const onTimer = function () {
 			//console.log('1209');
@@ -4153,7 +4145,7 @@
 			}
 			socket.emit("post", { text: id + ';' + n });
 		}
-
+	*/
 
 		objTimer = document.getElementById('timer');
 		const onTimer2 = function(){
@@ -4390,7 +4382,7 @@ dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"8.4"}	' );
 	"Athlete":"佐藤 一郎,サトウ イチロウ,東京,鈴木 二郎,スズキ ジロウ,神奈川,田中 三郎,タナカ サブロウ,千葉,高橋 四郎,タカハシ シロウ,愛知,山本 五郎,ヤマモト ゴロウ,宮崎"\
 	}'); 
 	*/
-	//dummyOn( 'PR;["G","W","B","Y","R"]' );
+
 
 	
 		//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"1.2"}' );	
@@ -4576,6 +4568,7 @@ dummyOn( 'J1;{"idNo":"1","IJ":"1_1","val":"8.4"}	' );
 	//dummyOn( 'J1;{"idNo":"2","IJ":"1_1","val":"1.1"}' );
 	//dummyOn( 'J1;{"idNo":"2","IJ":"1_2","val":"1.1"}' );
 */	
+//dummyOn( 'J1;{"idNo":"1","IJ":"0_0","val":"M"}');
 	
 			
 	</script>
